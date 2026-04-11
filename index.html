@@ -6,7 +6,7 @@
     <title>FINSEGYE</title>
     <link rel="stylesheet" href="style.css">
 
-    <style>
+<style>
     /* 결제창: 평소에는 아예 존재하지 않도록 설정 */
     #paymentFields {
         display: none; /* ★ 중요: 평소엔 숨김 */
@@ -28,6 +28,12 @@
     .nav {
         z-index: 10000 !important;
     }
+    <style>
+    /* 키보드가 올라왔을 때 하단 메뉴를 강제로 숨기는 설정 */
+    body.keyboard-open .nav {
+        display: none !important;
+    }
+</style>
 </style>
 
     
