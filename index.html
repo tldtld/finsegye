@@ -670,6 +670,27 @@ document.querySelectorAll('input, textarea').forEach(input => {
 });
 
 
+    /* 탭 메뉴가 자판기 위로 올라오는 현상 방지 */
+if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+        const nav = document.querySelector('.nav'); // 하단 6개 탭 메뉴
+        const currentHeight = window.visualViewport.height;
+        const fullHeight = window.innerHeight;
+
+        if (nav) {
+            // 화면 높이가 자판기 때문에 일정 수준(25%) 이상 줄어들면 메뉴를 숨깁니다.
+            if (currentHeight < fullHeight * 0.75) {
+                nav.style.visibility = 'hidden'; // 눈에 안 보이게 숨김
+                nav.style.pointerEvents = 'none'; // 클릭도 안 되게 차단
+            } else {
+                nav.style.visibility = 'visible'; // 원래대로 표시
+                nav.style.pointerEvents = 'auto'; // 클릭 허용
+            }
+        }
+    });
+}
+
+
 </script>
 </body>
 </html>
