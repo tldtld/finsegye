@@ -364,6 +364,38 @@ window.resetEconomy = function() {
 
     alert("자산 수치가 초기화되었습니다.");
 };
+
+    /* 📡 AI 딥러닝 신호 무한 루프 (예전처럼 활발하게!) */
+function updateAISignal() {
+    const assets = ["KOSPI200 선물", "삼성전자", "현대차", "나스닥100", "원/달러 환율", "금 선물", "이더리움"];
+    const actions = ["매수 포착", "비중 확대", "관망(대기)", "차익 실현", "강력 매수"];
+    const colors = ["#ff416c", "#ff4b2b", "#888", "#00ffcc", "#ff00ff"];
+
+    const assetEl = document.getElementById('assetName');
+    const actionEl = document.getElementById('actionType');
+
+    if (!assetEl || !actionEl) return;
+
+    // 1. 랜덤하게 자산과 상태 선택
+    const randomAsset = assets[Math.floor(Math.random() * assets.length)];
+    const randomIndex = Math.floor(Math.random() * actions.length);
+    const randomAction = actions[randomIndex];
+    const randomColor = colors[randomIndex];
+
+    // 2. 화면에 즉시 반영
+    assetEl.innerText = randomAsset;
+    actionEl.innerText = randomAction;
+    actionEl.style.background = randomColor;
+    actionEl.style.color = (randomIndex === 0 || randomIndex === 1) ? "#fff" : "#000";
+
+    // 3. 2초~4초 사이로 계속 변화 (예전 그 느낌 그대로!)
+    setTimeout(updateAISignal, Math.random() * 2000 + 2000);
+}
+
+// 페이지 로드 시 AI 엔진 가동!
+window.addEventListener('load', () => {
+    updateAISignal(); 
+});
     
 </script>
 </body>
