@@ -608,6 +608,33 @@ window.addEventListener('load', function() {
 
     if (!referrerName && document.activeElement) document.activeElement.blur();
 });
+
+/* [UI 개선] 키보드가 올라올 때 하단 메뉴 숨기기 */
+window.visualViewport.addEventListener('resize', () => {
+    const nav = document.querySelector('.nav'); // 하단 6개 탭 메뉴
+    const currentHeight = window.visualViewport.height;
+    const fullHeight = window.innerHeight;
+
+    if (nav) {
+        // 화면 높이가 25% 이상 줄어들면 '키보드가 올라왔다'고 판단
+        if (currentHeight < fullHeight * 0.75) {
+            nav.style.display = 'none'; // 하단 메뉴 숨김
+        } else {
+            nav.style.display = 'flex'; // 원래대로 표시
+        }
+    }
+});
+
+/* [입력창 최적화] 입력 칸 클릭 시 해당 위치로 자동 스크롤 */
+document.querySelectorAll('input, textarea').forEach(input => {
+    input.addEventListener('focus', () => {
+        setTimeout(() => {
+            input.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300); // 키보드 애니메이션 시간을 고려한 0.3초 지연
+    });
+});
+
+
 </script>
 </body>
 </html>
