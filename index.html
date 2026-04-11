@@ -431,31 +431,25 @@ function toggleLiveList() {
     if (typeof updateRealtimeList === "function") updateRealtimeList();
 }
 
-// [탭 3] 실시간 결제 시스템 열기
+// [교체] 키보드에 밀리지 않는 결제창 열기 함수
 function openPayment() {
     const fields = document.getElementById('paymentFields');
     const payBox = document.getElementById('paymentBox');
-    const qr = document.getElementById('qrContainer');
-    const liveList = document.getElementById('liveListContainer');
 
     if (!fields) return;
 
-    // 시스템 일시 정지 (economy.js와 연동)
     window.isSystemPaused = true;
-
-    // 결제창 보이기
     fields.style.display = 'block';
     if (payBox) payBox.style.borderColor = '#ff416c';
 
-    // 다른 탭 닫기
-    if (qr) qr.style.display = 'none';
-    if (liveList) liveList.style.display = 'none';
-
-    // 입력창 포커스
+    // 자판기가 화면을 밀어 올리는 것을 방지하기 위해 0.3초 뒤 강제 스크롤 고정
     setTimeout(() => {
         const input = document.getElementById('payAmount');
-        if (input) input.focus();
-    }, 150);
+        if (input) {
+            input.focus();
+            window.scrollTo(0, 0); // 화면을 맨 위로 고정 (자판기 가림 방지)
+        }
+    }, 300);
 }
 
 // 결제창 닫기 (취소 또는 완료 시)
