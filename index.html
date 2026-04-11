@@ -190,40 +190,56 @@
         window.scrollTo(0, 0);
     }
 
-    // [2] AI 지갑 설립 완료 (채정석 대표님 최종본)
-    function submitBank() {
-        const name = document.getElementById('bankName');
-        const phone = document.getElementById('bankPhone');
-        const address = document.getElementById('bankAddress');
-        const agree = document.getElementById('bankAgree');
-        const refInput = document.getElementById('bankReferrer');
+// AI 지갑 설립 완료 함수 (클릭 시 메인 화면으로 즉시 이동)
+function submitBank() {
+    const name = document.getElementById('bankName');
+    const phone = document.getElementById('bankPhone');
+    const address = document.getElementById('bankAddress');
+    const agree = document.getElementById('bankAgree');
+    const refInput = document.getElementById('bankReferrer');
 
-        if (!name.value.trim()) { alert("성함을 입력해주세요."); name.focus(); return; }
-        if (!agree.checked) { alert("개인정보 동의가 필요합니다."); return; }
-
-        let finalRef = refInput.value.trim() || window.currentReferrer || "직접 가입";
-
-        const newUser = {
-            bankName: name.value,
-            bankPhone: phone.value,
-            bankAddress: address.value,
-            referrer: finalRef,
-            date: new Date().toLocaleString()
-        };
-
-        let wallets = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
-        wallets.unshift(newUser);
-        localStorage.setItem('fin_wallets', JSON.stringify(wallets));
-
-        alert(`🏦 [${name.value}] 님 설립 완료!\n추천인: ${finalRef}`);
-
-        // 폼 초기화 및 메인 이동
-        [name, phone, address].forEach(el => el.value = "");
-        agree.checked = false;
-        showSection('dashboard', document.getElementById('btn-dashboard'));
-        
-        if (typeof updateRealtimeList === "function") updateRealtimeList();
+    // 1. 유효성 검사
+    if (!name.value.trim()) { 
+        alert("성함을 입력해주세요."); 
+        name.focus(); 
+        return; 
     }
+    if (!agree.checked) { 
+        alert("개인정보 동의가 필요합니다."); 
+        return; 
+    }
+
+    // 2. 추천인 가져오기
+    let finalRef = refInput.value.trim() || window.currentReferrer || "직접 가입";
+
+    // 3. 데이터 저장 (내 스마트폰 메모리에 기록)
+    const newUser = {
+        bankName: name.value,
+        bankPhone: phone.value,
+        bankAddress: address.value,
+        referrer: finalRef,
+        date: new Date().toLocaleString()
+    };
+    
+    let wallets = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
+    wallets.unshift(newUser);
+    localStorage.setItem('fin_wallets', JSON.stringify(wallets));
+
+    // 4. 완료 알림
+    alert(`🏦 [${name.value}] 님 설립 완료!\n메인 화면으로 이동합니다.`);
+
+    // 5. [핵심] 입력창 초기화 및 메인 화면(Dashboard)으로 즉시 강제 이동
+    name.value = "";
+    phone.value = "";
+    address.value = "";
+    agree.checked = false;
+
+    // ★ 이 코드가 대표님이 원하시는 "메인으로 가기" 기능을 수행합니다.
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+
+    // 실시간 참여 명단 업데이트가 있다면 실행
+    if (typeof updateRealtimeList === "function") updateRealtimeList();
+}
 
     // [3] 자판기 가림 및 탭 메뉴 방해 금지 로직 (통합형)
     if (window.visualViewport) {
