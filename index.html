@@ -91,46 +91,33 @@
 <section id="loanApplyForm"><div class="form-box"><input id="loanName" type="text" placeholder="신청자명"><input id="loanAmount" type="number" placeholder="신청금액(만원)"><textarea id="loanPurpose" placeholder="공유목적 입력"></textarea><button class="submitBtn" onclick="submitLoan()">💰 공유 신청하기</button></div></section>
 <section id="routineForm"><div class="form-box"><input id="routineOwner" type="text" placeholder="제작자 이름"><input id="routineRegion" type="text" placeholder="적용지역"><textarea id="routineText" placeholder="루틴 내용 입력"></textarea><button class="submitBtn" onclick="submitRoutine()">🌀 루틴 생성하기</button></div></section>
 
-<section id="bankForm">
-    <div class="form-box" style="padding: 15px; border: 1px solid rgba(255, 215, 0, 0.3); background: rgba(255, 255, 255, 0.03); width: 90%; max-width: 320px; margin: 0 auto; border-radius: 12px;">
-        <h3 style="color: gold; font-size: 1.1em; margin-top: 5px; margin-bottom: 5px;">🏦 AI 지갑 설립</h3>
-        <p style="font-size: 0.75em; color: #aaa; margin-bottom: 15px;">정보 입력 없이 원클릭으로 가입하세요.</p>
-
-        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <button onclick="autoFillKakao()" style="flex: 1; height: 45px; background: #FEE500; color: #3C1E1E; border: none; border-radius: 8px; font-weight: bold; font-size: 0.8em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                💬 카카오 인증
-            </button>
-            <button onclick="autoFillInfo()" style="flex: 1; height: 45px; background: rgba(0, 255, 204, 0.2); color: #00ffcc; border: 1px solid #00ffcc; border-radius: 8px; font-weight: bold; font-size: 0.8em; cursor: pointer;">
-                👤 자동입력
-            </button>
-        </div>
-
-
-
-        <div style="margin-bottom: 8px;">
-            <label style="font-size: 0.7em; color: #00ffcc; display: block; margin-bottom: 4px;">🤝 추천인 (없으면 직접 가입)</label>
-            <input id="bankReferrer" type="text" placeholder="추천인 성함" style="width: 100%; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
-        </div>
 
 
 
 
-        <div style="border-top: 1px solid #333; margin: 15px 0; position: relative;">
-            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #000; padding: 0 10px; font-size: 0.7em; color: #666;">또는 직접 입력</span>
-        </div>
-
-        <input id="bankName" type="text" placeholder="성명" style="width: 90%; margin-bottom: 8px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
-        <input id="bankPhone" type="tel" placeholder="전화번호" style="width: 90%; margin-bottom: 8px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
-        <input id="bankAddress" type="text" placeholder="주소" style="width: 90%; margin-bottom: 12px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
-
-        <div class="agree-container" style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; font-size: 0.75em;">
-            <input type="checkbox" id="bankAgree" style="margin-right: 8px;">
-            <span>개인정보 수집 및 이용 동의 (필수)</span>
-        </div>
-
-        <button class="submitBtn" onclick="submitBank()" style="width: 100%; height: 50px; background: linear-gradient(90deg, gold, #ffcc33); border: none; border-radius: 8px; color: #000; font-weight: bold; font-size: 1.1em; margin-top: 15px; cursor: pointer;">
-            🚀 AI 지갑 설립 완료
+    
+<section id="bankForm" style="display:none; padding: 10px;">
+    <div class="form-box" style="padding: 20px 15px; border: 1.5px solid gold; background: rgba(255, 255, 255, 0.05); width: 92%; max-width: 340px; margin: 0 auto; border-radius: 15px; text-align: center;">
+        
+        <h3 style="color: gold; font-size: 1.2em; margin-bottom: 15px;">🏦 AI 지갑 설립</h3>
+        
+        <button onclick="submitBank()" style="width: 100%; height: 70px; background: linear-gradient(90deg, #ffcc33, gold); border: none; border-radius: 12px; color: #000; font-weight: bold; font-size: 1.2em; cursor: pointer; box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3); margin-bottom: 20px;">
+            🚀 AI 지갑 설립 (원클릭)
         </button>
+
+        <div style="margin-bottom: 15px; background: rgba(0, 255, 204, 0.05); padding: 10px; border-radius: 8px; border: 1px dashed #00ffcc;">
+            <label style="font-size: 0.75em; color: #00ffcc; display: block; margin-bottom: 5px;">🤝 관리인(추천인)</label>
+            <input id="bankReferrer" type="text" value="CEO 채정석" readonly style="width: 80%; background: transparent; color: #fff; border: none; text-align: center; font-size: 1.1em; font-weight: bold;">
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: center; font-size: 0.8em; color: #aaa;">
+            <input type="checkbox" id="bankAgree" checked style="margin-right: 8px;">
+            <span>개인정보 활용 동의 (자동 승인)</span>
+        </div>
+
+        <input id="bankName" type="hidden" value="사용자">
+        <input id="bankPhone" type="hidden" value="01000000000">
+        <input id="bankAddress" type="hidden" value="자동입력">
     </div>
 </section>
 
