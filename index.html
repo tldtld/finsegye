@@ -57,7 +57,7 @@
         <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
 <button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; overflow: hidden;">
     <span>👥 실시간</span>
-    <span id="realtimeUserCount" style="color: #fff; display: inline-block; transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);">742</span>
+    <span id="realtimeUserCount" style="color: #fff; display: inline-block; transition: all 0.5s ease-out;">10,000</span>
     <span>명</span>
 </button>
             <div id="liveListContainer" style="display: none; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,204,0.3); border-radius: 12px; height: 130px;">
@@ -398,43 +398,43 @@ window.addEventListener('load', () => {
     updateAISignal(); 
 });
 
-/* 📈 실시간 인원 우상향 엔진 (멈추지 않고 증가) */
-// 대표님, 시작하고 싶은 숫자를 아래 742 대신 적으시면 됩니다.
-let masterLiveCount = parseInt(localStorage.getItem('fin_live_users')) || 10000;
+/* 📈 [단독 가동] 실시간 인원 10,000명 시작 & 우상향 엔진 */
+// 1. 브라우저에 저장된 숫자가 있으면 가져오고, 없으면 10000부터 시작합니다.
+let globalLiveCount = parseInt(localStorage.getItem('fin_live_users_v2')) || 10000;
 
-function startInfiniteGrowth() {
+function runLiveCounter() {
     const countEl = document.getElementById('realtimeUserCount');
     if (!countEl) return;
 
-    // 1. 무조건 1~2명씩 증가 (감소나 제자리걸음 없음!)
-    const growth = Math.floor(Math.random() * 2) + 1; 
-    masterLiveCount += growth;
+    // 2. 무조건 1명~3명씩만 증가 (절대 줄어들지 않음)
+    const increment = Math.floor(Math.random() * 3) + 1;
+    globalLiveCount += increment;
 
-    // 2. 브라우저 저장소에 현재 숫자 기억 (새로고침해도 이어서 증가)
-    localStorage.setItem('fin_live_users', masterLiveCount);
+    // 3. 현재 숫자를 스마트폰에 기억 (새로고침해도 이어서 증가)
+    localStorage.setItem('fin_live_users_v2', globalLiveCount);
 
-    // 3. 아래에서 위로 슥~ 올라오는 애니메이션
+    // 4. 애니메이션 효과: 아래에서 위로 슥!
     countEl.style.opacity = "0";
     countEl.style.transform = "translateY(10px)";
 
     setTimeout(() => {
-        countEl.innerText = masterLiveCount.toLocaleString();
+        countEl.innerText = globalLiveCount.toLocaleString();
         countEl.style.opacity = "1";
         countEl.style.transform = "translateY(0)";
     }, 150);
 
-    // 4. 다음 증가 시간: 4초 ~ 9초 사이 (너무 빠르지 않게 적당히!)
-    const nextStep = Math.random() * 5000 + 4000;
-    setTimeout(startInfiniteGrowth, nextStep);
+    // 5. 다음 증가 시간: 3초 ~ 8초 사이 (너무 빠르지 않게 적당히)
+    const nextInterval = Math.random() * 5000 + 3000;
+    setTimeout(runLiveCounter, nextInterval);
 }
 
-// 페이지 로드 시 엔진 가동
+// 페이지 로드 시 단 한 번만 실행되도록 설정
 window.addEventListener('load', () => {
     const countEl = document.getElementById('realtimeUserCount');
-    if(countEl) countEl.innerText = masterLiveCount.toLocaleString();
+    if(countEl) countEl.innerText = globalLiveCount.toLocaleString();
     
-    // 첫 증가는 3초 뒤에 시작합니다.
-    setTimeout(startInfiniteGrowth, 3000);
+    // 2초 뒤부터 조용히 올라가기 시작합니다.
+    setTimeout(runLiveCounter, 2000);
 });
     
 </script>
