@@ -54,12 +54,20 @@
             </div>
         </div>
 
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-<button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; overflow: hidden;">
-    <span>누계</span>
-    <span id="realtimeUserCount" style="color: #fff; display: inline-block; transition: all 0.5s ease-out;">10,000</span>
-    <span>명</span>
-</button>
+       <div style="display: flex; gap: 8px; margin: 15px auto; width: 98%;">
+    
+    <button onclick="toggleLiveList()" style="flex: 1; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; overflow: hidden;">
+        <span>👥 누계</span>
+        <span id="totalCumulativeCount" style="color: #fff; display: inline-block; transition: all 0.5s ease-out;">10,000</span>
+        <span>명</span>
+    </button>
+
+    <button onclick="toggleLiveList()" style="flex: 1; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; overflow: hidden;">
+        <span>👥 실시간</span>
+        <span id="realtimeUserCount" style="color: #fff; display: inline-block; transition: all 0.5s ease-out;">60</span>
+        <span>명</span>
+    </button>
+</div>
             <div id="liveListContainer" style="display: none; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,204,0.3); border-radius: 12px; height: 130px;">
                 <div id="realtimeNameList" style="height: 100%; overflow-y: auto; font-size: 0.75em; color: #eee; line-height: 1.6; text-align: left;">
                     데이터 로딩 중...
@@ -398,52 +406,59 @@ window.addEventListener('load', () => {
     updateAISignal(); 
 });
 
-/* 📈 [누계 엔진] 저장값 로드 + 5초 대기 후 우상향 */
-// 1. 저장된 누계 숫자가 없으면 기본 10,000명부터 시작
-let totalCumulativeCount = parseInt(localStorage.getItem('fin_total_users')) || 10000;
+/* 📈 [통합 엔진] 누계 & 실시간 인원 동시 증가 로직 */
 
-function updateCumulativeDisplay() {
-    const countEl = document.getElementById('realtimeUserCount');
-    if (countEl) {
-        countEl.innerText = totalCumulativeCount.toLocaleString();
-    }
+// 1. 초기값 설정 (저장된 값이 없으면 누계 10,000 / 실시간 60 시작)
+let masterTotal = parseInt(localStorage.getItem('fin_master_total')) || 10000;
+let masterRealtime = parseInt(localStorage.getItem('fin_master_real')) || 60;
+
+function updateAllDisplays() {
+    const totalEl = document.getElementById('totalCumulativeCount');
+    const realEl = document.getElementById('realtimeUserCount');
+    
+    if (totalEl) totalEl.innerText = masterTotal.toLocaleString();
+    if (realEl) realEl.innerText = masterRealtime.toLocaleString();
 }
 
-function startCumulativeGrowth() {
-    // 2. 누계이므로 무조건 1~2명씩만 증가 (감소 없음)
+function startUnifiedGrowth() {
+    // 2. 동시에 1~2명씩 증가 (비례해서 같이 올라감)
     const growth = Math.floor(Math.random() * 2) + 1;
-    totalCumulativeCount += growth;
+    
+    masterTotal += growth;
+    masterRealtime += growth;
 
-    // 3. 증가한 누계 숫자를 브라우저에 즉시 저장
-    localStorage.setItem('fin_total_users', totalCumulativeCount);
+    // 3. 브라우저에 현재 상태 저장 (새로고침 대비)
+    localStorage.setItem('fin_master_total', masterTotal);
+    localStorage.setItem('fin_master_real', masterRealtime);
 
-    // 4. 애니메이션 효과: 아래에서 위로 슥!
-    const countEl = document.getElementById('realtimeUserCount');
-    if (countEl) {
-        countEl.style.opacity = "0";
-        countEl.style.transform = "translateY(8px)";
-        
-        setTimeout(() => {
-            countEl.innerText = totalCumulativeCount.toLocaleString();
-            countEl.style.opacity = "1";
-            countEl.style.transform = "translateY(0)";
-        }, 150);
-    }
+    // 4. 두 숫자 모두 아래에서 위로 슥 올라오는 애니메이션 적용
+    [document.getElementById('totalCumulativeCount'), document.getElementById('realtimeUserCount')].forEach(el => {
+        if (el) {
+            el.style.opacity = "0";
+            el.style.transform = "translateY(8px)";
+            
+            setTimeout(() => {
+                el.innerText = (el.id === 'totalCumulativeCount') ? masterTotal.toLocaleString() : masterRealtime.toLocaleString();
+                el.style.opacity = "1";
+                el.style.transform = "translateY(0)";
+            }, 150);
+        }
+    });
 
-    // 5. 다음 증가 시간: 4초 ~ 8초 사이 (자연스럽게)
-    setTimeout(startCumulativeGrowth, Math.random() * 4000 + 4000);
+    // 5. 다음 증가 시간: 5초 ~ 10초 사이 (자연스러운 유입 속도)
+    setTimeout(startUnifiedGrowth, Math.random() * 5000 + 5000);
 }
 
 // 페이지 로드 시 즉시 실행
 window.addEventListener('load', () => {
-    // 저장된 누계 숫자를 즉시 화면에 보여줍니다.
-    updateCumulativeDisplay();
+    // 저장된 값을 즉시 화면에 표시 (널뛰기 방지)
+    updateAllDisplays();
     
-    // 대표님 요청대로 '약 5초 뒤'부터 누계 숫자가 올라가기 시작합니다.
-    console.log("누계 인원 엔진: 5초 대기 중...");
+    // 대표님 요청대로 약 5초 뒤부터 동시에 엔진 가동!
+    console.log("통합 인원 엔진: 5초 대기 중...");
     setTimeout(() => {
-        console.log("누계 인원 엔진: 증가 시작!");
-        startCumulativeGrowth();
+        console.log("통합 인원 엔진: 동시 증가 시작!");
+        startUnifiedGrowth();
     }, 5000); 
 });
     
