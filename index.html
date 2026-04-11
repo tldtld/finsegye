@@ -237,40 +237,21 @@
 function submitBank() {
     const name = document.getElementById('bankName');
     const phone = document.getElementById('bankPhone');
-    const address = document.getElementById('bankAddress');
+    const address = document.getElementById('bankAddress'); // 주소창 추가
     const agree = document.getElementById('bankAgree');
-    const refInput = document.getElementById('bankReferrer'); // 추천인 입력칸
+    const refInput = document.getElementById('bankReferrer');
 
-    // 🚀 [대표님 요청 사항] 버튼을 누르자마자 추천인 칸으로 커서를 보냅니다.
-    // 사용자가 '설립 완료'를 누르는 순간 추천인 칸이 깜빡거리며 시선을 끕니다.
-    if (refInput) {
-        refInput.focus();
-    }
+    // 유효성 검사
+    if (!name.value.trim()) { alert("성함을 입력해주세요."); name.focus(); return; }
+    if (!agree.checked) { alert("개인정보 동의가 필요합니다."); return; }
 
-    // 1. 유효성 검사 (필수 입력 사항 확인)
-    if (!name.value.trim()) {
-        alert("성함을 입력해주세요.");
-        name.focus();
-        return;
-    }
-    if (!agree.checked) {
-        alert("개인정보 동의에 체크해주셔야 설립이 가능합니다.");
-        return;
-    }
+    // 추천인 결정
+    let finalRef = refInput.value.trim() || window.currentReferrer || "직접 가입";
 
-    // 2. 추천인 결정
-    let finalRef = "직접 가입";
-    if (refInput && refInput.value.trim() !== "") {
-        finalRef = refInput.value.trim();
-    } else if (window.currentReferrer && window.currentReferrer !== "직접 가입") {
-        finalRef = window.currentReferrer;
-    }
-
-    // 3. 데이터 저장 로직
     const newUser = {
         bankName: name.value,
         bankPhone: phone.value,
-        bankAddress: address.value,
+        bankAddress: address.value, // 주소 데이터 포함
         referrer: finalRef,
         date: new Date().toLocaleString()
     };
@@ -279,28 +260,20 @@ function submitBank() {
     wallets.unshift(newUser);
     localStorage.setItem('fin_wallets', JSON.stringify(wallets));
 
-    // 4. 완료 알림창
     alert(`🏦 [${name.value}] 님 설립 완료!\n추천인: ${finalRef}`);
 
-    // 5. 실시간 명단 업데이트
-    const listEl = document.getElementById('realtimeNameList');
-    if (listEl) {
-        listEl.innerHTML = wallets.slice(0, 15).map(u =>
-            `<div style="border-bottom:1px solid #333; padding:3px 0;">
-                ✅ ${u.bankName} 님 설립완료 <br>
-                <span style="font-size:0.8em; color:gold;">(추천: ${u.referrer})</span>
-            </div>`
-        ).join('');
-    }
+    // [핵심] 폼 비우기 (주소창까지 확실하게!)
+    name.value = "";
+    phone.value = "";
+    address.value = ""; // ★ 대표님, 이제 주소 잔상이 남지 않습니다!
+    agree.checked = false;
 
-    // 6. 폼 초기화 및 다음 시연 준비 (커서를 다시 추천인에 둠)
-    [name, phone, address].forEach(el => el.value = "");
-    if(agree) agree.checked = false;
+    // [핵심] 커서 위치 조정
+    // 추천인 칸이 아니라, 다음 입력을 위해 '성명' 칸으로 커서를 보냅니다.
+    setTimeout(() => { name.focus(); }, 150);
 
-    // 완료 후에도 다음 입력을 위해 깜빡거림 유지
-    if (refInput) refInput.focus();
+    if (typeof updateRealtimeList === "function") updateRealtimeList();
 }
-
 
 
 // [교체대상 1] 화면 전환 및 '나의 현황' 접고 펴기 기능
@@ -608,28 +581,25 @@ function getReferrerFromURL() {
     return urlParams.get('ref') || "직접가입"; // ref 파라미터가 없으면 '직접가입'
 }
 
-// [교체대상 2] AI 지갑 설립 완료 (노란 박스 유도 및 정보 보존)
+// ... (위쪽 생략)
+
+// [최종 수정본] 주소 잔상 제거 및 커서 제어 기능 포함
 function submitBank() {
     const name = document.getElementById('bankName');
     const phone = document.getElementById('bankPhone');
+    const address = document.getElementById('bankAddress'); 
     const agree = document.getElementById('bankAgree');
     const refInput = document.getElementById('bankReferrer');
 
     if (!name.value.trim()) { alert("성함을 입력해주세요."); name.focus(); return; }
     if (!agree.checked) { alert("개인정보 동의가 필요합니다."); return; }
 
-    // 🚀 버튼 누르는 순간 추천인 칸 노란색 강조
-    if (refInput) {
-        refInput.style.border = "3px solid yellow";
-        refInput.style.boxShadow = "0 0 15px yellow";
-        refInput.focus();
-    }
-
     let finalRef = refInput.value.trim() || window.currentReferrer || "직접 가입";
 
     const newUser = {
         bankName: name.value,
         bankPhone: phone.value,
+        bankAddress: address.value, 
         referrer: finalRef,
         date: new Date().toLocaleString()
     };
@@ -639,36 +609,40 @@ function submitBank() {
 
     alert(`🏦 [${name.value}] 님 설립 완료!\n추천인: ${finalRef}`);
 
-    setTimeout(() => { if (refInput) refInput.focus(); }, 150);
-    if (typeof updateRealtimeList === "function") updateRealtimeList();
-
-    // 폼 비우기
+    // 주소까지 깨끗하게 비우기
     name.value = "";
     phone.value = "";
+    address.value = ""; 
     agree.checked = false;
+
+    // 완료 후 성명 칸으로 커서 이동
+    setTimeout(() => { if (name) name.focus(); }, 150);
+    if (typeof updateRealtimeList === "function") updateRealtimeList();
 }
 
-/* 2. 페이지 로드 시 초기화 */
+/* 페이지 로드 시 초기화 및 QR 진입 제어 */
 window.addEventListener('load', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const referrerName = urlParams.get('ref');
-    const displayEl = document.getElementById('displayReferrer');
     const refInput = document.getElementById('bankReferrer');
+    const nameInput = document.getElementById('bankName');
 
     if (referrerName) {
         window.currentReferrer = referrerName;
-        if (displayEl) displayEl.innerText = referrerName;
-        if (refInput) refInput.value = referrerName;
+        if (refInput) {
+            refInput.value = referrerName;
+            refInput.readOnly = true; 
+            refInput.style.backgroundColor = "#222"; 
+        }
+        // QR 진입 시 바로 성명 칸으로 커서 이동
+        if (nameInput) setTimeout(() => { nameInput.focus(); }, 500);
     } else {
         window.currentReferrer = "직접 가입";
-        if (displayEl) displayEl.innerText = "직접 가입";
+        if (refInput) refInput.value = "";
     }
 
-    // 🚀 처음에 들어왔을 때는 절대 커서가 생기지 않게 방지합니다.
-    if (document.activeElement) document.activeElement.blur();
+    if (!referrerName && document.activeElement) document.activeElement.blur();
 });
-
-
 
 </script>
 </body>
