@@ -22,89 +22,83 @@
 
 
 
-    
-<section id="dashboard" style="display:block; padding-top: 5px;">
-    <div class="asset-wrapper" style="margin-top:5px; display: flex; justify-content: space-around; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;">
+    <section id="dashboard" style="display:block; padding-top: 5px;">
+    <div class="asset-wrapper" style="margin-top:10px; display: flex; justify-content: space-around; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;">
         <div class="digital" style="text-align:center;">행사자(20%)<br><span id="advValue" style="font-size:1.2em; color:gold; font-weight:bold;">50,000원</span></div>
         <div class="digital" style="text-align:center;">소비자(10%)<br><span id="consValue" style="font-size:1.2em; color:#fff;">20,000원</span></div>
     </div>
     
     <div style="font-size:1.5em; margin:10px 0; color:gold; font-weight:bold; text-align:center; border-bottom:1px solid #333; padding-bottom:10px;">
         합계: <span id="totalValue">70,000원</span>
+        <button onclick="if(confirm('수치를 초기화할까요?')) { document.getElementById('advValue').innerText='0원'; document.getElementById('consValue').innerText='0원'; document.getElementById('totalValue').innerText='0원'; }" 
+                style="display: inline-block; vertical-align: middle; margin-left: 10px; background: #444; border: 1px solid #666; color: #ccc; font-size: 10px; padding: 2px 6px; border-radius: 4px; cursor: pointer;">RESET</button>
     </div>
 
     <div style="display: flex; gap: 10px; margin: 15px auto; width: 98%;">
         
         <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
-<button onclick="
-    (function(){
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.capture = 'camera'; 
-        input.onchange = function(e) {
-            if (e.target.files.length > 0) {
-                // 1. 대표님께서 좋아하신 알림 메시지
-                alert('🚀 [전문 행사자 루틴 생성 완료]\n--------------------------------\n상호/연락처 인프라가 자산으로 등록되었습니다.\n귀하에게 매출의 20% 배당 권리가 부여됩니다.');
+            <button onclick="
+                (function(){
+                    const input = document.createElement('input');
+                    input.type = 'file';
+                    input.accept = 'image/*';
+                    input.capture = 'camera'; 
+                    input.onchange = function(e) {
+                        if (e.target.files.length > 0) {
+                            alert('🚀 [전문 행사자 루틴 생성 완료]\n--------------------------------\n상호/연락처 인프라가 자산으로 등록되었습니다.\n귀하에게 매출의 20% 배당 권리가 부여됩니다.');
 
-                // 2. 숫자 업데이트 (행사자 자산 5,000원 추가)
-                const adv = document.getElementById('advValue');
-                if(adv) {
-                    let curAdv = parseInt(adv.innerText.replace(/[^0-9]/g, ''));
-                    adv.innerText = (curAdv + 5000).toLocaleString() + '원';
-                    adv.style.color = 'gold';
-                }
+                            // 숫자 상승
+                            const adv = document.getElementById('advValue');
+                            const total = document.getElementById('totalValue');
+                            if(adv && total) {
+                                let curAdv = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 0;
+                                let curTotal = parseInt(total.innerText.replace(/[^0-9]/g, '')) || 0;
+                                adv.innerText = (curAdv + 5000).toLocaleString() + '원';
+                                total.innerText = (curTotal + 5000).toLocaleString() + '원';
+                            }
 
-                // 3. ★ 핵심: 내역 기재 및 화면 이동 ★
-                // 루틴 내역이 들어갈 리스트(liveUserList)를 찾습니다.
-                const list = document.getElementById('liveUserList');
-                if(list) {
-                    const now = new Date();
-                    const timeStr = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
-                    
-                    // 신규 내역 디자인 (눈에 확 띄게 금색 테두리)
-                    const newEntry = `
-                        <li style='list-style:none; padding:15px; margin-bottom:10px; background:rgba(255,215,0,0.15); border:2px solid gold; border-radius:10px; color:#fff; clear:both;'>
-                            <div style='display:flex; justify-content:space-between; align-items:center;'>
-                                <strong style='color:gold; font-size:1.1em;'>📍 [신규] 행사 루틴 생성</strong>
-                                <span style='font-size:0.8em; color:#aaa;'>${timeStr}</span>
-                            </div>
-                            <div style='margin-top:8px; font-size:1em;'>
-                                가맹점 인프라 자산 등록 완료 <br>
-                                <span style='color:#00ffcc; font-size:0.9em;'>→ 배당 등급: 전문 행사자 (20%)</span>
-                            </div>
-                        </li>
-                    `;
-                    
-                    // 리스트 맨 위에 추가
-                    list.insertAdjacentHTML('afterbegin', newEntry);
-                    
-                    // 내역 박스가 숨겨져 있다면 보이게 처리
-                    const parentBox = list.closest('section') || list.parentElement;
-                    parentBox.style.display = 'block';
-
-                    // ★ 화면을 내역 위치로 부드럽게 이동 ★
-                    setTimeout(() => {
-                        list.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }, 300);
-                }
-            }
-        };
-        input.click();
-    })()
-" style="width: 100%; height: 70px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,215,0,0.4);">
-    📸 루틴 생성하기
-</button> 
-            <button onclick="toggleQR()" style="width: 100%; height: 50px; background: rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff; border-radius: 12px; font-size: 0.8em;">🤝 공유참여</button>
+                            // 내역 기록 (나의 현황 내역 박스에 직접 기재)
+                            const list = document.getElementById('liveUserList');
+                            if(list) {
+                                const now = new Date();
+                                const timeStr = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+                                const item = '<li style=&quot;list-style:none; padding:15px; margin-bottom:10px; background:rgba(255,215,0,0.15); border:2px solid gold; border-radius:10px; color:#fff;&quot;>' +
+                                             '<strong style=&quot;color:gold;&quot;>📍 [신규] 행사 루틴 생성</strong> (' + timeStr + ')<br>' +
+                                             '상호 연락처 인프라 자산 등록 완료 (20% 배당확보)</li>';
+                                list.insertAdjacentHTML('afterbegin', item);
+                                
+                                // 화면을 내역 위치로 강제 이동
+                                setTimeout(() => { list.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 500);
+                            }
+                        }
+                    };
+                    input.click();
+                })()
+            " style="width: 100%; height: 70px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,215,0,0.4);">
+                📸 루틴 생성하기
+            </button>
+            
+            <button onclick="document.getElementById('bankForm').style.display='block'; document.getElementById('dashboard').style.display='none';" 
+                    style="width: 100%; height: 50px; background: rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff; border-radius: 12px; font-size: 0.8em; cursor: pointer;">🤝 공유참여</button>
         </div>
 
         <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="toggleLiveList()" style="width: 100%; height: 70px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-weight: bold; cursor: pointer;">
-                <div style="font-size: 0.7em;">👥 누계: <span id="totalCumulativeCount">10,000</span>명</div>
-                <div style="font-size: 0.6em;">📡 실시간: <span id="realtimeUserCount">60</span>명</div>
+            <button onclick="const list = document.getElementById('liveUserList'); if(list) list.scrollIntoView({ behavior: 'smooth' });" 
+                    style="width: 100%; height: 70px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-weight: bold; cursor: pointer;">
+                <div style="font-size: 0.7em;">👥 참여 현황 확인</div>
+                <div style="font-size: 0.6em; opacity: 0.8;">(루틴 내역 보기)</div>
             </button>
             
-            <button onclick="openPayment()" style="width: 100%; height: 50px; background: rgba(255, 65, 108, 0.1); border: 1.5px solid #ff416c; color: #ff416c; border-radius: 12px; font-size: 0.8em; font-weight: bold;">💳 실시간결제</button>
+            <button onclick="document.getElementById('paymentFields').style.display='block';" 
+                    style="width: 100%; height: 50px; background: rgba(255, 65, 108, 0.1); border: 1.5px solid #ff416c; color: #ff416c; border-radius: 12px; font-size: 0.8em; font-weight: bold; cursor: pointer;">💳 실시간결제</button>
+        </div>
+    </div>
+
+    <div id="paymentFields" style="display: none; width: 92%; margin: 10px auto; padding: 15px; background: #111; border: 1.5px solid #ff416c; border-radius: 12px; text-align: center;">
+        <input id="payAmount" type="number" placeholder="금액 입력" style="width: 80%; padding: 10px; margin-bottom: 10px; border-radius: 5px; border: none;">
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="alert('결제가 완료되었습니다.'); document.getElementById('paymentFields').style.display='none';" style="padding: 8px 20px; background: #ff416c; color: #fff; border: none; border-radius: 5px;">완료</button>
+            <button onclick="document.getElementById('paymentFields').style.display='none';" style="padding: 8px 20px; background: #444; color: #fff; border: none; border-radius: 5px;">취소</button>
         </div>
     </div>
 </section>
