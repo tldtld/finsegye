@@ -56,7 +56,7 @@
 
         <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
 <button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; overflow: hidden;">
-    <span> 실시간</span>
+    <span>누계</span>
     <span id="realtimeUserCount" style="color: #fff; display: inline-block; transition: all 0.5s ease-out;">10,000</span>
     <span>명</span>
 </button>
@@ -398,52 +398,52 @@ window.addEventListener('load', () => {
     updateAISignal(); 
 });
 
-/* 📈 [스마트 엔진] 저장값 우선 로드 + 5초 대기 후 우상향 */
-// 1. 저장된 숫자가 없으면 기본 10,000명부터 시작
-let liveCount = parseInt(localStorage.getItem('fin_live_users_v3')) || 10000;
+/* 📈 [누계 엔진] 저장값 로드 + 5초 대기 후 우상향 */
+// 1. 저장된 누계 숫자가 없으면 기본 10,000명부터 시작
+let totalCumulativeCount = parseInt(localStorage.getItem('fin_total_users')) || 10000;
 
-function updateDisplay() {
+function updateCumulativeDisplay() {
     const countEl = document.getElementById('realtimeUserCount');
     if (countEl) {
-        countEl.innerText = liveCount.toLocaleString();
+        countEl.innerText = totalCumulativeCount.toLocaleString();
     }
 }
 
-function startGrowth() {
-    // 2. 무조건 1~2명씩만 증가 (뒤로 가기 없음)
+function startCumulativeGrowth() {
+    // 2. 누계이므로 무조건 1~2명씩만 증가 (감소 없음)
     const growth = Math.floor(Math.random() * 2) + 1;
-    liveCount += growth;
+    totalCumulativeCount += growth;
 
-    // 3. 증가한 숫자를 브라우저에 즉시 저장
-    localStorage.setItem('fin_live_users_v3', liveCount);
+    // 3. 증가한 누계 숫자를 브라우저에 즉시 저장
+    localStorage.setItem('fin_total_users', totalCumulativeCount);
 
-    // 4. 아래에서 위로 슥 올라오는 애니메이션 효과
+    // 4. 애니메이션 효과: 아래에서 위로 슥!
     const countEl = document.getElementById('realtimeUserCount');
     if (countEl) {
         countEl.style.opacity = "0";
         countEl.style.transform = "translateY(8px)";
         
         setTimeout(() => {
-            countEl.innerText = liveCount.toLocaleString();
+            countEl.innerText = totalCumulativeCount.toLocaleString();
             countEl.style.opacity = "1";
             countEl.style.transform = "translateY(0)";
         }, 150);
     }
 
-    // 5. 다음 증가 시간: 4초 ~ 8초 사이 (자연스러운 속도)
-    setTimeout(startGrowth, Math.random() * 4000 + 4000);
+    // 5. 다음 증가 시간: 4초 ~ 8초 사이 (자연스럽게)
+    setTimeout(startCumulativeGrowth, Math.random() * 4000 + 4000);
 }
 
 // 페이지 로드 시 즉시 실행
 window.addEventListener('load', () => {
-    // 일단 저장된 숫자(혹은 만 명)를 즉시 화면에 뿌립니다.
-    updateDisplay();
+    // 저장된 누계 숫자를 즉시 화면에 보여줍니다.
+    updateCumulativeDisplay();
     
-    // 대표님 요청대로 '약 5초 뒤'부터 숫자가 올라가기 시작합니다.
-    console.log("실시간 인원 엔진: 5초 대기 중...");
+    // 대표님 요청대로 '약 5초 뒤'부터 누계 숫자가 올라가기 시작합니다.
+    console.log("누계 인원 엔진: 5초 대기 중...");
     setTimeout(() => {
-        console.log("실시간 인원 엔진: 증가 시작!");
-        startGrowth();
+        console.log("누계 인원 엔진: 증가 시작!");
+        startCumulativeGrowth();
     }, 5000); 
 });
     
