@@ -74,6 +74,17 @@ function updateStatus() {
     }
 
     window.renderAssetUI();
+
+   // economy.js 맨 아래에 붙여넣기
+window.resetEconomy = function() {
+    window.advertiser = 50000;
+    window.consumer = 20000;
+    localStorage.setItem('fin_advertiser', 50000);
+    localStorage.setItem('fin_consumer', 20000);
+    // 화면 수치 즉시 갱신
+    if (typeof renderAssetUI === "function") renderAssetUI();
+    alert("수치가 초기화되었습니다.");
+};
 }
 
 setInterval(updateStatus, 100);
