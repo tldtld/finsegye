@@ -55,11 +55,11 @@
         </div>
 
         <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-   <button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;">
+  <button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; overflow: hidden;">
     <span>👥 실시간</span>
-    <span id="realtimeUserCount" style="color: #fff;">00</span><span>명</span>
+    <span id="realtimeUserCount" style="color: #fff; display: inline-block; transition: all 0.4s ease-out;">742</span>
+    <span>명</span>
 </button>
-
             <div id="liveListContainer" style="display: none; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,204,0.3); border-radius: 12px; height: 130px;">
                 <div id="realtimeNameList" style="height: 100%; overflow-y: auto; font-size: 0.75em; color: #eee; line-height: 1.6; text-align: left;">
                     데이터 로딩 중...
