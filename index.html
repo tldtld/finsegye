@@ -5,43 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>FINSEGYE</title>
     <link rel="stylesheet" href="style.css">
-
-<style>
-    /* 화면 전체 레이아웃 고정 */
-    html, body {
-        height: 100%;
-        overflow: hidden; /* 전체 화면이 밀려 올라가는 것을 방지 */
-    }
-
-    #statusContainer, #dashboard {
-        position: relative;
-        z-index: 1;
-    }
-
-    /* 하단 메뉴 탭: 자판기가 올라오면 자동으로 숨김 처리 */
-    .nav {
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        width: 100%;
-        z-index: 100;
-        background: #000;
-    }
-
-    /* 자판기 감지 시 메뉴 숨김 전용 클래스 */
-    .hide-nav .nav {
-        display: none !important;
-    }
-
-    /* 자판기 감지 시 메인 화면이 위로 밀리지 않게 높이 유지 */
-    .hide-nav #dashboard {
-        height: 100vh;
-        overflow-y: auto;
-    }
-</style>
-
-
-    
 </head>
 <body style="background-color: black;">
 
@@ -78,11 +41,9 @@
                 🤝 공유경제참여
             </button>
 
-            <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 0 15px rgba(161, 196, 253, 0.4); cursor:pointer;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_최정석" alt="QR" style="width:100%; max-width:100px; display:block; margin: 0 auto;">
-                <div style="font-size:0.65em; color:#444; font-weight:bold; margin-top:5px;">
-                    스캔 시 <br><span style="color:#ff416c;">추천인(CEO 채정석) 자동 연결</span>
-                </div>
+            <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 0 15px rgba(161, 196, 253, 0.4);">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join" alt="QR" style="width:100%; max-width:100px; display:block; margin: 0 auto;">
+                <div style="font-size:0.65em; color:#444; font-weight:bold; margin-top:5px;">카메라를 비추면<br><span style="color:#ff416c;">참여 완료!</span></div>
             </div>
         </div>
 
@@ -124,57 +85,23 @@
 <section id="loanApplyForm"><div class="form-box"><input id="loanName" type="text" placeholder="신청자명"><input id="loanAmount" type="number" placeholder="신청금액(만원)"><textarea id="loanPurpose" placeholder="공유목적 입력"></textarea><button class="submitBtn" onclick="submitLoan()">💰 공유 신청하기</button></div></section>
 <section id="routineForm"><div class="form-box"><input id="routineOwner" type="text" placeholder="제작자 이름"><input id="routineRegion" type="text" placeholder="적용지역"><textarea id="routineText" placeholder="루틴 내용 입력"></textarea><button class="submitBtn" onclick="submitRoutine()">🌀 루틴 생성하기</button></div></section>
 
-
-
-
-
 <section id="bankForm">
-    <div class="form-box" style="padding: 15px; border: 1px solid rgba(255, 215, 0, 0.3); background: rgba(255, 255, 255, 0.03); width: 90%; max-width: 320px; margin: 0 auto; border-radius: 12px;">
-        <h3 style="color: gold; font-size: 1.1em; margin-top: 5px; margin-bottom: 5px;">🏦 AI 지갑 설립</h3>
-        <p style="font-size: 0.75em; color: #aaa; margin-bottom: 15px;">정보 입력 없이 원클릭으로 가입하세요.</p>
-
-        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <button onclick="autoFillKakao()" style="flex: 1; height: 45px; background: #FEE500; color: #3C1E1E; border: none; border-radius: 8px; font-weight: bold; font-size: 0.8em; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px;">
-                💬 카카오 인증
-            </button>
-            <button onclick="autoFillInfo()" style="flex: 1; height: 45px; background: rgba(0, 255, 204, 0.2); color: #00ffcc; border: 1px solid #00ffcc; border-radius: 8px; font-weight: bold; font-size: 0.8em; cursor: pointer;">
-                👤 자동입력
-            </button>
+    <div class="form-box">
+        <input id="bankName" type="text" placeholder="성명">
+        <input id="bankPhone" type="tel" placeholder="전화번호">
+        <input id="bankAddress" type="text" placeholder="주소">
+        <div class="agree-container">
+            <input type="checkbox" id="bankAgree">
+            <span>개인정보 동의 (필수)</span>
         </div>
-
-
-
-        <div style="margin-bottom: 8px;">
-            <label style="font-size: 0.7em; color: #00ffcc; display: block; margin-bottom: 4px;">🤝 추천인 (없으면 직접 가입)</label>
-            <input id="bankReferrer" type="text" placeholder="추천인 성함" style="width: 100%; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
+        <div style="margin-bottom:8px; font-size:11px;">
+            <span onclick="alert('생산 주체인 행사자는 소비자 대비 20% 우대 배당권을 가집니다.')" style="color:#ffd700; cursor:pointer; text-decoration:underline;">이용약관</span> |
+            <span onclick="alert('수집된 정보는 안전하게 사용됩니다.')" style="color:#ffd700; cursor:pointer; text-decoration:underline;">개인정보방침</span>
         </div>
+        <button class="submitBtn" onclick="submitBank()">🏦 AI 지갑 설립 완료</button>
 
-
-
-
-        <div style="border-top: 1px solid #333; margin: 15px 0; position: relative;">
-            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #000; padding: 0 10px; font-size: 0.7em; color: #666;">또는 직접 입력</span>
-        </div>
-
-        <input id="bankName" type="text" placeholder="성명" style="width: 90%; margin-bottom: 8px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
-        <input id="bankPhone" type="tel" placeholder="전화번호" style="width: 90%; margin-bottom: 8px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
-        <input id="bankAddress" type="text" placeholder="주소" style="width: 90%; margin-bottom: 12px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
-
-        <div class="agree-container" style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; font-size: 0.75em;">
-            <input type="checkbox" id="bankAgree" style="margin-right: 8px;">
-            <span>개인정보 수집 및 이용 동의 (필수)</span>
-        </div>
-
-        <button class="submitBtn" onclick="submitBank()" style="width: 100%; height: 50px; background: linear-gradient(90deg, gold, #ffcc33); border: none; border-radius: 8px; color: #000; font-weight: bold; font-size: 1.1em; margin-top: 15px; cursor: pointer;">
-            🚀 AI 지갑 설립 완료
-        </button>
     </div>
 </section>
-
-
-
-
-
 
 <section id="mypage" style="display:none; padding: 0px 3px; margin-top: 20px;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 0;">
@@ -203,28 +130,7 @@
 <script>
     var isMypageExpanded = false;
 
-    // [1] 화면 전환 및 폼 포커스 통합
-    function showSection(sectionId, btn) {
-        document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-
-        const target = document.getElementById(sectionId);
-        if(target) target.style.display = 'block';
-        if(btn) btn.classList.add('active');
-
-        if(sectionId === 'mypage') {
-            isMypageExpanded = !isMypageExpanded;
-            if(typeof forceUpdateAll === "function") forceUpdateAll();
-        } else {
-            isMypageExpanded = false;
-        }
-
-        // 입력 폼 첫 칸 포커스
-        const focusMap = { 'adApplyForm': 'shopName', 'loanApplyForm': 'loanName', 'routineForm': 'routineOwner' };
-        if (focusMap[sectionId]) document.getElementById(focusMap[sectionId]).focus();
-    }
-
-    // [2] 자산 저장 공통 함수
+    // 공통 저장 함수
     function handleStorage(key, item, msg) {
         try {
             let list = JSON.parse(localStorage.getItem(key) || '[]');
@@ -235,101 +141,319 @@
         } catch(e) { alert("저장 오류: " + e.message); }
     }
 
-    // [3] 지갑 설립 완료 및 화면 이동 (채정석 대표님 최종본)
+    // 1. [행사 신청] 유효성 검사
+    function submitAd() {
+        const shop = document.getElementById('shopName');
+        const type = document.getElementById('bizType');
+        const area = document.getElementById('area');
+        const text = document.getElementById('adText');
+
+        if (!shop.value.trim()) { alert("상호명을 입력해주세요."); shop.focus(); return; }
+        if (!type.value.trim()) { alert("업종/업태를 입력해주세요."); type.focus(); return; }
+        if (!area.value.trim()) { alert("행사 지역이 어디인가요?"); area.focus(); return; }
+        if (!text.value.trim()) { alert("행사 문구를 입력해주세요."); text.focus(); return; }
+
+        const item = { shopName: shop.value, bizType: type.value, area: area.value, adText: text.value, date: new Date().toLocaleString() };
+        handleStorage('fin_ads', item, "📢 [" + shop.value + "] 행사 신청이 완벽하게 입고되었습니다!");
+
+        // 입력창 비우기
+        [shop, type, area, text].forEach(el => el.value = "");
+    }
+
+    // 2. [공유 신청] 유효성 검사
+    function submitLoan() {
+        const name = document.getElementById('loanName');
+        const amount = document.getElementById('loanAmount');
+        const purpose = document.getElementById('loanPurpose');
+
+        if (!name.value.trim()) { alert("신청자 성함을 입력해주세요."); name.focus(); return; }
+        if (!amount.value.trim()) { alert("신청 금액을 입력해주세요."); amount.focus(); return; }
+        if (!purpose.value.trim()) { alert("공유 목적을 입력해주세요."); purpose.focus(); return; }
+
+        const item = { loanName: name.value, loanAmount: amount.value, loanPurpose: purpose.value, date: new Date().toLocaleString() };
+        handleStorage('fin_loans', item, "💰 [" + name.value + "] 님 공유 신청이 완료되었습니다!");
+
+        [name, amount, purpose].forEach(el => el.value = "");
+    }
+
+    // 3. [행사 루틴] 유효성 검사
+    function submitRoutine() {
+        const owner = document.getElementById('routineOwner');
+        const region = document.getElementById('routineRegion');
+        const text = document.getElementById('routineText');
+
+        if (!owner.value.trim()) { alert("제작자 이름을 입력해주세요."); owner.focus(); return; }
+        if (!region.value.trim()) { alert("적용 지역을 입력해주세요."); region.focus(); return; }
+        if (!text.value.trim()) { alert("루틴 내용을 입력해주세요."); text.focus(); return; }
+
+        const item = { routineOwner: owner.value, routineRegion: region.value, routineText: text.value, date: new Date().toLocaleString() };
+        handleStorage('fin_routines', item, "🌀 [" + owner.value + "] 루틴 생성이 완료되었습니다!");
+
+        [owner, region, text].forEach(el => el.value = "");
+    }
+
+    // 4. [지갑 설립] 유효성 검사 (동의 체크박스 포함)
     function submitBank() {
         const name = document.getElementById('bankName');
         const phone = document.getElementById('bankPhone');
-        const address = document.getElementById('bankAddress'); 
+        const address = document.getElementById('bankAddress');
         const agree = document.getElementById('bankAgree');
-        const refInput = document.getElementById('bankReferrer');
 
         if (!name.value.trim()) { alert("성함을 입력해주세요."); name.focus(); return; }
-        if (!agree.checked) { alert("개인정보 동의가 필요합니다."); return; }
+        if (!phone.value.trim()) { alert("전화번호를 입력해주세요."); phone.focus(); return; }
+        if (!address.value.trim()) { alert("주소를 입력해주세요."); address.focus(); return; }
+        if (!agree.checked) { alert("개인정보 동의에 체크해주셔야 설립이 가능합니다."); agree.focus(); return; }
 
-        let finalRef = refInput.value.trim() || window.currentReferrer || "직접 가입";
-        const newUser = { bankName: name.value, bankPhone: phone.value, bankAddress: address.value, referrer: finalRef, date: new Date().toLocaleString() };
-        
-        let wallets = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
-        wallets.unshift(newUser);
-        localStorage.setItem('fin_wallets', JSON.stringify(wallets));
+        const item = { bankName: name.value, bankPhone: phone.value, bankAddress: address.value, date: new Date().toLocaleString() };
+        handleStorage('fin_wallets', item, "🏦 [" + name.value + "] 님 AI 지갑 설립이 완료되었습니다!");
 
-        alert(`🏦 [${name.value}] 님 설립 완료!\n추천인: ${finalRef}`);
         [name, phone, address].forEach(el => el.value = "");
         agree.checked = false;
-
-        showSection('dashboard', document.getElementById('btn-dashboard'));
-        if (typeof updateRealtimeList === "function") updateRealtimeList();
     }
 
-    // [4] 자판기 대응: 탭 메뉴 숨기기 및 화면 밀림 방지 (통합본)
-    if (window.visualViewport) {
-        window.visualViewport.addEventListener('resize', () => {
-            const nav = document.querySelector('.nav');
-            const currentHeight = window.visualViewport.height;
-            const fullHeight = window.innerHeight;
+    // 화면 전환 및 자동 커서
+    function showSection(sectionId, btn) {
+        document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
 
-            if (nav) {
-                // 키보드가 올라오면(높이 25% 이상 감소) 메뉴 제거 및 상단 고정
-                if (currentHeight < fullHeight * 0.75) {
-                    nav.style.display = 'none'; 
-                    window.scrollTo(0, 0); 
-                } else {
-                    nav.style.display = 'flex'; 
-                }
-            }
-        });
+        const target = document.getElementById(sectionId);
+        if(target) target.style.display = 'block';
+        if(btn) btn.classList.add('active');
+
+        // 첫 번째 칸으로 커서 이동
+        if (sectionId === 'adApplyForm') document.getElementById('shopName').focus();
+        if (sectionId === 'loanApplyForm') document.getElementById('loanName').focus();
+        if (sectionId === 'routineForm') document.getElementById('routineOwner').focus();
+        if (sectionId === 'bankForm') document.getElementById('bankName').focus();
+
+        if(sectionId === 'mypage') isMypageExpanded = !isMypageExpanded;
+        else isMypageExpanded = false;
     }
 
-    // [5] 페이지 초기화 (추천인 채정석 설정)
-    window.addEventListener('load', function() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const referrerName = urlParams.get('ref');
-        const refInput = document.getElementById('bankReferrer');
-        const nameInput = document.getElementById('bankName');
+   function forceUpdateAll() {
+    // 1. 현재 화면의 공유비율 값을 숫자로 가져옵니다.
+    const loanPercentEl = document.getElementById('loanPercent');
+    if (!loanPercentEl) return;
 
-        if (referrerName) {
-            window.currentReferrer = referrerName;
-            if (refInput) {
-                refInput.value = referrerName;
-                refInput.readOnly = true; 
-                refInput.style.backgroundColor = "#222"; 
+    const currentLoanPercent = parseFloat(loanPercentEl.innerText);
+
+    // [핵심 로직] 공유비율이 0%가 아닐 때(즉, 0보다 클 때)는 업데이트를 멈춥니다.
+    if (currentLoanPercent > 0) {
+        // 이 블록이 실행되면 아래의 자산 갱신 코드를 모두 건너뜁니다.
+        // 즉, 행사자, 소비자, 합계 숫자가 변하지 않고 고정됩니다.
+        console.log("공유비율이 0%가 아니므로 자산 지표가 고정(잠금)되었습니다.");
+        return;
+    }
+
+    // --- 여기서부터는 공유비율이 0%일 때만 실행되는 코드입니다 ---
+
+    const config = [
+        { id: 'walletDisplay', key: 'fin_wallets', nameKey: 'bankName' },
+        { id: 'adListDisplay', key: 'fin_ads', nameKey: 'shopName' },
+        { id: 'loanListDisplay', key: 'fin_loans', nameKey: 'loanName' },
+        { id: 'routineListDisplay', key: 'fin_routines', nameKey: 'routineOwner' }
+    ];
+
+    config.forEach(cat => {
+        const el = document.getElementById(cat.id);
+        if(!el) return;
+        let data = JSON.parse(localStorage.getItem(cat.key) || '[]');
+        if(data.length > 0) {
+            if(isMypageExpanded) {
+                el.innerHTML = data.map(item =>
+                    `<div style="border-bottom:1px solid #333; padding:5px 0; font-size:0.8em; color:#fff;">
+                        ✅ ${item.date}<br>${item[cat.nameKey]}
+                    </div>`
+                ).join('');
+            } else {
+                const top = data[0];
+                let shortTime = top.date.split(' ').slice(-2).join(' ');
+                el.innerHTML = `<div style="color:gold; font-size:0.8em;">🕒 ${shortTime}<br>${top[cat.nameKey]} 완료</div>`;
             }
-            if (nameInput) setTimeout(() => { nameInput.focus(); }, 500);
         } else {
-            window.currentReferrer = "CEO 채정석"; 
-            if (refInput) {
-                refInput.value = "CEO 채정석";
-                refInput.readOnly = false;
-                refInput.style.backgroundColor = "#111";
-            }
+            el.innerHTML = "<span style='color:#666;'>내역 없음</span>";
         }
-        if(typeof forceUpdateAll === "function") forceUpdateAll();
     });
 
-    // 기타 토글 및 결제 함수
-    function toggleQR() { 
-        const qr = document.getElementById('qrContainer');
-        qr.style.display = (qr.style.display === 'none' || qr.style.display === '') ? 'block' : 'none';
-        document.getElementById('liveListContainer').style.display = 'none';
+    const total = JSON.parse(localStorage.getItem('fin_wallets') || '[]').length;
+    if(document.getElementById('realtimeUserCount')) document.getElementById('realtimeUserCount').innerText = total;
+}
+    setInterval(forceUpdateAll, 1000);
+    window.onload = forceUpdateAll;
+
+    // [기능 1] QR 코드 토글
+function toggleQR() {
+    const qr = document.getElementById('qrContainer');
+    qr.style.display = (qr.style.display === 'none' || qr.style.display === '') ? 'block' : 'none';
+    // 명단이 열려있다면 닫기 (선택 사항)
+    document.getElementById('liveListContainer').style.display = 'none';
+}
+
+// [기능 2] 실시간 명단 토글
+function toggleLiveList() {
+    const list = document.getElementById('liveListContainer');
+    list.style.display = (list.style.display === 'none' || list.style.display === '') ? 'block' : 'none';
+    // QR이 열려있다면 닫기 (선택 사항)
+    document.getElementById('qrContainer').style.display = 'none';
+}
+
+// [기능 3] 실시간 명단 업데이트 (기존 forceUpdateAll 안에 포함하거나 별도 유지)
+function updateRealtimeList() {
+    const data = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
+
+    // 인원수 업데이트
+    const countEl = document.getElementById('realtimeUserCount');
+    if(countEl) countEl.innerText = data.length;
+
+    // 명단 리스트 업데이트
+    const listEl = document.getElementById('realtimeNameList');
+    if(listEl) {
+        if(data.length > 0) {
+            listEl.innerHTML = data.slice(0, 15).map(u =>
+                `<div style="border-bottom:1px solid #333; padding:3px 0;">✅ ${u.bankName}님 설립완료</div>`
+            ).join('');
+        } else {
+            listEl.innerHTML = "참여 내역이 없습니다.";
+        }
     }
-    function toggleLiveList() {
-        const list = document.getElementById('liveListContainer');
-        list.style.display = (list.style.display === 'none' || list.style.display === '') ? 'block' : 'none';
-        document.getElementById('qrContainer').style.display = 'none';
-        if (typeof updateRealtimeList === "function") updateRealtimeList();
+}
+let isSystemPaused = false; // 시스템 정지 상태 변수
+
+
+
+/* =========================================================
+   1. 탭 제어 로직 (공유참여, 실시간참여, 결제시스템)
+   ========================================================= */
+
+// [탭 1] 공유경제참여 (QR 코드) 토글
+function toggleQR() {
+    const qr = document.getElementById('qrContainer');
+    const liveList = document.getElementById('liveListContainer');
+    const payment = document.getElementById('paymentFields');
+
+    if (!qr) return;
+
+    // QR 열기/닫기
+    qr.style.display = (qr.style.display === 'none' || qr.style.display === '') ? 'block' : 'none';
+
+    // 다른 탭은 닫기
+    if (liveList) liveList.style.display = 'none';
+    if (payment) closePayment();
+}
+
+// [탭 2] 실시간참여 (명단) 토글
+function toggleLiveList() {
+    const qr = document.getElementById('qrContainer');
+    const liveList = document.getElementById('liveListContainer');
+    const payment = document.getElementById('paymentFields');
+
+    if (!liveList) return;
+
+    // 명단 열기/닫기
+    liveList.style.display = (liveList.style.display === 'none' || liveList.style.display === '') ? 'block' : 'none';
+
+    // 다른 탭은 닫기
+    if (qr) qr.style.display = 'none';
+    if (payment) closePayment();
+
+    // 명단 즉시 갱신
+    if (typeof updateRealtimeList === "function") updateRealtimeList();
+}
+
+// [탭 3] 실시간 결제 시스템 열기
+function openPayment() {
+    const fields = document.getElementById('paymentFields');
+    const payBox = document.getElementById('paymentBox');
+    const qr = document.getElementById('qrContainer');
+    const liveList = document.getElementById('liveListContainer');
+
+    if (!fields) return;
+
+    // 시스템 일시 정지 (economy.js와 연동)
+    window.isSystemPaused = true;
+
+    // 결제창 보이기
+    fields.style.display = 'block';
+    if (payBox) payBox.style.borderColor = '#ff416c';
+
+    // 다른 탭 닫기
+    if (qr) qr.style.display = 'none';
+    if (liveList) liveList.style.display = 'none';
+
+    // 입력창 포커스
+    setTimeout(() => {
+        const input = document.getElementById('payAmount');
+        if (input) input.focus();
+    }, 150);
+}
+
+// 결제창 닫기 (취소 또는 완료 시)
+function closePayment() {
+    const fields = document.getElementById('paymentFields');
+    const payBox = document.getElementById('paymentBox');
+    const payInput = document.getElementById('payAmount');
+
+    window.isSystemPaused = false; // 시스템 재가동
+
+    if (fields) fields.style.display = 'none';
+    if (payBox) payBox.style.borderColor = '#00ffcc';
+    if (payInput) payInput.value = "";
+}
+
+/* =========================================================
+   2. 실시간 결제 금액 반영 알고리즘 (완성체)
+   ========================================================= */
+
+function submitPayment() {
+    const payInput = document.getElementById('payAmount');
+    const amount = parseInt(payInput ? payInput.value : 0);
+
+    if (!amount || amount <= 0) {
+        alert("금액을 입력해주세요.");
+        if (payInput) payInput.focus();
+        return;
     }
-    function openPayment() {
-        const fields = document.getElementById('paymentFields');
-        if (!fields) return;
-        window.isSystemPaused = true;
-        fields.style.display = 'block';
-        setTimeout(() => { document.getElementById('payAmount').focus(); window.scrollTo(0, 0); }, 300);
+
+    // [데이터 주입] 원본 변수 수정 (economy.js의 window.advertiser 수정)
+    const advShare = Math.floor(amount * 0.7);
+    const consShare = amount - advShare;
+
+    window.advertiser += advShare;
+    window.consumer += consShare;
+
+    // [즉시 반영] 화면 갱신 함수 호출 (economy.js에 정의된 함수)
+    if (typeof renderAssetUI === "function") {
+        renderAssetUI();
+    } else {
+        // 백업용 수동 갱신
+        document.getElementById("advValue").innerText = Math.floor(window.advertiser).toLocaleString() + "원";
+        document.getElementById("consValue").innerText = Math.floor(window.consumer).toLocaleString() + "원";
+        document.getElementById("totalValue").innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
     }
-    function closePayment() {
-        document.getElementById('paymentFields').style.display = 'none';
-        window.isSystemPaused = false;
-        document.getElementById('payAmount').value = "";
+
+    alert(amount.toLocaleString() + "원 결제가 완료되었습니다.\n합산된 금액에서 실시간 상승이 시작됩니다.");
+
+    closePayment();
+}
+
+/* =========================================================
+   3. 보조 기능 (명단 업데이트 등)
+   ========================================================= */
+function updateRealtimeList() {
+    const data = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
+    const listEl = document.getElementById('realtimeNameList');
+    if (listEl) {
+        if (data.length > 0) {
+            listEl.innerHTML = data.slice(0, 10).map(u => `✅ ${u.bankName} 님 설립완료`).join('<br>');
+        } else {
+            listEl.innerHTML = "참여 내역이 없습니다.";
+        }
     }
+}
+
+// 1초마다 명단 갱신
+setInterval(updateRealtimeList, 1000);
+
 </script>
 </body>
 </html>
