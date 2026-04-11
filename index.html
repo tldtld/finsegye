@@ -589,26 +589,24 @@ window.addEventListener('load', function() {
     const nameInput = document.getElementById('bankName');
 
     if (referrerName) {
-        // 1. QR코드로 들어온 경우: 추천인 고정
+        // [경우 1] QR 스캔으로 들어온 경우
         window.currentReferrer = referrerName;
         if (refInput) {
             refInput.value = referrerName;
-            refInput.readOnly = true; // 수정 못 하게 잠금
-            refInput.style.backgroundColor = "#222"; // 어둡게 처리
+            refInput.readOnly = true; // QR은 확실한 정보이므로 수정 불가
+            refInput.style.backgroundColor = "#222"; 
         }
-        // 바로 성명 칸으로 커서 이동
         if (nameInput) setTimeout(() => { nameInput.focus(); }, 500);
     } else {
-        // 2. [핵심] QR코드 없이 그냥 들어온 경우: 모든 잔상 제거!
-        window.currentReferrer = "직접 가입";
+        // [경우 2] QR 없이 그냥 들어온 경우 (대표님 요청 반영)
+        window.currentReferrer = "CEO 최정석"; 
         if (refInput) {
-            refInput.value = ""; // 추천인 칸 비우기
-            refInput.readOnly = false; // 다시 입력 가능하게 풀기
-            refInput.style.backgroundColor = "#111"; // 원래 색상으로 복구
+            refInput.value = "CEO 최정석"; // 기본값으로 대표님 성함 입력
+            refInput.readOnly = false;    // ★ 핵심: 하지만 수정은 가능하게!
+            refInput.style.backgroundColor = "#111"; // 입력 가능한 밝은 색
         }
     }
 
-    // 첫 진입 시 불필요한 포커스 해제
     if (!referrerName && document.activeElement) document.activeElement.blur();
 });
 
