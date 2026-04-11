@@ -609,14 +609,14 @@ function submitBank() {
 
     alert(`🏦 [${name.value}] 님 설립 완료!\n추천인: ${finalRef}`);
 
-    // 주소까지 깨끗하게 비우기
     name.value = "";
     phone.value = "";
     address.value = ""; 
     agree.checked = false;
 
-    // 완료 후 성명 칸으로 커서 이동
-    setTimeout(() => { if (name) name.focus(); }, 150);
+    // 즉시 메인 화면으로 이동
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+
     if (typeof updateRealtimeList === "function") updateRealtimeList();
 }
 
