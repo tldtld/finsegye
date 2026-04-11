@@ -22,102 +22,47 @@
 
 
 
-<section id="dashboard" style="display:block; padding: 20px 10px; margin-top: 20px;">
+<section id="dashboard" style="display:block; padding: 20px 10px; margin-top: 50px;">
     
-    <div class="asset-wrapper" style="display: flex; justify-content: space-around; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+    <div class="asset-wrapper" style="display: flex; justify-content: space-around; background: rgba(255,255,255,0.05); padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #333;">
         <div class="digital" style="text-align:center;">
-            행사자(20%)<br><span id="advValue" style="font-size:1.3em; color:gold; font-weight:bold;">50,000원</span>
+            행사자<br><span id="advValue" style="font-size:1.3em; color:gold; font-weight:bold;">50,000원</span>
         </div>
         <div class="digital" style="text-align:center;">
-            소비자(10%)<br><span id="consValue" style="font-size:1.3em; color:#fff;">20,000원</span>
+            소비자<br><span id="consValue" style="font-size:1.3em; color:#fff;">20,000원</span>
         </div>
     </div>
     
-    <div style="font-size:1.6em; color:gold; font-weight:bold; text-align:center; margin-bottom: 20px;">
+    <div style="font-size:1.6em; color:gold; font-weight:bold; text-align:center; margin-bottom: 30px;">
         합계: <span id="totalValue">70,000원</span>
-        <button onclick="if(confirm('수치를 초기화할까요?')) { document.getElementById('advValue').innerText='0원'; document.getElementById('consValue').innerText='0원'; document.getElementById('totalValue').innerText='0원'; }" 
-                style="vertical-align: middle; margin-left: 10px; background: #333; border: 1px solid #555; color: #999; font-size: 11px; padding: 3px 7px; border-radius: 4px; cursor: pointer;">RESET</button>
     </div>
 
-    <div style="display: grid; grid-template-columns: 1s 1s; gap: 12px; margin-bottom: 30px;">
-        <button onclick="alert('QR코드가 생성되었습니다.');" style="height: 65px; background: #fff; color: #000; border: none; border-radius: 12px; font-weight: bold; cursor: pointer;">🤝 공유 참여</button>
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 30px;">
         
-        <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.click(); })()" 
-                style="height: 65px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-weight: bold; cursor: pointer;">📸 루틴 생성하기</button>
-        
-        <button onclick="document.getElementById('liveUserList').scrollIntoView({behavior:'smooth'});" 
-                style="height: 65px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-weight: bold; cursor: pointer;">👥 나의 현황</button>
-        
-        <button onclick="document.getElementById('paymentFields').style.display='block';" 
-                style="height: 65px; background: rgba(255, 65, 108, 0.1); border: 1.5px solid #ff416c; color: #ff416c; border-radius: 12px; font-weight: bold; cursor: pointer;">💳 실시간 결제</button>
-    </div>
-
-    <div id="paymentFields" style="display: none; padding: 15px; background: #111; border: 1px solid #ff416c; border-radius: 12px; text-align: center; margin-bottom: 20px;">
-        <input id="payAmount" type="number" placeholder="결제 금액 입력" style="width: 80%; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="alert('결제 완료'); document.getElementById('paymentFields').style.display='none';" style="padding: 8px 20px; background: #ff416c; color: #fff; border: none; border-radius: 5px;">완료</button>
-            <button onclick="document.getElementById('paymentFields').style.display='none';" style="padding: 8px 20px; background: #444; color: #fff; border: none; border-radius: 5px;">취소</button>
-        </div>
-    </div>
-
-    <hr style="border: 0.1px solid #222; margin: 25px 0;">
-
-    <div style="padding: 0 5px;">
-        <h3 style="color: #00ffcc; font-size: 1.1em; margin-bottom: 15px;">📋 나의 행사 루틴 내역</h3>
-        <ul id="liveUserList" style="padding: 0; margin: 0; min-height: 100px;">
-            <li style="list-style: none; padding: 20px; color: #555; text-align: center; border: 1px dashed #333; border-radius: 10px;">
-                내역이 없습니다. 루틴을 생성해 주세요.
-            </li>
-        </ul>
-    </div>
-</section>
-
-
-    
-<section id="adApplyForm"><div class="form-box"><input id="shopName" type="text" placeholder="상호명"><input id="bizType" type="text" placeholder="업종/업태"><input id="area" type="text" placeholder="행사지역"><textarea id="adText" placeholder="행사문구 입력"></textarea><button class="submitBtn" onclick="submitAd()">📩 행사 신청하기</button></div></section>
-<section id="loanApplyForm"><div class="form-box"><input id="loanName" type="text" placeholder="신청자명"><input id="loanAmount" type="number" placeholder="신청금액(만원)"><textarea id="loanPurpose" placeholder="공유목적 입력"></textarea><button class="submitBtn" onclick="submitLoan()">💰 공유 신청하기</button></div></section>
-<section id="routineForm"><div class="form-box"><input id="routineOwner" type="text" placeholder="제작자 이름"><input id="routineRegion" type="text" placeholder="적용지역"><textarea id="routineText" placeholder="루틴 내용 입력"></textarea><button class="submitBtn" onclick="submitRoutine()">🌀 루틴 생성하기</button></div></section>
-
-
-
-
-
-    
-<section id="bankForm" style="display:none; padding: 20px 10px;">
-    <div class="form-box" style="padding: 15px; border: 1.5px solid rgba(255, 215, 0, 0.5); background: rgba(0, 0, 0, 0.8); width: 92%; max-width: 340px; margin: 0 auto; border-radius: 12px; text-align: center;">
-        <h3 style="color: gold; font-size: 1.2em; margin-top: 5px; margin-bottom: 5px;">🏦 AI 지갑 설립</h3>
-        <p style="font-size: 0.8em; color: #aaa; margin-bottom: 15px;">정보 입력 없이 원클릭으로 가입하세요.</p>
-
-        <div style="display: flex; gap: 8px; margin-bottom: 15px;">
-            <button onclick="autoFillKakao()" style="flex: 1; height: 45px; background: #FEE500; color: #3C1E1E; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85em; cursor: pointer;">
-                💬 카카오 인증
-            </button>
-            <button onclick="autoFillInfo()" style="flex: 1; height: 45px; background: rgba(0, 255, 204, 0.2); color: #00ffcc; border: 1px solid #00ffcc; border-radius: 8px; font-weight: bold; font-size: 0.85em; cursor: pointer;">
-                👤 자동입력
-            </button>
-        </div>
-
-        <div style="margin-bottom: 10px; text-align: left;">
-            <label style="font-size: 0.75em; color: #00ffcc; display: block; margin-bottom: 4px; margin-left: 5px;">🤝 추천인</label>
-            <input id="bankReferrer" type="text" value="CEO 채정석" style="width: 92%; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; margin: 0 auto; display: block;">
-        </div>
-
-        <div style="border-top: 1px solid #333; margin: 15px 0; position: relative;">
-            <span style="position: absolute; top: -10px; left: 50%; transform: translateX(-50%); background: #000; padding: 0 10px; font-size: 0.75em; color: #666;">직접 입력</span>
-        </div>
-
-        <input id="bankName" type="text" placeholder="성명" style="width: 92%; margin-bottom: 8px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; display: block; margin-left: auto; margin-right: auto;">
-        <input id="bankPhone" type="tel" placeholder="전화번호" style="width: 92%; margin-bottom: 8px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; display: block; margin-left: auto; margin-right: auto;">
-        <input id="bankAddress" type="text" placeholder="주소" style="width: 92%; margin-bottom: 12px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px; display: block; margin-left: auto; margin-right: auto;">
-
-        <div style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 6px; font-size: 0.8em; margin-bottom: 15px;">
-            <input type="checkbox" id="bankAgree" style="margin-right: 8px;" checked>
-            <span>개인정보 수집 및 이용 동의 (필수)</span>
-        </div>
-
-        <button onclick="submitBank()" style="width: 100%; height: 55px; background: linear-gradient(90deg, gold, #ffcc33); border: none; border-radius: 10px; color: #000; font-weight: bold; font-size: 1.1em; cursor: pointer; box-shadow: 0 4px 10px rgba(255, 215, 0, 0.2);">
-            🚀 AI 지갑 설립 완료
+        <button onclick="showSection('bankForm')" style="height: 70px; background: #fff; color: #000; border: none; border-radius: 12px; font-weight: bold; font-size: 1em; cursor: pointer;">
+            🤝 공유 참여
         </button>
+        
+        <button onclick="alert('루틴 생성 모드로 전환합니다.');" style="height: 70px; background: #333; color: #fff; border: 1px solid #555; border-radius: 12px; font-weight: bold; font-size: 1em; cursor: pointer;">
+            🔄 루틴 생성
+        </button>
+        
+        <button onclick="showSection('liveList')" style="height: 70px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-weight: bold; font-size: 1em; cursor: pointer;">
+            👥 나의 현황
+        </button>
+        
+        <button onclick="openPayment()" style="height: 70px; background: rgba(255, 65, 108, 0.1); border: 1.5px solid #ff416c; color: #ff416c; border-radius: 12px; font-weight: bold; font-size: 1em; cursor: pointer;">
+            💳 실시간 결제
+        </button>
+    </div>
+
+    <hr style="border: 0.1px solid #333; margin: 30px 0;">
+
+    <div id="liveList" style="padding: 0 5px;">
+        <h3 style="color: #00ffcc; font-size: 1.1em; margin-bottom: 15px;">📋 나의 행사 루틴 내역</h3>
+        <ul id="liveUserList" style="padding: 0; margin: 0; min-height: 100px; border: 1px dashed #444; border-radius: 10px; display: flex; align-items: center; justify-content: center; color: #666;">
+            <li>내역이 없습니다.</li>
+        </ul>
     </div>
 </section>
 
