@@ -55,9 +55,28 @@
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width:100%; max-width:80px;">
             </div>
 
-            <button onclick="takePhoto()" style="width: 100%; height: 60px; background: rgba(255, 255, 255, 0.1); border: 1.5px solid #fff; color: #fff; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer;">
-                📸 사진찍기
-            </button>
+
+            
+
+  <button onclick="
+    (function(){
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.capture = 'camera'; 
+        input.onchange = function(e) {
+            if (e.target.files.length > 0) {
+                alert('📷 사진이 성공적으로 촬영되었습니다!');
+            }
+        };
+        input.click();
+    })()
+" style="width: 100%; height: 60px; background: rgba(255, 255, 255, 0.1); border: 1.5px solid #fff; color: #fff; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer;">
+    📸 사진찍기
+</button>
+
+
+            
         </div>
 
         <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
