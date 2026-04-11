@@ -36,50 +36,66 @@
     <div style="display: flex; gap: 10px; margin: 15px auto; width: 98%;">
         
         <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="
-                (function(){
-                    const input = document.createElement('input');
-                    input.type = 'file';
-                    input.accept = 'image/*';
-                    input.capture = 'camera'; 
-                    input.onchange = function(e) {
-                        if (e.target.files.length > 0) {
-                            // [1] 알림 메시지 실행
-                            alert('🚀 [전문 행사자 루틴 생성 완료]\n--------------------------------\n상호/연락처 인프라가 자산으로 등록되었습니다.\n귀하에게 매출의 20% 배당 권리가 부여됩니다.');
+<button onclick="
+    (function(){
+        const input = document.createElement('input');
+        input.type = 'file';
+        input.accept = 'image/*';
+        input.capture = 'camera'; 
+        input.onchange = function(e) {
+            if (e.target.files.length > 0) {
+                // 1. 안내 문구 (대표님께서 만족하신 그 문구)
+                alert('🚀 [전문 행사자 루틴 생성 완료]\n--------------------------------\n상호/연락처 인프라가 자산으로 등록되었습니다.\n귀하에게 매출의 20% 배당 권리가 부여됩니다.');
 
-                            // [2] 행사자 숫자 5,000원 올리기
-                            const adv = document.getElementById('advValue');
-                            const total = document.getElementById('totalValue');
-                            if(adv && total) {
-                                let curAdv = parseInt(adv.innerText.replace(/[^0-9]/g, ''));
-                                let curTotal = parseInt(total.innerText.replace(/[^0-9]/g, ''));
-                                
-                                let newAdv = curAdv + 5000;
-                                let newTotal = curTotal + 5000;
-                                
-                                adv.innerText = newAdv.toLocaleString() + '원';
-                                total.innerText = newTotal.toLocaleString() + '원';
-                                
-                                // 숫자 올라갈 때 금색으로 반짝이는 효과
-                                adv.style.color = '#00ffcc';
-                                setTimeout(() => { adv.style.color = 'gold'; }, 1000);
-                            }
+                // 2. 행사자 자산(advValue) 및 합계(totalValue) 숫자 올리기
+                const adv = document.getElementById('advValue');
+                const total = document.getElementById('totalValue');
+                if(adv && total) {
+                    let curAdv = parseInt(adv.innerText.replace(/[^0-9]/g, ''));
+                    let curTotal = parseInt(total.innerText.replace(/[^0-9]/g, ''));
+                    
+                    adv.innerText = (curAdv + 5000).toLocaleString() + '원';
+                    total.innerText = (curTotal + 5000).toLocaleString() + '원';
+                    
+                    // 수치 강조 효과 (금색 반짝임)
+                    adv.style.color = '#00ffcc';
+                    setTimeout(() => { adv.style.color = 'gold'; }, 1000);
+                }
 
-                            // [3] 하단 리스트에 기록 남기
-                            const list = document.getElementById('liveUserList');
-                            if(list) {
-                                const now = new Date();
-                                const timeStr = now.getHours() + ':' + now.getMinutes();
-                                const item = '<li style=&quot;color:gold; font-weight:bold; padding:5px; border-bottom:1px solid #222;&quot;>[루틴생성 ' + timeStr + '] 가맹점 발굴(20% 배당확보)</li>';
-                                list.insertAdjacentHTML('afterbegin', item);
-                            }
-                        }
-                    };
-                    input.click();
-                })()
-            " style="width: 100%; height: 70px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,215,0,0.4);">
-                📸 루틴 생성하기
-            </button>
+                // 3. ★ 핵심: [내 행사 루틴 내역]에 실제로 기록 추가 ★
+                // 대표님 시스템의 하단 리스트 ID인 'liveUserList'를 찾아 기록합니다.
+                const list = document.getElementById('liveUserList');
+                if(list) {
+                    const now = new Date();
+                    const timeStr = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+                    
+                    // 리스트 맨 위에 '금색'으로 행사자 루틴 기록 삽입
+                    const newEntry = `
+                        <li style='list-style:none; padding:12px; margin-bottom:8px; background:rgba(255,215,0,0.1); border:1px solid gold; border-radius:8px; color:gold;'>
+                            <div style='display:flex; justify-content:space-between; font-size:0.85em;'>
+                                <span>📌 [행사 루틴 생성]</span>
+                                <span>${timeStr}</span>
+                            </div>
+                            <div style='font-size:0.95em; margin-top:5px; font-weight:bold; color:#fff;'>
+                                가맹점 상호/인프라 확보 (배당 20% 확정)
+                            </div>
+                        </li>
+                    `;
+                    list.insertAdjacentHTML('afterbegin', newEntry);
+                    
+                    // 내역 리스트가 닫혀있다면 강제로 열어서 보여줍니다.
+                    list.parentElement.style.display = 'block';
+                    
+                    // 화면을 내역이 있는 하단으로 살짝 스크롤 해주는 센스
+                    list.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                }
+            }
+        };
+        input.click();
+    })()
+" style="width: 100%; height: 70px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(255,215,0,0.4);">
+    📸 루틴 생성하기
+</button>
             
             <button onclick="toggleQR()" style="width: 100%; height: 50px; background: rgba(255,255,255,0.1); border: 1px solid #fff; color: #fff; border-radius: 12px; font-size: 0.8em;">🤝 공유참여</button>
         </div>
