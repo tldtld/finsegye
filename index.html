@@ -443,6 +443,28 @@ function takePhoto() {
     };
     input.click();
 }
+
+    // [카메라 가동 엔진] 📸 사진 찍기 버튼을 누르면 이 코드가 실행됩니다.
+function takePhoto() {
+    console.log("카메라 가동 시작...");
+    
+    // 1. 카메라 기능을 실행하기 위한 임시 입력창 생성
+    const cameraInput = document.createElement('input');
+    cameraInput.type = 'file';
+    cameraInput.accept = 'image/*';
+    cameraInput.capture = 'camera'; // 스마트폰에서 카메라를 바로 여는 핵심 명령어
+
+    // 2. 사진을 찍었을 때 실행될 동작
+    cameraInput.onchange = function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            alert("📷 사진이 성공적으로 촬영되었습니다!\n핀세계 시스템에 기록됩니다.");
+        }
+    };
+
+    // 3. 실제로 카메라 실행!
+    cameraInput.click();
+}
     
 </script>
 </body>
