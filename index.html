@@ -7,21 +7,28 @@
     <link rel="stylesheet" href="style.css">
 
     <style>
-        #paymentFields {
-            position: fixed !important;
-            top: 50% !important;
-            left: 50% !important;
-            transform: translate(-50%, -50%) !important;
-            width: 90% !important;
-            max-width: 400px;
-            z-index: 9999;
-            background: #1a1a1a;
-            padding: 20px;
-            border-radius: 15px;
-            box-shadow: 0 0 25px rgba(0, 255, 204, 0.4);
-            border: 1px solid #00ffcc;
-        }
-    </style>
+    /* 결제창: 평소에는 아예 존재하지 않도록 설정 */
+    #paymentFields {
+        display: none; /* ★ 중요: 평소엔 숨김 */
+        position: fixed !important;
+        top: 50% !important;
+        left: 50% !important;
+        transform: translate(-50%, -50%) !important;
+        width: 85% !important;
+        max-width: 350px;
+        z-index: 10001 !important; /* 하단 탭(10000)보다 높게 설정 */
+        background: #1a1a1a;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0 0 30px rgba(0, 0, 0, 0.8), 0 0 10px #00ffcc;
+        border: 2px solid #00ffcc;
+    }
+
+    /* 하단 탭 메뉴가 자판기 위로 못 올라오게 강제 고정 */
+    .nav {
+        z-index: 10000 !important;
+    }
+</style>
 
     
 </head>
@@ -431,38 +438,53 @@ function toggleLiveList() {
     if (typeof updateRealtimeList === "function") updateRealtimeList();
 }
 
-// [교체] 키보드에 밀리지 않는 결제창 열기 함수
+// [수정] 결제창 열기: 화면 중앙에 띄우고 시스템 일시정지
 function openPayment() {
     const fields = document.getElementById('paymentFields');
-    const payBox = document.getElementById('paymentBox');
-
     if (!fields) return;
 
-    window.isSystemPaused = true;
-    fields.style.display = 'block';
-    if (payBox) payBox.style.borderColor = '#ff416c';
+    window.isSystemPaused = true; // 경제 엔진 정지
+    fields.style.setProperty('display', 'block', 'important'); // 확실히 보이게 함
 
-    // 자판기가 화면을 밀어 올리는 것을 방지하기 위해 0.3초 뒤 강제 스크롤 고정
     setTimeout(() => {
         const input = document.getElementById('payAmount');
         if (input) {
             input.focus();
-            window.scrollTo(0, 0); // 화면을 맨 위로 고정 (자판기 가림 방지)
+            window.scrollTo(0, 0); // 화면 밀림 방지
         }
     }, 300);
 }
 
-// 결제창 닫기 (취소 또는 완료 시)
+// [수정] 결제창 닫기: 화면에서 아예 제거하고 시스템 재가동
 function closePayment() {
     const fields = document.getElementById('paymentFields');
-    const payBox = document.getElementById('paymentBox');
     const payInput = document.getElementById('payAmount');
 
-    window.isSystemPaused = false; // 시스템 재가동
+    window.isSystemPaused = false; // 경제 엔진 재가동
 
-    if (fields) fields.style.display = 'none';
-    if (payBox) payBox.style.borderColor = '#00ffcc';
+    if (fields) {
+        fields.style.setProperty('display', 'none', 'important'); // ★ 확실히 숨김
+    }
     if (payInput) payInput.value = "";
+}
+
+// [추가] 결제 완료 시에도 창을 닫도록 수정
+function submitPayment() {
+    const payInput = document.getElementById('payAmount');
+    const amount = parseInt(payInput ? payInput.value : 0);
+
+    if (!amount || amount <= 0) {
+        alert("금액을 입력해주세요.");
+        return;
+    }
+
+    window.advertiser += Math.floor(amount * 0.7);
+    window.consumer += Math.floor(amount * 0.3);
+    
+    if (typeof renderAssetUI === "function") renderAssetUI();
+
+    alert(amount.toLocaleString() + "원 결제가 완료되었습니다.");
+    closePayment(); // ★ 결제 완료 후 창 닫기
 }
 
 /* =========================================================
