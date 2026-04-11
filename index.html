@@ -581,6 +581,7 @@ function submitBank() {
 }
 
 /* 페이지 로드 시 초기화 및 QR 진입 제어 */
+/* 페이지 로드 시 초기화 및 QR 진입 제어 (최종 수정본) */
 window.addEventListener('load', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const referrerName = urlParams.get('ref');
@@ -588,19 +589,26 @@ window.addEventListener('load', function() {
     const nameInput = document.getElementById('bankName');
 
     if (referrerName) {
+        // 1. QR코드로 들어온 경우: 추천인 고정
         window.currentReferrer = referrerName;
         if (refInput) {
             refInput.value = referrerName;
-            refInput.readOnly = true; 
-            refInput.style.backgroundColor = "#222"; 
+            refInput.readOnly = true; // 수정 못 하게 잠금
+            refInput.style.backgroundColor = "#222"; // 어둡게 처리
         }
-        // QR 진입 시 바로 성명 칸으로 커서 이동
+        // 바로 성명 칸으로 커서 이동
         if (nameInput) setTimeout(() => { nameInput.focus(); }, 500);
     } else {
+        // 2. [핵심] QR코드 없이 그냥 들어온 경우: 모든 잔상 제거!
         window.currentReferrer = "직접 가입";
-        if (refInput) refInput.value = "";
+        if (refInput) {
+            refInput.value = ""; // 추천인 칸 비우기
+            refInput.readOnly = false; // 다시 입력 가능하게 풀기
+            refInput.style.backgroundColor = "#111"; // 원래 색상으로 복구
+        }
     }
 
+    // 첫 진입 시 불필요한 포커스 해제
     if (!referrerName && document.activeElement) document.activeElement.blur();
 });
 
