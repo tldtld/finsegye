@@ -22,85 +22,51 @@
 
 
 
-  <section id="dashboard" style="display:block; padding-top: 5px;">
-    <div class="asset-wrapper" style="margin-top:10px; display: flex; justify-content: space-around; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px;">
-        <div class="digital" style="text-align:center;">행사자(20%)<br><span id="advValue" style="font-size:1.2em; color:gold; font-weight:bold;">50,000원</span></div>
-        <div class="digital" style="text-align:center;">소비자(10%)<br><span id="consValue" style="font-size:1.2em; color:#fff;">20,000원</span></div>
+<section id="dashboard" style="display:block; padding: 20px 10px; margin-top: 20px;">
+    
+    <div class="asset-wrapper" style="display: flex; justify-content: space-around; background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+        <div class="digital" style="text-align:center;">
+            행사자(20%)<br><span id="advValue" style="font-size:1.3em; color:gold; font-weight:bold;">50,000원</span>
+        </div>
+        <div class="digital" style="text-align:center;">
+            소비자(10%)<br><span id="consValue" style="font-size:1.3em; color:#fff;">20,000원</span>
+        </div>
     </div>
-    <div style="font-size:1.5em; margin:10px 0; color:gold; font-weight:bold; text-align:center;">
+    
+    <div style="font-size:1.6em; color:gold; font-weight:bold; text-align:center; margin-bottom: 20px;">
         합계: <span id="totalValue">70,000원</span>
+        <button onclick="if(confirm('수치를 초기화할까요?')) { document.getElementById('advValue').innerText='0원'; document.getElementById('consValue').innerText='0원'; document.getElementById('totalValue').innerText='0원'; }" 
+                style="vertical-align: middle; margin-left: 10px; background: #333; border: 1px solid #555; color: #999; font-size: 11px; padding: 3px 7px; border-radius: 4px; cursor: pointer;">RESET</button>
     </div>
 
-    <div style="display: flex; gap: 10px; margin: 15px auto; width: 98%;">
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="
-                (function(){
-                    const input = document.createElement('input');
-                    input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; 
-                    input.onchange = function(e) {
-                        if (e.target.files.length > 0) {
-                            alert('🚀 [전문 행사자 루틴 생성 완료]\n--------------------------------\n상호/연락처 인프라가 자산으로 등록되었습니다.\n귀하에게 매출의 20% 배당 권리가 부여됩니다.');
+    <div style="display: grid; grid-template-columns: 1s 1s; gap: 12px; margin-bottom: 30px;">
+        <button onclick="alert('QR코드가 생성되었습니다.');" style="height: 65px; background: #fff; color: #000; border: none; border-radius: 12px; font-weight: bold; cursor: pointer;">🤝 공유 참여</button>
+        
+        <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.click(); })()" 
+                style="height: 65px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-weight: bold; cursor: pointer;">📸 루틴 생성하기</button>
+        
+        <button onclick="document.getElementById('liveUserList').scrollIntoView({behavior:'smooth'});" 
+                style="height: 65px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-weight: bold; cursor: pointer;">👥 나의 현황</button>
+        
+        <button onclick="document.getElementById('paymentFields').style.display='block';" 
+                style="height: 65px; background: rgba(255, 65, 108, 0.1); border: 1.5px solid #ff416c; color: #ff416c; border-radius: 12px; font-weight: bold; cursor: pointer;">💳 실시간 결제</button>
+    </div>
 
-                            // 숫자 업데이트
-                            const adv = document.getElementById('advValue');
-                            if(adv) {
-                                let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 0;
-                                adv.innerText = (cur + 5000).toLocaleString() + '원';
-                            }
-
-                            // ★ 내역 기록 (아래에 만든 전용 리스트에 직접 꽂아넣기) ★
-                            const list = document.getElementById('finalRoutineList');
-                            const now = new Date();
-                            const timeStr = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
-                            
-                            // 빈 목록 안내 문구 삭제
-                            if(list.innerHTML.includes('내역이 없습니다')) list.innerHTML = '';
-
-                            const item = `<li style='list-style:none; padding:15px; margin-bottom:10px; background:rgba(255,215,0,0.1); border:1.5px solid gold; border-radius:10px; color:gold;'>
-                                            <div style='display:flex; justify-content:space-between;'>
-                                                <strong>📍 [루틴 생성 완료]</strong>
-                                                <span style='font-size:0.8em;'>${timeStr}</span>
-                                            </div>
-                                            <div style='color:#fff; font-size:0.9em; margin-top:5px;'>신규 가맹점 인프라 자산 등록 (배당 20%)</div>
-                                          </li>`;
-                            list.insertAdjacentHTML('afterbegin', item);
-                            
-                            // 화면 이동
-                            list.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                        }
-                    };
-                    input.click();
-                })()
-            " style="width: 100%; height: 70px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; cursor: pointer;">
-                📸 루틴 생성하기
-            </button>
-            <button onclick="document.getElementById('qrArea').style.display='block'; this.scrollIntoView();" style="width: 100%; height: 50px; background: #fff; color: #000; border: none; border-radius: 12px; font-size: 0.8em; font-weight: bold;">🤝 공유 참여</button>
-        </div>
-
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
-            <button onclick="document.getElementById('finalRoutineList').scrollIntoView({ behavior: 'smooth' });" style="width: 100%; height: 70px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-weight: bold;">👥 나의 현황 확인</button>
-            <button onclick="document.getElementById('paymentFields').style.display='block';" style="width: 100%; height: 50px; background: rgba(255, 65, 108, 0.1); border: 1.5px solid #ff416c; color: #ff416c; border-radius: 12px; font-size: 0.8em; font-weight: bold;">💳 실시간결제</button>
+    <div id="paymentFields" style="display: none; padding: 15px; background: #111; border: 1px solid #ff416c; border-radius: 12px; text-align: center; margin-bottom: 20px;">
+        <input id="payAmount" type="number" placeholder="결제 금액 입력" style="width: 80%; padding: 10px; margin-bottom: 10px; border-radius: 5px;">
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="alert('결제 완료'); document.getElementById('paymentFields').style.display='none';" style="padding: 8px 20px; background: #ff416c; color: #fff; border: none; border-radius: 5px;">완료</button>
+            <button onclick="document.getElementById('paymentFields').style.display='none';" style="padding: 8px 20px; background: #444; color: #fff; border: none; border-radius: 5px;">취소</button>
         </div>
     </div>
 
-    <div id="qrArea" style="display: none; text-align: center; padding: 20px; background: white; margin: 10px; border-radius: 15px;">
-        <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=https://tldtld.github.io/finsegye/" style="width: 120px;">
-        <p style="color: #666; font-size: 0.8em; margin-top: 5px;">핀세계 공유 QR코드</p>
-        <button onclick="document.getElementById('qrArea').style.display='none';" style="padding: 5px 15px; background: #444; color: #fff; border: none; border-radius: 5px; font-size: 0.7em;">닫기</button>
-    </div>
+    <hr style="border: 0.1px solid #222; margin: 25px 0;">
 
-    <div id="paymentFields" style="display: none; width: 92%; margin: 10px auto; padding: 15px; background: #111; border: 1.5px solid #ff416c; border-radius: 12px; text-align: center;">
-        <input id="payAmount" type="number" placeholder="금액 입력" style="width: 80%; padding: 10px; margin-bottom: 10px;">
-        <button onclick="alert('결제 완료'); document.getElementById('paymentFields').style.display='none';" style="padding: 10px 20px; background: #ff416c; color: #fff; border: none; border-radius: 5px;">완료</button>
-    </div>
-
-    <hr style="border: 0.5px solid #333; margin: 20px 0;">
-
-    <div style="padding: 10px;">
-        <h3 style="color: #00ffcc; font-size: 1.1em; margin-bottom: 15px; text-align: center;">📋 나의 행사 루틴 내역</h3>
-        <ul id="finalRoutineList" style="padding: 0; margin: 0; min-height: 100px; border: 1px solid #222; border-radius: 10px; padding: 10px;">
-            <li style="list-style: none; padding: 20px; color: #555; text-align: center;">
-                생성된 루틴 내역이 없습니다.<br>사진을 찍어 루틴을 생산하세요.
+    <div style="padding: 0 5px;">
+        <h3 style="color: #00ffcc; font-size: 1.1em; margin-bottom: 15px;">📋 나의 행사 루틴 내역</h3>
+        <ul id="liveUserList" style="padding: 0; margin: 0; min-height: 100px;">
+            <li style="list-style: none; padding: 20px; color: #555; text-align: center; border: 1px dashed #333; border-radius: 10px;">
+                내역이 없습니다. 루틴을 생성해 주세요.
             </li>
         </ul>
     </div>
