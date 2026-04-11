@@ -30,11 +30,8 @@
     </div>
     
     <div style="font-size:1.4em; margin:0px 0; color:gold; font-weight:bold; border-bottom:1px solid #333; padding-bottom:10px; text-align:center;">
-        <span>합계: <span id="totalValue">70,000원</span></span>
-        <button onclick="if(confirm('수치를 초기화할까요?')) resetEconomy();" 
-                style="display: inline-block; vertical-align: middle; margin-left: 5px; background: rgba(255,255,255,0.05); border: 1px solid #555; color: #777; font-size: 10px; padding: 1px 4px; border-radius: 3px; cursor: pointer; height: 18px;">
-            RESET
-        </button>
+        합계: <span id="totalValue">70,000원</span>
+        <button onclick="if(confirm('수치를 초기화할까요?')) resetEconomy();" style="display: inline-block; vertical-align: middle; margin-left: 5px; background: rgba(255,255,255,0.05); border: 1px solid #555; color: #777; font-size: 10px; padding: 1px 4px; border-radius: 3px; cursor: pointer; height: 18px;">RESET</button>
     </div>
 
     <div id="aiSignalBox" style="margin: 0px auto; padding: 8px 5px; border: 1.5px solid #ff00ff; border-radius: 8px; background: rgba(255,0,255,0.1); width: 90%; height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -51,32 +48,14 @@
             <button onclick="toggleQR()" style="width: 100%; height: 60px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer;">
                 🤝 공유참여
             </button>
-            <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center;">
+            <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; cursor: pointer;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width:100%; max-width:80px;">
+                <div style="font-size:0.6em; color:#444; margin-top:5px; font-weight:bold;">클릭 시 지갑설립 연결</div>
             </div>
 
-
-            
-
-  <button onclick="
-    (function(){
-        const input = document.createElement('input');
-        input.type = 'file';
-        input.accept = 'image/*';
-        input.capture = 'camera'; 
-        input.onchange = function(e) {
-            if (e.target.files.length > 0) {
-                alert('📷 사진이 성공적으로 촬영되었습니다!');
-            }
-        };
-        input.click();
-    })()
-" style="width: 100%; height: 60px; background: rgba(255, 255, 255, 0.1); border: 1.5px solid #fff; color: #fff; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer;">
-    📸 사진찍기
-</button>
-
-
-            
+            <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.onchange = function(e) { if (e.target.files.length > 0) { alert('📷 사진이 성공적으로 촬영되었습니다!'); } }; input.click(); })()" style="width: 100%; height: 60px; background: rgba(255, 255, 255, 0.1); border: 1.5px solid #fff; color: #fff; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer;">
+                📸 사진찍기
+            </button>
         </div>
 
         <div style="flex: 1; display: flex; flex-direction: column; gap: 10px;">
@@ -88,6 +67,14 @@
             <button onclick="openPayment()" style="width: 100%; height: 60px; background: rgba(255, 65, 108, 0.1); border: 1.5px solid #ff416c; color: #ff416c; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer;">
                 💳 실시간결제
             </button>
+        </div>
+    </div>
+
+    <div id="paymentFields" style="display: none; width: 90%; margin: 10px auto; padding: 15px; background: rgba(0,0,0,0.9); border: 1.5px solid #ff416c; border-radius: 12px; text-align: center;">
+        <input id="payAmount" type="number" placeholder="금액 입력" style="width: 80%; padding: 10px; border-radius: 8px; border: none; text-align: center; font-size: 1.2em; margin-bottom: 10px;">
+        <div style="display: flex; gap: 10px; justify-content: center;">
+            <button onclick="submitPayment()" style="padding: 10px 20px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold;">완료</button>
+            <button onclick="closePayment()" style="padding: 10px 20px; background: #444; color: #fff; border: none; border-radius: 8px;">취소</button>
         </div>
     </div>
 </section>
