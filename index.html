@@ -397,6 +397,42 @@ function updateAISignal() {
 window.addEventListener('load', () => {
     updateAISignal(); 
 });
+
+/* 👥 실시간 인원수 자동 증가 엔진 (아래에서 위로 슥!) */
+let currentLiveUsers = 742; // 시작 숫자 (원하시는 숫자로 바꾸셔도 됩니다)
+
+function animateLiveCount() {
+    const countEl = document.getElementById('realtimeUserCount');
+    if (!countEl) return;
+
+    // 1. 인원수 랜덤 증가 (1~3명)
+    const increment = Math.floor(Math.random() * 3) + 1;
+    currentLiveUsers += increment;
+
+    // 2. 애니메이션 효과 (살짝 위로 올라갔다 나타나기)
+    countEl.style.opacity = "0";
+    countEl.style.transform = "translateY(15px)"; // 아래에서 대기
+
+    setTimeout(() => {
+        countEl.innerText = currentLiveUsers.toLocaleString();
+        countEl.style.opacity = "1";
+        countEl.style.transform = "translateY(0)"; // 제자리로 슥!
+    }, 100);
+
+    // 3. 다음 증가 시간 (3초 ~ 7초 사이 무작위)
+    const nextInterval = Math.random() * 4000 + 3000;
+    setTimeout(animateLiveCount, nextInterval);
+}
+
+// 페이지가 완전히 로딩되면 엔진 가동!
+window.addEventListener('load', () => {
+    const countEl = document.getElementById('realtimeUserCount');
+    if(countEl) countEl.innerText = currentLiveUsers.toLocaleString();
+    
+    // 2초 뒤부터 본격적으로 숫자가 올라가기 시작합니다.
+    setTimeout(animateLiveCount, 2000);
+});
+
     
 </script>
 </body>
