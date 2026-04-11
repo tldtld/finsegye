@@ -28,10 +28,12 @@
         <div class="digital">행사자<br><span id="advValue">50,000원</span></div>
         <div class="digital">소비자<br><span id="consValue">20,000원</span></div>
     </div>
-    
     <div style="font-size:1.4em; margin:0px 0; color:gold; font-weight:bold; border-bottom:1px solid #333; padding-bottom:10px; text-align:center;">
         합계: <span id="totalValue">70,000원</span>
-        <button onclick="if(confirm('수치를 초기화할까요?')) resetEconomy();" style="display: inline-block; vertical-align: middle; margin-left: 5px; background: rgba(255,255,255,0.05); border: 1px solid #555; color: #777; font-size: 10px; padding: 1px 4px; border-radius: 3px; cursor: pointer; height: 18px;">RESET</button>
+        <button onclick="if(confirm('수치를 초기화할까요?')) resetEconomy();" 
+                style="display: inline-block; vertical-align: middle; margin-left: 5px; background: rgba(255,255,255,0.05); border: 1px solid #555; color: #777; font-size: 10px; padding: 1px 4px; border-radius: 3px; cursor: pointer; height: 18px;">
+            RESET
+        </button>
     </div>
 
     <div id="aiSignalBox" style="margin: 0px auto; padding: 8px 5px; border: 1.5px solid #ff00ff; border-radius: 8px; background: rgba(255,0,255,0.1); width: 90%; height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
@@ -49,8 +51,11 @@
                 🤝 공유참여
             </button>
             <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; cursor: pointer;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width:100%; max-width:80px;">
-                <div style="font-size:0.6em; color:#444; margin-top:5px; font-weight:bold;">클릭 시 지갑설립 연결</div>
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width:100%; max-width:100px; display:block; margin: 0 auto;">
+                <div style="font-size:0.65em; color:#444; font-weight:bold; margin-top:5px;">
+                    스캔 시 <br><span style="color:#ff416c;">추천인(CEO 채정석) 자동 연결</span>
+                </div>
+                <div style="font-size:0.6em; color:#007bff; margin-top:3px;">[터치 시 지갑설립 이동]</div>
             </div>
 
             <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.onchange = function(e) { if (e.target.files.length > 0) { alert('📷 사진이 성공적으로 촬영되었습니다!'); } }; input.click(); })()" style="width: 100%; height: 60px; background: rgba(255, 255, 255, 0.1); border: 1.5px solid #fff; color: #fff; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer;">
@@ -70,11 +75,11 @@
         </div>
     </div>
 
-    <div id="paymentFields" style="display: none; width: 90%; margin: 10px auto; padding: 15px; background: rgba(0,0,0,0.9); border: 1.5px solid #ff416c; border-radius: 12px; text-align: center;">
-        <input id="payAmount" type="number" placeholder="금액 입력" style="width: 80%; padding: 10px; border-radius: 8px; border: none; text-align: center; font-size: 1.2em; margin-bottom: 10px;">
+    <div id="paymentFields" style="display: none; width: 92%; margin: 10px auto; padding: 15px; background: rgba(0,0,0,0.95); border: 1.5px solid #ff416c; border-radius: 12px; text-align: center; position: relative; z-index: 100;">
+        <input id="payAmount" type="number" placeholder="금액 입력" style="width: 85%; padding: 12px; border-radius: 8px; border: none; text-align: center; font-size: 1.2em; margin-bottom: 12px; background: #fff; color: #000; font-weight: bold;">
         <div style="display: flex; gap: 10px; justify-content: center;">
-            <button onclick="submitPayment()" style="padding: 10px 20px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold;">완료</button>
-            <button onclick="closePayment()" style="padding: 10px 20px; background: #444; color: #fff; border: none; border-radius: 8px;">취소</button>
+            <button onclick="submitPayment()" style="padding: 10px 25px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold;">결제완료</button>
+            <button onclick="closePayment()" style="padding: 10px 25px; background: #444; color: #fff; border: none; border-radius: 8px;">취소</button>
         </div>
     </div>
 </section>
