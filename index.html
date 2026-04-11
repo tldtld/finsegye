@@ -580,8 +580,7 @@ function submitBank() {
     if (typeof updateRealtimeList === "function") updateRealtimeList();
 }
 
-/* 페이지 로드 시 초기화 및 QR 진입 제어 */
-/* 페이지 로드 시 초기화 및 QR 진입 제어 (최종 수정본) */
+/* 페이지 로드 시 초기화 및 QR 진입 제어 (채정석 대표님 최종본) */
 window.addEventListener('load', function() {
     const urlParams = new URLSearchParams(window.location.search);
     const referrerName = urlParams.get('ref');
@@ -589,27 +588,26 @@ window.addEventListener('load', function() {
     const nameInput = document.getElementById('bankName');
 
     if (referrerName) {
-        // [경우 1] QR 스캔으로 들어온 경우
+        // [경우 1] QR 스캔으로 들어온 경우: 수정 불가하게 고정
         window.currentReferrer = referrerName;
         if (refInput) {
             refInput.value = referrerName;
-            refInput.readOnly = true; // QR은 확실한 정보이므로 수정 불가
+            refInput.readOnly = true; 
             refInput.style.backgroundColor = "#222"; 
         }
         if (nameInput) setTimeout(() => { nameInput.focus(); }, 500);
     } else {
-        // [경우 2] QR 없이 그냥 들어온 경우 (대표님 요청 반영)
-        window.currentReferrer = "CEO 최정석"; 
+        // [경우 2] QR 없이 그냥 들어온 경우: 대표님 성함 넣되 '수정 가능'하게!
+        window.currentReferrer = "CEO 채정석"; 
         if (refInput) {
-            refInput.value = "CEO 최정석"; // 기본값으로 대표님 성함 입력
-            refInput.readOnly = false;    // ★ 핵심: 하지만 수정은 가능하게!
-            refInput.style.backgroundColor = "#111"; // 입력 가능한 밝은 색
+            refInput.value = "CEO 채정석"; // 기본값으로 채정석 대표님 성함 입력
+            refInput.readOnly = false;    // ★ 핵심: 이제 지우고 다른 이름 쓸 수 있습니다!
+            refInput.style.backgroundColor = "#111"; // 입력 가능한 색상
         }
     }
 
     if (!referrerName && document.activeElement) document.activeElement.blur();
 });
-
 </script>
 </body>
 </html>
