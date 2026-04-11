@@ -343,8 +343,28 @@ function submitBank() {
         document.getElementById('bankAgree').checked = true;
     }
     function autoFillKakao() { alert("💬 카카오톡 보안 인증 완료!"); autoFillInfo(); }
+
+// [긴급 추가] 자산 초기화 직접 실행 함수
+window.resetEconomy = function() {
+    // 1. 경제 변수 강제 리셋 (행사자 5만, 소비자 2만)
+    window.advertiser = 50000;
+    window.consumer = 20000;
+
+    // 2. 스마트폰 저장소 데이터도 초기값으로 덮어쓰기
+    localStorage.setItem('fin_advertiser', 50000);
+    localStorage.setItem('fin_consumer', 20000);
+
+    // 3. 화면의 숫자들 즉시 갱신
+    if (document.getElementById('advValue')) document.getElementById('advValue').innerText = "50,000원";
+    if (document.getElementById('consValue')) document.getElementById('consValue').innerText = "20,000원";
+    if (document.getElementById('totalValue')) document.getElementById('totalValue').innerText = "70,000원";
+
+    // 4. 혹시 UI 갱신 함수가 있다면 실행
+    if (typeof renderAssetUI === "function") renderAssetUI();
+
+    alert("자산 수치가 초기화되었습니다.");
+};
+    
 </script>
-
-
 </body>
 </html>
