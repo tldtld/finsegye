@@ -43,7 +43,7 @@
 
         <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
             <button onclick="toggleQR()" style="width: 100%; height: 60px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.3); cursor: pointer;">
-                🤝 공유경제참여
+                🤝 QR참여
             </button>
 
             <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 0 15px rgba(161, 196, 253, 0.4); cursor:pointer;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
@@ -55,9 +55,10 @@
         </div>
 
         <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-            <button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.9em; font-weight: bold; cursor: pointer;">
-                👥 실시간참여<br><span id="realtimeUserCount" style="font-size: 0.8em; color: #fff;">0</span>명
-            </button>
+   <button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px;">
+    <span>👥 실시간참여</span>
+    <span id="realtimeUserCount" style="color: #fff;">0</span><span>명</span>
+</button>
 
             <div id="liveListContainer" style="display: none; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,204,0.3); border-radius: 12px; height: 130px;">
                 <div id="realtimeNameList" style="height: 100%; overflow-y: auto; font-size: 0.75em; color: #eee; line-height: 1.6; text-align: left;">
