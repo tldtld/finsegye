@@ -234,47 +234,6 @@
 
 
 
-function submitBank() {
-    const name = document.getElementById('bankName');
-    const phone = document.getElementById('bankPhone');
-    const address = document.getElementById('bankAddress'); // 주소창 추가
-    const agree = document.getElementById('bankAgree');
-    const refInput = document.getElementById('bankReferrer');
-
-    // 유효성 검사
-    if (!name.value.trim()) { alert("성함을 입력해주세요."); name.focus(); return; }
-    if (!agree.checked) { alert("개인정보 동의가 필요합니다."); return; }
-
-    // 추천인 결정
-    let finalRef = refInput.value.trim() || window.currentReferrer || "직접 가입";
-
-    const newUser = {
-        bankName: name.value,
-        bankPhone: phone.value,
-        bankAddress: address.value, // 주소 데이터 포함
-        referrer: finalRef,
-        date: new Date().toLocaleString()
-    };
-
-    let wallets = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
-    wallets.unshift(newUser);
-    localStorage.setItem('fin_wallets', JSON.stringify(wallets));
-
-    alert(`🏦 [${name.value}] 님 설립 완료!\n추천인: ${finalRef}`);
-
-    // [핵심] 폼 비우기 (주소창까지 확실하게!)
-    name.value = "";
-    phone.value = "";
-    address.value = ""; // ★ 대표님, 이제 주소 잔상이 남지 않습니다!
-    agree.checked = false;
-
-    // [핵심] 커서 위치 조정
-    // 추천인 칸이 아니라, 다음 입력을 위해 '성명' 칸으로 커서를 보냅니다.
-    setTimeout(() => { name.focus(); }, 150);
-
-    if (typeof updateRealtimeList === "function") updateRealtimeList();
-}
-
 
 // [교체대상 1] 화면 전환 및 '나의 현황' 접고 펴기 기능
 function showSection(sectionId, btn) {
@@ -609,12 +568,13 @@ function submitBank() {
 
     alert(`🏦 [${name.value}] 님 설립 완료!\n추천인: ${finalRef}`);
 
+    // 폼 초기화 (주소까지 싹 비우기)
     name.value = "";
     phone.value = "";
     address.value = ""; 
     agree.checked = false;
 
-    // 즉시 메인 화면으로 이동
+    // ★ 핵심: 즉시 메인 화면(자산현황)으로 강제 이동
     showSection('dashboard', document.getElementById('btn-dashboard'));
 
     if (typeof updateRealtimeList === "function") updateRealtimeList();
