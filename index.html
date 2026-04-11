@@ -398,43 +398,53 @@ window.addEventListener('load', () => {
     updateAISignal(); 
 });
 
-/* 📈 [단독 가동] 실시간 인원 10,000명 시작 & 우상향 엔진 */
-// 1. 브라우저에 저장된 숫자가 있으면 가져오고, 없으면 10000부터 시작합니다.
-let globalLiveCount = parseInt(localStorage.getItem('fin_live_users_v2')) || 10000;
+/* 📈 [스마트 엔진] 저장값 우선 로드 + 5초 대기 후 우상향 */
+// 1. 저장된 숫자가 없으면 기본 10,000명부터 시작
+let liveCount = parseInt(localStorage.getItem('fin_live_users_v3')) || 10000;
 
-function runLiveCounter() {
+function updateDisplay() {
     const countEl = document.getElementById('realtimeUserCount');
-    if (!countEl) return;
-
-    // 2. 무조건 1명~3명씩만 증가 (절대 줄어들지 않음)
-    const increment = Math.floor(Math.random() * 3) + 1;
-    globalLiveCount += increment;
-
-    // 3. 현재 숫자를 스마트폰에 기억 (새로고침해도 이어서 증가)
-    localStorage.setItem('fin_live_users_v2', globalLiveCount);
-
-    // 4. 애니메이션 효과: 아래에서 위로 슥!
-    countEl.style.opacity = "0";
-    countEl.style.transform = "translateY(10px)";
-
-    setTimeout(() => {
-        countEl.innerText = globalLiveCount.toLocaleString();
-        countEl.style.opacity = "1";
-        countEl.style.transform = "translateY(0)";
-    }, 150);
-
-    // 5. 다음 증가 시간: 3초 ~ 8초 사이 (너무 빠르지 않게 적당히)
-    const nextInterval = Math.random() * 5000 + 3000;
-    setTimeout(runLiveCounter, nextInterval);
+    if (countEl) {
+        countEl.innerText = liveCount.toLocaleString();
+    }
 }
 
-// 페이지 로드 시 단 한 번만 실행되도록 설정
-window.addEventListener('load', () => {
+function startGrowth() {
+    // 2. 무조건 1~2명씩만 증가 (뒤로 가기 없음)
+    const growth = Math.floor(Math.random() * 2) + 1;
+    liveCount += growth;
+
+    // 3. 증가한 숫자를 브라우저에 즉시 저장
+    localStorage.setItem('fin_live_users_v3', liveCount);
+
+    // 4. 아래에서 위로 슥 올라오는 애니메이션 효과
     const countEl = document.getElementById('realtimeUserCount');
-    if(countEl) countEl.innerText = globalLiveCount.toLocaleString();
+    if (countEl) {
+        countEl.style.opacity = "0";
+        countEl.style.transform = "translateY(8px)";
+        
+        setTimeout(() => {
+            countEl.innerText = liveCount.toLocaleString();
+            countEl.style.opacity = "1";
+            countEl.style.transform = "translateY(0)";
+        }, 150);
+    }
+
+    // 5. 다음 증가 시간: 4초 ~ 8초 사이 (자연스러운 속도)
+    setTimeout(startGrowth, Math.random() * 4000 + 4000);
+}
+
+// 페이지 로드 시 즉시 실행
+window.addEventListener('load', () => {
+    // 일단 저장된 숫자(혹은 만 명)를 즉시 화면에 뿌립니다.
+    updateDisplay();
     
-    // 2초 뒤부터 조용히 올라가기 시작합니다.
-    setTimeout(runLiveCounter, 2000);
+    // 대표님 요청대로 '약 5초 뒤'부터 숫자가 올라가기 시작합니다.
+    console.log("실시간 인원 엔진: 5초 대기 중...");
+    setTimeout(() => {
+        console.log("실시간 인원 엔진: 증가 시작!");
+        startGrowth();
+    }, 5000); 
 });
     
 </script>
