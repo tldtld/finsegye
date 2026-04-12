@@ -95,85 +95,79 @@
     </div>
 
 <div style="display: flex; background: rgba(255, 255, 255, 0.05); align-items: center; border-top: 1px solid rgba(0, 255, 204, 0.2);">
-        <div onclick="alert('💡 [아이디어 뱅크]\n혁신적인 공유 경제 아이디어를 제안해주세요.')" 
-             style="flex: 1; border-right: 1.5px solid rgba(0, 255, 204, 0.2); cursor: pointer; text-align: center; color: #fff; font-size: 0.85em; height: 35px; display: flex; align-items: center; justify-content: center;">
-            💡 아이디어 뱅크
-        </div>
-        
-<div onclick="presentGemini()" 
-             style="flex: 1; cursor: pointer; text-align: center; color: #fff; font-size: 0.85em; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 204, 0.1);">
-            Q&A 
-            
-            <span style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 12px; height: 16px; margin-left: 5px; position: relative; top: -1px;">
-                <span style="width: 5px; height: 10px; background: #00ffcc; border-radius: 3px; display: block;"></span>
-                <span style="width: 1px; height: 4px; background: #00ffcc; display: block;"></span>
-                <span style="width: 6px; height: 1px; background: #00ffcc; display: block;"></span>
-            </span>
-        </div>
-
-</div> 
+    <div onclick="alert('💡 [아이디어 뱅크]\n혁신적인 공유 경제 아이디어를 제안해주세요.')" 
+         style="flex: 1; border-right: 1.5px solid rgba(0, 255, 204, 0.2); cursor: pointer; text-align: center; color: #fff; font-size: 0.85em; height: 35px; display: flex; align-items: center; justify-content: center;">
+        💡 아이디어 뱅크
+    </div>
     
+    <div onclick="presentGemini()" 
+         style="flex: 1; cursor: pointer; text-align: center; color: #fff; font-size: 0.85em; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 204, 0.1); position: relative;">
+        Q&A 
+        <div id="micVisual" style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 14px; height: 18px; margin-left: 8px; position: relative;">
+            <span id="micPulse" style="position: absolute; width: 15px; height: 15px; background: rgba(0, 255, 204, 0.6); border-radius: 50%; display: none;"></span>
+            <span style="width: 5px; height: 10px; background: #00ffcc; border-radius: 3px; z-index: 2;"></span>
+            <span style="width: 1px; height: 4px; background: #00ffcc; z-index: 2;"></span>
+            <span style="width: 6px; height: 1px; background: #00ffcc; z-index: 2;"></span>
+        </div>
+    </div>
+</div>
+
+<style>
+/* 붕붕 애니메이션 효과 */
+@keyframes micFloating {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(2.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 0; }
+}
+.mic-active { display: block !important; animation: micFloating 1.2s infinite ease-out; }
+</style>
+
 <script>
-// [시각 장애인 대응] 음성 인식 + 음성 안내(TTS) 통합 엔진
 function presentGemini() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-    
-    if (!SpeechRecognition) {
-        alert("이 브라우저는 음성 기능을 지원하지 않습니다.");
-        return;
-    }
-
-    // 1. 음성 출력 함수 (재미나이가 목소리로 읽어줌)
-    function speak(text) {
-        const msg = new SpeechSynthesisUtterance();
-        msg.text = text;
-        msg.lang = 'ko-KR'; // 한국어 목소리
-        msg.rate = 1.0;     // 읽기 속도
-        window.speechSynthesis.speak(msg);
-    }
+    const micPulse = document.getElementById('micPulse');
+    if (!SpeechRecognition) { alert("크롬 브라우저를 사용해 주세요."); return; }
 
     const recognition = new SpeechRecognition();
     recognition.lang = 'ko-KR';
+    
+    function speak(text) {
+        window.speechSynthesis.cancel(); 
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'ko-KR';
+        window.speechSynthesis.speak(msg);
+    }
 
-    // 가동 시 안내 (음성으로도 나옵니다)
-    const startMsg = "핀세계 상담 엔진 재미나이가 가동되었습니다. 무엇이든 물어보세요.";
-    alert("🎤 " + startMsg);
-    speak(startMsg);
-
-    recognition.start();
+    recognition.onstart = function() {
+        micPulse.classList.add('mic-active');
+        speak("재미나이가 가동되었습니다. 말씀하세요.");
+    };
 
     recognition.onresult = function(event) {
         const userText = event.results[0][0].transcript;
-        alert("🗣️ 질문: " + userText);
-
-        setTimeout(() => {
-            let aiResponse = "";
-            
-            // 구체적인 탭 설명 로직 추가
-            if(userText.includes("자산") || userText.includes("현황")) {
-                aiResponse = "자산 현황 탭은 현재 보유하신 행사자 수익과 소비자 배당금 합계를 보여줍니다.";
-            } else if(userText.includes("지갑") || userText.includes("설립")) {
-                aiResponse = "지갑 설립 탭은 원클릭으로 나만의 AI 지갑을 만들고 공유 경제에 참여하는 곳입니다.";
-            } else if(userText.includes("루틴")) {
-                aiResponse = "행사 루틴 탭은 매출의 20%를 배당받을 수 있는 마케팅 활동을 생성하고 기록합니다.";
-            } else if(userText.includes("배당") || userText.includes("수익")) {
-                aiResponse = "핀세계는 28년 연구된 알고리즘을 통해 모든 참가자에게 투명하고 공정한 실시간 배당을 지급하고 있습니다.";
-            } else {
-                aiResponse = "네 대표님, 핀세계 플랫폼은 시각 장애인분들도 음성으로 모든 경제 활동을 하실 수 있도록 설계되었습니다.";
-            }
-            
-            // 텍스트로 보여주고 + 실제 목소리로 읽어주기!
-            alert("🤖 [Gemini 답변]:\n" + aiResponse);
-            speak(aiResponse);
-        }, 800);
+        micPulse.classList.remove('mic-active');
+        
+        let aiResponse = "";
+        if(userText.includes("자산") || userText.includes("현황")) {
+            aiResponse = "자산 현황 탭은 행사자 수익과 소비자 배당금 합계를 실시간으로 보여줍니다.";
+        } else if(userText.includes("배당") || userText.includes("수익")) {
+            aiResponse = "핀세계는 28년 연구 알고리즘으로 공정한 실시간 배당을 지급합니다.";
+        } else if(userText.includes("지갑")) {
+            aiResponse = "지갑 설립 탭은 원클릭으로 나만의 에이아이 지갑을 만드는 곳입니다.";
+        } else {
+            aiResponse = "네 대표님, 핀세계 플랫폼은 음성으로 모든 경제 활동이 가능합니다.";
+        }
+        
+        alert("🗣️ 질문 포착: " + userText + "\n\n🤖 Gemini 답변: " + aiResponse);
+        speak(aiResponse);
     };
 
-    recognition.onerror = function() {
-        speak("마이크 인식에 실패했습니다. 다시 시도해 주세요.");
-    };
+    recognition.onend = function() { micPulse.classList.remove('mic-active'); };
+    recognition.onerror = function() { micPulse.classList.remove('mic-active'); };
+
+    recognition.start();
 }
 </script>
-
 <section id="adApplyForm"><div class="form-box"><input id="shopName" type="text" placeholder="상호명"><input id="bizType" type="text" placeholder="업종/업태"><input id="area" type="text" placeholder="행사지역"><textarea id="adText" placeholder="행사문구 입력"></textarea><button class="submitBtn" onclick="submitAd()">📩 행사 신청하기</button></div></section>
 <section id="loanApplyForm"><div class="form-box"><input id="loanName" type="text" placeholder="신청자명"><input id="loanAmount" type="number" placeholder="신청금액(만원)"><textarea id="loanPurpose" placeholder="공유목적 입력"></textarea><button class="submitBtn" onclick="submitLoan()">💰 공유 신청하기</button></div></section>
 <section id="routineForm"><div class="form-box"><input id="routineOwner" type="text" placeholder="제작자 이름"><input id="routineRegion" type="text" placeholder="적용지역"><textarea id="routineText" placeholder="루틴 내용 입력"></textarea><button class="submitBtn" onclick="submitRoutine()">🌀 루틴 생성하기</button></div></section>
