@@ -91,18 +91,27 @@
         </button>
     </div>
 
-    <div style="padding: 15px;">
-        <div onclick="openPayment()" style="cursor: pointer; text-align: center; color: #ff416c; font-weight: bold; font-size: 0.95em;">
-            💳 실시간결제 <span style="font-size: 0.8em; font-weight: normal; color: #666;">▼</span>
-        </div>
-        <div id="paymentFields" style="display: none; margin-top: 15px; text-align: center;">
-            <input id="payAmount" type="number" placeholder="결제 금액(원)" style="width: 85%; padding: 12px; border-radius: 8px; border: none; font-size: 1.1em; text-align: center; margin-bottom: 10px;">
-            <div style="display: flex; gap: 8px; justify-content: center;">
-                <button onclick="submitPayment()" style="padding: 10px 20px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold;">완료</button>
-                <button onclick="closePayment()" style="padding: 10px 20px; background: #444; color: #fff; border: none; border-radius: 8px;">취소</button>
-            </div>
+<div style="padding: 15px;">
+    <div onclick="
+        const fields = document.getElementById('paymentFields');
+        if(fields.style.display === 'block') {
+            closePayment(); // 이미 열려있으면 닫기
+        } else {
+            openPayment(); // 닫혀있으면 열기
+        }
+    " style="cursor: pointer; text-align: center; color: #ff416c; font-weight: bold; font-size: 0.95em;">
+        💳 실시간 결제 시스템 <span style="font-size: 0.8em; font-weight: normal; color: #666;">▼</span>
+    </div>
+
+    <div id="paymentFields" style="display: none; margin-top: 15px; text-align: center;">
+        <input id="payAmount" type="number" placeholder="결제 금액(원)" 
+               style="width: 85%; padding: 12px; border-radius: 8px; border: none; font-size: 1.1em; text-align: center; margin-bottom: 10px; background: #fff; color: #000; font-weight: bold;">
+        <div style="display: flex; gap: 8px; justify-content: center;">
+            <button onclick="submitPayment()" style="padding: 10px 20px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">완료</button>
+            <button onclick="closePayment()" style="padding: 10px 20px; background: #444; color: #fff; border: none; border-radius: 8px; cursor: pointer;">취소</button>
         </div>
     </div>
+</div>
 </div>
     
 <!-- // 버튼구역 끝 -->
