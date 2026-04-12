@@ -111,14 +111,55 @@
             </span>
         </div>
 
-</div> <script>
-// 내일 시연을 위한 재미나이 AI 상담 연출 함수
-function presentGemini() {
-    alert("🎤 [재미나이 AI 상담 엔진 가동]\n'핀세계'에 대해 궁금한 점을 말씀해주세요.");
+</div> 
     
-    setTimeout(() => {
-        alert("🤖 [Gemini 답변]:\n'네, 대표님! 현재 핀세계 플랫폼은 28년 연구 결실인 공유 루틴을 통해 전 지역에 실시간 배당 경제를 실현하고 있습니다.'");
-    }, 800);
+<script>
+// [진짜 가동] 재미나이 음성 인식 시연 함수 (내일 발표용)
+function presentGemini() {
+    // 1. 브라우저 음성인식 객체 가져오기
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    
+    if (!SpeechRecognition) {
+        alert("이 브라우저는 음성 인식을 지원하지 않습니다. 크롬(Chrome) 브라우저를 사용해주세요.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ko-KR'; // 한국어 인식 설정
+    recognition.interimResults = false; // 최종 결과만 확인
+
+    // 마이크 가동 알림
+    alert("🎤 [재미나이 AI가 듣고 있습니다]\n확인 버튼을 누르신 후, '핀세계'에 대해 질문을 말씀해주세요!");
+
+    recognition.start();
+
+    // 음성을 성공적으로 알아들었을 때 실행
+    recognition.onresult = function(event) {
+        const userText = event.results[0][0].transcript;
+        
+        // 대표님이 하신 말씀을 팝업으로 확인시켜줌 (신뢰도 상승!)
+        alert("🗣️ 대표님 질문 포착: \"" + userText + "\"");
+
+        // 재미나이의 분석 및 답변 연출 (1초 뒤 답변)
+        setTimeout(() => {
+            let aiResponse = "";
+            
+            // 질문에 '배당'이나 '수익'이 포함되면 관련 답변, 아니면 기본 답변
+            if(userText.includes("배당") || userText.includes("수익") || userText.includes("돈")) {
+                aiResponse = "현재 핀세계의 실시간 배당 엔진은 100% 투명하게 가동 중이며, 공유 루틴에 참여한 모든 분께 공정한 수익을 즉시 분배하고 있습니다.";
+            } else {
+                aiResponse = "네, 대표님! 28년 연구의 결실인 핀세계는 구글 재미나이와 결합하여 전 세계 어디서든 작동하는 공유 경제 플랫폼으로 도약하고 있습니다.";
+            }
+            
+            alert("🤖 [Gemini 답변]:\n'" + aiResponse + "'");
+        }, 1000);
+    };
+
+    // 오류 발생 시 안내
+    recognition.onerror = function(event) {
+        console.error("마이크 오류:", event.error);
+        alert("❌ 마이크 인식에 실패했습니다. (권한 허용을 확인해주세요)");
+    };
 }
 </script>
 
