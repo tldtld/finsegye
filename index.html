@@ -50,7 +50,7 @@
 <div id="integratedControlBox" style="width: 96%; margin: 5px auto 15px auto; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(0, 255, 204, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; top: -5px;">
     
     <div style="display: flex; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(0, 0, 0, 0.2); align-items: center;">
-        <div style="flex: 1.2; padding: 5px 10px; border-right: 1.5px solid rgba(0, 255, 204, 0.2); text-align: center;">
+        <div style="flex: 1.2; padding: 0.1px 10px; border-right: 1.5px solid rgba(0, 255, 204, 0.2); text-align: center;">
             <button onclick="toggleQR()" style="width: 100%; height: 45px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.85em;">🤝 QR입소문</button>
             <div id="qrContainer" style="display: none; margin-top: 5px; padding: 5px; background: white; border-radius: 8px;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width: 80px;">
@@ -61,13 +61,13 @@
         </div>
     </div>
 
-    <div style="padding: 1px 10px 3px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.03);">
+    <div style="padding: 0.1px 10px 3px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.03);">
         <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.onchange = function(e) { if (e.target.files.length > 0) { alert('🚀 [전문행사자 루틴생성완료]\n매출의 20% 배당 권리가 부여됩니다.'); const adv = document.getElementById('advValue'); if(adv) { let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000; adv.innerText = (cur + 5000).toLocaleString() + '원'; if(typeof renderAssetUI === 'function') renderAssetUI(); } } }; input.click(); })()" style="width: 100%; height: 50px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 10px; font-size: 0.95em; font-weight: bold; cursor: pointer; margin: 0;">
             📸 루틴사진찍기(행사자전용)
         </button>
     </div>
 
-    <div style="padding: 3px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2);">
+    <div style="padding: 0.1px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2);">
         <div onclick="const fields = document.getElementById('paymentFields'); if(fields.style.display === 'block') { closePayment(); } else { openPayment(); }" style="cursor: pointer; text-align: center; color: #ff416c; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
             💳 실시간 결제 시스템 <span style="font-size: 0.8em; margin-left:5px;">▼</span>
         </div>
@@ -80,7 +80,7 @@
         </div>
     </div>
 
-    <div style="padding: 0.5px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(161, 196, 253, 0.05);">
+    <div style="padding: 0.1px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(161, 196, 253, 0.05);">
         <div onclick="alert('🌐 [글로벌 주문 시스템 가동]\n전주에서 LA까지! 글로벌 원거리 주문 모드입니다.')" 
              style="cursor: pointer; text-align: center; color: #a1c4fd; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
             🌍 국내외주문 (GLOBAL ORDER)
