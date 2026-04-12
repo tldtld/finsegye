@@ -49,67 +49,45 @@
     <!-- // 버튼구역 시작 -->
 <div id="integratedControlBox" style="width: 96%; margin: 5px auto 15px auto; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(0, 255, 204, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; top: -5px;">
     
-    <div style="display: flex; border-bottom: 2px solid rgba(0, 255, 204, 0.2); background: rgba(0, 0, 0, 0.2); align-items: center; margin-bottom: 0.1px;">
-        <div style="flex: 1.2; padding: 0px; border-right: 2px solid rgba(0, 255, 204, 0.2); text-align: center;">
+    <div style="display: flex; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(0, 0, 0, 0.2); align-items: center;">
+        <div style="flex: 1.2; padding: 10px; border-right: 1.5px solid rgba(0, 255, 204, 0.2); text-align: center;">
             <button onclick="toggleQR()" style="width: 100%; height: 45px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.85em;">🤝 QR입소문</button>
-            <div id="qrContainer" style="display: none; margin-top: 5px; padding: 0px; background: white; border-radius: 8px;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
+            <div id="qrContainer" style="display: none; margin-top: 5px; padding: 5px; background: white; border-radius: 8px;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width: 80px;">
             </div>
         </div>
-        <div style="flex: 1; padding: 0 0px; text-align: left; display: flex; align-items: center; cursor: pointer;" onclick="toggleLiveList()">
-            <div id="realtimeUserCount" style="font-size: 1.1em; font-weight: bold; color: gold; text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); transition: all 0.3s ease-out;">
-                13,672
-            </div>
+        <div style="flex: 1; padding: 0 10px; text-align: left; display: flex; align-items: center; cursor: pointer;" onclick="toggleLiveList()">
+            <div id="realtimeUserCount" style="font-size: 1.1em; font-weight: bold; color: gold; text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); transition: all 0.3s ease-out;">13,672</div>
         </div>
     </div>
 
-    <div style="padding: 0px 0px; border-bottom: 2px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.05); margin-bottom: 2px;">
-        <button onclick="
-            (function(){
-                const input = document.createElement('input');
-                input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; 
-                input.onchange = function(e) {
-                    if (e.target.files.length > 0) {
-                        alert('🚀 [전문행사자 루틴생성완료]\n매출의 20% 배당 권리가 부여됩니다.');
-                        const adv = document.getElementById('advValue');
-                        if(adv) {
-                            let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000;
-                            adv.innerText = (cur + 5000).toLocaleString() + '원';
-                            if(typeof renderAssetUI === 'function') renderAssetUI();
-                        }
-                    }
-                };
-                input.click();
-            })()
-        " style="width: 100%; height: 55px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 1em; font-weight: bold; cursor: pointer;">
+    <div style="padding: 3px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.03);">
+        <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.onchange = function(e) { if (e.target.files.length > 0) { alert('🚀 [전문행사자 루틴생성완료]\n매출의 20% 배당 권리가 부여됩니다.'); const adv = document.getElementById('advValue'); if(adv) { let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000; adv.innerText = (cur + 5000).toLocaleString() + '원'; if(typeof renderAssetUI === 'function') renderAssetUI(); } } }; input.click(); })()" style="width: 100%; height: 50px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 10px; font-size: 0.95em; font-weight: bold; cursor: pointer;">
             📸 루틴사진찍기(행사자전용)
         </button>
     </div>
 
-    <div style="padding: 0px 0px;">
-        <div onclick="
-            const fields = document.getElementById('paymentFields');
-            if(fields.style.display === 'block') { closePayment(); } else { openPayment(); }
-        " style="cursor: pointer; text-align: center; color: #ff416c; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
+    <div style="padding: 3px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2);">
+        <div onclick="const fields = document.getElementById('paymentFields'); if(fields.style.display === 'block') { closePayment(); } else { openPayment(); }" style="cursor: pointer; text-align: center; color: #ff416c; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
             💳 실시간 결제 시스템 <span style="font-size: 0.8em; margin-left:5px;">▼</span>
         </div>
-        <div id="paymentFields" style="display: none; margin-top: 5px; text-align: center;">
-            <input id="payAmount" type="number" placeholder="금액(원)" style="width: 85%; padding: 0px; border-radius: 8px; border: none; font-size: 1em; text-align: center; margin-bottom: 8px; background: #fff; color: #000; font-weight: bold;">
-            <div style="display: flex; gap: 5px; justify-content: center; padding-bottom: 0px;">
-                <button onclick="submitPayment()" style="padding: 0px 0px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 0.85em;">완료</button>
-                <button onclick="closePayment()" style="padding: 0px 0px; background: #444; color: #fff; border: none; border-radius: 8px; font-size: 0.85em;">취소</button>
+        <div id="paymentFields" style="display: none; margin-top: 5px; text-align: center; padding-bottom: 5px;">
+            <input id="payAmount" type="number" placeholder="금액(원)" style="width: 85%; padding: 10px; border-radius: 8px; border: none; font-size: 1em; text-align: center; background: #fff; color: #000; font-weight: bold;">
+            <div style="display: flex; gap: 5px; justify-content: center; margin-top: 8px;">
+                <button onclick="submitPayment()" style="padding: 8px 15px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 0.8em;">완료</button>
+                <button onclick="closePayment()" style="padding: 8px 15px; background: #444; color: #fff; border: none; border-radius: 8px; font-size: 0.8em;">취소</button>
             </div>
         </div>
     </div>
-</div>
 
-<div style="padding: 0px 0px; border-top: 2px solid rgba(0, 255, 204, 0.2); background: rgba(0, 255, 204, 0.05);">
-    <div onclick="alert('🌐 [글로벌 주문 시스템 가동]\n--------------------------------\n국내 및 해외(LA 등) 가맹점 원거리 주문 모드를 시작합니다.\n현재 위치: 전북 전주 (접속 가능 구역)')" 
-         style="cursor: pointer; text-align: center; color: #a1c4fd; font-weight: bold; font-size: 0.95em; height: 40px; display: flex; align-items: center; justify-content: center;">
-        🌍 국내외 주문 (GLOBAL ORDER)
+    <div style="padding: 3px 10px; background: rgba(161, 196, 253, 0.05);">
+        <div onclick="alert('🌐 [글로벌 주문 시스템 가동]\n--------------------------------\n전주에서 LA까지! 글로벌 원거리 주문 모드입니다.')" 
+             style="cursor: pointer; text-align: center; color: #a1c4fd; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
+            🌍 국내외 주문 (GLOBAL ORDER)
+        </div>
     </div>
+
 </div>
-    
     
 <!-- // 버튼구역 끝 -->
     
