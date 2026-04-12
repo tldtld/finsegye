@@ -39,104 +39,73 @@
         </div>
     </div>
 
-    <div style="display: flex; gap: 8px; margin: 15px auto; width: 98%; align-items: flex-start;">
 
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-            <button onclick="toggleQR()" style="width: 100%; height: 60px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.3); cursor: pointer;">
-                🤝 QR참여
-            </button>
 
-            <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 0 15px rgba(161, 196, 253, 0.4); cursor:pointer;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_최정석" alt="QR" style="width:100%; max-width:100px; display:block; margin: 0 auto;">
-                <div style="font-size:0.65em; color:#444; font-weight:bold; margin-top:5px;">
-                    스캔 시 <br><span style="color:#ff416c;">추천인(CEO 채정석) 자동 연결</span>
-                </div>
+
+    // 버튼구역 시작
+    <div id="integratedControlBox" style="width: 96%; margin: 15px auto; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(0, 255, 204, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
+    
+    <div style="display: flex; border-bottom: 1px solid rgba(0, 255, 204, 0.2);">
+        <div style="flex: 1; padding: 15px; border-right: 1px solid rgba(0, 255, 204, 0.2); text-align: center;">
+            <button onclick="toggleQR()" style="width: 100%; height: 50px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 10px; font-weight: bold; cursor: pointer;">🤝 QR참여</button>
+            <div id="qrContainer" style="display: none; margin-top: 10px; padding: 5px; background: white; border-radius: 8px;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width: 80px;">
             </div>
         </div>
-
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-<button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; overflow: hidden;">
-    <span> 실시간</span>
-    <span id="realtimeUserCount" style="color: #fff; display: inline-block; transition: all 0.5s ease-out;">10,000</span>
-    <span>명</span>
-</button>
-            <div id="liveListContainer" style="display: none; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,204,0.3); border-radius: 12px; height: 130px;">
-                <div id="realtimeNameList" style="height: 100%; overflow-y: auto; font-size: 0.75em; color: #eee; line-height: 1.6; text-align: left;">
-                    데이터 로딩 중...
-                </div>
+        <div style="flex: 1; padding: 15px; text-align: center; display: flex; flex-direction: column; justify-content: center;">
+            <div onclick="toggleLiveList()" style="cursor: pointer; color: #00ffcc;">
+                <span style="font-size: 0.8em; display: block; margin-bottom: 5px; color: #888;">📡 실시간 참여</span>
+                <span style="font-size: 1.2em; font-weight: bold;"><span id="realtimeUserCount">10,000</span>명</span>
+            </div>
+            <div id="liveListContainer" style="display: none; margin-top: 10px; font-size: 0.7em; color: #eee; text-align: left; max-height: 60px; overflow-y: auto;">
+                <div id="realtimeNameList">데이터 로딩 중...</div>
             </div>
         </div>
-
-    </div> <div id="paymentBox" style="width: 98%; margin: 20px auto; position: relative; z-index: 10; background: rgba(255,255,255,0.1); border: 1.5px solid #00ffcc; border-radius: 12px; overflow: hidden; transition: all 0.3s ease; box-shadow: 0 -5px 15px rgba(0,255,204,0.2);">
-
-
-
-        
-
-<div style="width: 98%; margin: 10px auto;">
-    <button onclick="
-        (function(){
-            const input = document.createElement('input');
-            input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; 
-            input.onchange = function(e) {
-                if (e.target.files.length > 0) {
-                    // 1. 안내 문구
-                    alert('🚀 [전문 행사자 루틴 생성 완료]\n--------------------------------\n상호/연락처 인프라가 자산으로 등록되었습니다.\n귀하에게 매출의 20% 배당 권리가 부여됩니다.');
-
-                    // 2. 숫자 업데이트 (행사자 자산 증가)
-                    const adv = document.getElementById('advValue');
-                    const total = document.getElementById('totalValue');
-                    if(adv && total) {
-                        let curAdv = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000;
-                        let curTotal = parseInt(total.innerText.replace(/[^0-9]/g, '')) || 70000;
-                        adv.innerText = (curAdv + 5000).toLocaleString() + '원';
-                        total.innerText = (curTotal + 5000).toLocaleString() + '원';
-                        adv.style.color = '#00ffcc'; // 반짝 효과
-                        setTimeout(() => { adv.style.color = 'gold'; }, 1000);
-                    }
-
-                    // 3. 나의 현황(mypage) 내역에 강제 기록
-                    const routineList = document.getElementById('routineListDisplay');
-                    if(routineList) {
-                        const now = new Date();
-                        const timeStr = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
-                        if(routineList.innerHTML.includes('내역 없음')) routineList.innerHTML = '';
-                        const newItem = `<li style='margin-bottom:5px; border-bottom:1px solid #333; padding-bottom:3px;'>
-                                            <span style='color:gold;'>[생성]</span> 가맹점 인프라 (${timeStr})
-                                         </li>`;
-                        routineList.insertAdjacentHTML('afterbegin', newItem);
-                    }
-                }
-            };
-            input.click();
-        })()
-    " style="width: 100%; height: 60px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,215,0,0.3);">
-        📸 루틴 생성하기 (행사자 전용)
-    </button>
-</div>
-
-        
-
-
-        
-    <div onclick="openPayment()" style="height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #00ffcc; font-weight: bold; font-size: 0.9em;">
-        💳 실시간결제시스템
     </div>
 
-    <div id="paymentFields" style="display: none; padding: 0px 15px 15px 15px; border-top: 1px solid rgba(0,255,204,0.3); text-align: center;">
+    <div style="padding: 15px; border-bottom: 1px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.05);">
+        <button onclick="
+            (function(){
+                const input = document.createElement('input');
+                input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; 
+                input.onchange = function(e) {
+                    if (e.target.files.length > 0) {
+                        alert('🚀 [전문 행사자 루틴 생성 완료]\n상호/연락처 인프라가 자산으로 등록되었습니다.\n매출의 20% 배당 권리가 부여됩니다.');
+                        const adv = document.getElementById('advValue');
+                        if(adv) {
+                            let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000;
+                            adv.innerText = (cur + 5000).toLocaleString() + '원';
+                            if(typeof renderAssetUI === 'function') renderAssetUI();
+                        }
+                        const routineList = document.getElementById('routineListDisplay');
+                        if(routineList) {
+                            if(routineList.innerHTML.includes('내역 없음')) routineList.innerHTML = '';
+                            routineList.insertAdjacentHTML('afterbegin', `<li style='margin-bottom:3px; color:gold;'>✅ 가맹점 인프라 확보</li>`);
+                        }
+                    }
+                };
+                input.click();
+            })()
+        " style="width: 100%; height: 60px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,215,0,0.3);">
+            📸 루틴 생성하기 (행사자 전용)
+        </button>
+    </div>
 
-        <input id="payAmount" type="number" placeholder="결제 금액 입력 (원)"
-               style="width: 80%; padding: 12px; margin-top: -10px; border-radius: 8px; border: none; outline: none; font-size: 1.1em; text-align: center; background: #fff; color: #000; font-weight: bold;">
-
-        <div style="margin-top: 12px; display: flex; gap: 10px; justify-content: center;">
-            <button onclick="submitPayment()" style="padding: 10px 25px; background: #00ffcc; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">완료</button>
-            <button onclick="closePayment()" style="padding: 10px 25px; background: #444; color: #fff; border: none; border-radius: 8px; cursor: pointer;">취소</button>
+    <div style="padding: 15px;">
+        <div onclick="openPayment()" style="cursor: pointer; text-align: center; color: #ff416c; font-weight: bold; font-size: 0.95em;">
+            💳 실시간 결제 시스템 <span style="font-size: 0.8em; font-weight: normal; color: #666;">▼</span>
+        </div>
+        <div id="paymentFields" style="display: none; margin-top: 15px; text-align: center;">
+            <input id="payAmount" type="number" placeholder="결제 금액(원)" style="width: 85%; padding: 12px; border-radius: 8px; border: none; font-size: 1.1em; text-align: center; margin-bottom: 10px;">
+            <div style="display: flex; gap: 8px; justify-content: center;">
+                <button onclick="submitPayment()" style="padding: 10px 20px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold;">완료</button>
+                <button onclick="closePayment()" style="padding: 10px 20px; background: #444; color: #fff; border: none; border-radius: 8px;">취소</button>
+            </div>
         </div>
     </div>
 </div>
-
-    </div>
-
+// 버튼구역 끝
+    
 </section>
 
 <section id="adApplyForm"><div class="form-box"><input id="shopName" type="text" placeholder="상호명"><input id="bizType" type="text" placeholder="업종/업태"><input id="area" type="text" placeholder="행사지역"><textarea id="adText" placeholder="행사문구 입력"></textarea><button class="submitBtn" onclick="submitAd()">📩 행사 신청하기</button></div></section>
