@@ -45,26 +45,24 @@
     <!-- // 버튼구역 시작 -->
     <div id="integratedControlBox" style="width: 96%; margin: 15px auto; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(0, 255, 204, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5);">
     
-<div style="display: flex; border-bottom: 1px solid rgba(0, 255, 204, 0.2); background: rgba(0, 0, 0, 0.2);">
+<div style="display: flex; border-bottom: 1px solid rgba(0, 255, 204, 0.2); background: rgba(0, 0, 0, 0.2); align-items: center;">
     
-    <div style="flex: 1; padding: 12px; border-right: 1px solid rgba(0, 255, 204, 0.2); text-align: center;">
+    <div style="flex: 1.2; padding: 12px; border-right: 1px solid rgba(0, 255, 204, 0.2); text-align: center;">
         <button onclick="toggleQR()" style="width: 100%; height: 50px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.9em;">🤝 QR입소문</button>
         <div id="qrContainer" style="display: none; margin-top: 10px; padding: 5px; background: white; border-radius: 8px;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width: 80px;">
         </div>
     </div>
 
-    <div style="flex: 1; padding: 12px; text-align: center; display: flex; flex-direction: column; justify-content: center; cursor: pointer;" onclick="toggleLiveList()">
-        <div style="font-size: 0.6em; color: #888; margin-bottom: 2px; letter-spacing: 1px;">LIVE TOTAL</div>
-        <div id="realtimeUserCount" style="font-size: 1.5em; font-weight: bold; color: gold; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); transition: all 0.3s ease-out;">
+    <div style="flex: 1; padding: 0 10px; text-align: left; display: flex; align-items: center; cursor: pointer;" onclick="toggleLiveList()">
+        <div id="realtimeUserCount" style="font-size: 1.1em; font-weight: bold; color: gold; text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); transition: all 0.3s ease-out; white-space: nowrap;">
             13,672
         </div>
-        <div id="liveListContainer" style="display: none; margin-top: 8px; font-size: 0.7em; color: #eee; text-align: left; max-height: 50px; overflow-y: auto; background: rgba(0,0,0,0.3); padding: 5px; border-radius: 5px;">
+        <div id="liveListContainer" style="display: none; position: absolute; margin-top: 80px; width: 120px; font-size: 0.7em; color: #eee; background: rgba(0,0,0,0.8); padding: 5px; border-radius: 5px; z-index: 100;">
             <div id="realtimeNameList"></div>
         </div>
     </div>
 </div>
-
     <div style="padding: 15px; border-bottom: 1px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.05);">
         <button onclick="
             (function(){
