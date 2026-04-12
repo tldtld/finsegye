@@ -5,6 +5,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>FINSEGYE</title>
     <link rel="stylesheet" href="style.css">
+
+<style>
+/* 하단 탭 메뉴: 황금색 바탕 + 검정 글씨 정밀 복원 */
+.nav {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: #000;
+    z-index: 1000;
+    height: 55px; /* 높이 고정 */
+}
+
+.nav button {
+    flex: 1;
+    height: 100%;
+    /* 황금색 그라데이션 적용 */
+    background: linear-gradient(to bottom, #FFD700, #FFA500) !important;
+    color: #000 !important; /* 글씨 검정색 */
+    border: 0.5px solid #333 !important; /* 아주 얇은 테두리 */
+    font-size: 0.85em;
+    font-weight: bold;
+    cursor: pointer;
+    line-height: 1.2;
+    padding: 0;
+    margin: 0;
+}
+
+/* 탭 클릭 시 (활성화) 선명한 파란색으로 변경 */
+.nav button.active {
+    background: linear-gradient(to bottom, #1e90ff, #0052cc) !important;
+    color: #fff !important; /* 활성화 시 글씨 흰색 */
+}
+</style>
+
+    
 </head>
 <body style="background-color: black;">
 
