@@ -19,4 +19,39 @@ textarea {width:90%; margin:3px auto; display:block; background:#111; color:#fff
 .digital {font-family:sans-serif; font-size:0.8em; color:#00ffcc;}
 .digital span { display:block; color:white; font-size:1.3em; font-weight: bold; margin-top:5px;}
 
+/* 하단 탭 메뉴 황금색/파란색 최종 설정 */
+.nav {
+    display: flex !important;
+    position: fixed !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 60px !important;
+    background: #000 !important;
+    z-index: 9999 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+.nav button {
+    flex: 1 !important;
+    height: 100% !important;
+    background: linear-gradient(to bottom, #FFD700, #FFA500) !important; /* 황금색 */
+    color: #000 !important;
+    border: 0.5px solid #000 !important;
+    font-size: 0.85em !important;
+    font-weight: bold !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* 탭 클릭 시 파란색 변경 */
+.nav button.active {
+    background: linear-gradient(to bottom, #1e90ff, #0052cc) !important;
+    color: #fff !important;
+}
+
 
