@@ -70,7 +70,7 @@
                 input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; 
                 input.onchange = function(e) {
                     if (e.target.files.length > 0) {
-                        alert('🚀 [전문 행사자 루틴 생성 완료]\n상호/연락처 인프라가 자산으로 등록되었습니다.\n매출의 20% 배당 권리가 부여됩니다.');
+                        alert('🚀 [전문행사자 루틴생성완료]\n상호/연락처 인프라가 자산으로 등록되었습니다.\n매출의 20% 배당 권리가 부여됩니다.');
                         const adv = document.getElementById('advValue');
                         if(adv) {
                             let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000;
@@ -87,13 +87,13 @@
                 input.click();
             })()
         " style="width: 100%; height: 60px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 1em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,215,0,0.3);">
-            📸 루틴 생성하기 (행사자 전용)
+            📸 루틴QR생성(행사자전용)
         </button>
     </div>
 
     <div style="padding: 15px;">
         <div onclick="openPayment()" style="cursor: pointer; text-align: center; color: #ff416c; font-weight: bold; font-size: 0.95em;">
-            💳 실시간 결제 시스템 <span style="font-size: 0.8em; font-weight: normal; color: #666;">▼</span>
+            💳 실시간결제 <span style="font-size: 0.8em; font-weight: normal; color: #666;">▼</span>
         </div>
         <div id="paymentFields" style="display: none; margin-top: 15px; text-align: center;">
             <input id="payAmount" type="number" placeholder="결제 금액(원)" style="width: 85%; padding: 12px; border-radius: 8px; border: none; font-size: 1.1em; text-align: center; margin-bottom: 10px;">
