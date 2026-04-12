@@ -123,7 +123,15 @@ function presentGemini() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const micPulse = document.getElementById('micPulse');
     
-    if (!SpeechRecognition) { alert("크롬 브라우저를 사용해 주세요."); return; }
+    if (!SpeechRecognition) {
+        alert("크롬 브라우저를 사용해 주세요.");
+        return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ko-KR';
+    recognition.interimResults = false; // 중간 결과는 무시하고 완성된 문장만 받음
+    recognition.continuous = false;     // 한 문장이 끝나면 자동으로 멈춤
 
     function speak(text) {
         const msg = new SpeechSynthesisUtterance(text);
@@ -131,36 +139,53 @@ function presentGemini() {
         window.speechSynthesis.speak(msg);
     }
 
-    const recognition = new SpeechRecognition();
-    recognition.lang = 'ko-KR';
-
-    // 1. 시작할 때 애니메이션 켜기
+    // 1. 시작 시 로직: 팝업(Alert) 대신 목소리로만 안내하여 흐름을 유지함
     recognition.onstart = function() {
         micPulse.classList.add('mic-active');
         speak("재미나이가 가동되었습니다. 말씀하세요.");
+        console.log("음성 인식 시작됨...");
     };
 
-    // 2. 끝날 때 애니메이션 끄기
+    // 2. 음성을 알아들었을 때 로직
+    recognition.onresult = function(event) {
+        const userText = event.results[0][0].transcript;
+        // 대표님이 하신 말씀은 상단 알림으로 짧게 보여줌
+        console.log("인식된 문장: " + userText);
+        
+        micPulse.classList.remove('mic-active');
+
+        setTimeout(() => {
+            let aiResponse = "";
+            if(userText.includes("자산")) {
+                aiResponse = "자산 현황은 실시간 배당 합계를 보여주는 지표입니다.";
+            } else if(userText.includes("루틴")) {
+                aiResponse = "행사 루틴은 배당 권리를 생성하는 핵심 엔진입니다.";
+            } else if(userText.includes("지갑")) {
+                aiResponse = "AI 지갑은 원클릭으로 설립되어 공유 경제에 참여하게 합니다.";
+            } else {
+                aiResponse = "네 대표님, 핀세계는 재미나이와 함께 공유 경제의 미래를 열고 있습니다.";
+            }
+            
+            // 결과만 팝업으로 보여주고 목소리로 읽어줌
+            alert("🤖 Gemini: " + aiResponse);
+            speak(aiResponse);
+        }, 500);
+    };
+
+    // 3. 인식 실패나 종료 시 처리
+    recognition.onerror = function(event) {
+        micPulse.classList.remove('mic-active');
+        if(event.error === 'not-allowed') {
+            alert("마이크 권한을 허용해 주셔야 시연이 가능합니다.");
+        }
+    };
+
     recognition.onend = function() {
         micPulse.classList.remove('mic-active');
     };
 
+    // 실제 가동
     recognition.start();
-
-    recognition.onresult = function(event) {
-        const userText = event.results[0][0].transcript;
-        alert("🗣️ 질문 포착: " + userText);
-
-        setTimeout(() => {
-            let aiResponse = "";
-            if(userText.includes("자산")) aiResponse = "자산 현황은 실시간 배당 합계를 보여주는 지표입니다.";
-            else if(userText.includes("루틴")) aiResponse = "행사 루틴은 20% 배당 권리를 생성하는 핵심 엔진입니다.";
-            else aiResponse = "네 대표님, 핀세계는 구글 재미나이와 함께 공유 경제의 미래를 열고 있습니다.";
-            
-            alert("🤖 [Gemini 답변]:\n" + aiResponse);
-            speak(aiResponse);
-        }, 500);
-    };
 }
 </script>
 
