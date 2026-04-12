@@ -50,19 +50,19 @@
 <div id="integratedControlBox" style="width: 96%; margin: 5px auto 15px auto; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(0, 255, 204, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; top: -5px;">
     
     <div style="display: flex; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(0, 0, 0, 0.2); align-items: center;">
-        <div style="flex: 1.2; padding: 10px; border-right: 1.5px solid rgba(0, 255, 204, 0.2); text-align: center;">
+        <div style="flex: 1.2; padding: 5px 10px; border-right: 1.5px solid rgba(0, 255, 204, 0.2); text-align: center;">
             <button onclick="toggleQR()" style="width: 100%; height: 45px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.85em;">🤝 QR입소문</button>
             <div id="qrContainer" style="display: none; margin-top: 5px; padding: 5px; background: white; border-radius: 8px;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
                 <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width: 80px;">
             </div>
         </div>
-        <div style="flex: 1; padding: 0 0px; text-align: left; display: flex; align-items: center; cursor: pointer;" onclick="toggleLiveList()">
+        <div style="flex: 1; padding: 0 10px; text-align: left; display: flex; align-items: center; cursor: pointer;" onclick="toggleLiveList()">
             <div id="realtimeUserCount" style="font-size: 1.1em; font-weight: bold; color: gold; text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); transition: all 0.3s ease-out;">13,672</div>
         </div>
     </div>
 
-    <div style="padding: 0px 0px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.03);">
-        <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.onchange = function(e) { if (e.target.files.length > 0) { alert('🚀 [전문행사자 루틴생성완료]\n매출의 20% 배당 권리가 부여됩니다.'); const adv = document.getElementById('advValue'); if(adv) { let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000; adv.innerText = (cur + 5000).toLocaleString() + '원'; if(typeof renderAssetUI === 'function') renderAssetUI(); } } }; input.click(); })()" style="width: 100%; height: 50px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 10px; font-size: 0.95em; font-weight: bold; cursor: pointer;">
+    <div style="padding: 1px 10px 3px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.03);">
+        <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.onchange = function(e) { if (e.target.files.length > 0) { alert('🚀 [전문행사자 루틴생성완료]\n매출의 20% 배당 권리가 부여됩니다.'); const adv = document.getElementById('advValue'); if(adv) { let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000; adv.innerText = (cur + 5000).toLocaleString() + '원'; if(typeof renderAssetUI === 'function') renderAssetUI(); } } }; input.click(); })()" style="width: 100%; height: 50px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 10px; font-size: 0.95em; font-weight: bold; cursor: pointer; margin: 0;">
             📸 루틴사진찍기(행사자전용)
         </button>
     </div>
@@ -83,19 +83,30 @@
     <div style="padding: 0px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(161, 196, 253, 0.05);">
         <div onclick="alert('🌐 [글로벌 주문 시스템 가동]\n전주에서 LA까지! 글로벌 원거리 주문 모드입니다.')" 
              style="cursor: pointer; text-align: center; color: #a1c4fd; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
-            🌍 국내외주문
+            🌍 국내외주문 (GLOBAL ORDER)
         </div>
     </div>
 
     <div style="padding: 0px 10px; background: rgba(255, 0, 255, 0.05);">
         <div onclick="alert('🤖 [AI 재테크 엔진 가동]\n실시간 배당 및 AI 자동 자산 운용을 시작합니다.')" 
              style="cursor: pointer; text-align: center; color: #ff00ff; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
-            📈 AI 재테크
+            📈 AI 재테크 (AI ASSET MANAGEMENT)
         </div>
     </div>
 
-</div>
+</div> ```
 
+---
+
+### 🔍 무엇이 문제였나요?
+
+1.  **닫히지 않은 울타리:** 맨 마지막에 `</div>`가 하나 빠지는 바람에, 브라우저가 "아, 아직 버튼 박스가 안 끝났구나!"라고 생각해서 하단에 있는 모든 메뉴를 그 박스 안에 넣어버린 것입니다.
+2.  **생략된 코드:** 제가 설명 편의상 1~2층 코드만 보여드렸는데, 대표님이 그걸 그대로 복사하시면서 3~5층 코드가 통째로 날아갔던 것이죠.
+
+### 💡 전문가의 팁
+앞으로 코드를 수정하실 때는 반드시 **열린 태그와 닫힌 태그의 짝**이 맞는지 확인해 보세요. 지금 드린 전체 코드를 넣으시면 0.5mm 간격 조정도 유지되면서 사라졌던 하단 탭들도 반갑게 다시 나타날 겁니다.
+
+지금 바로 적용해 보세요! 모든 게 정상으로 돌아올 겁니다. **고고고!** 입니다!
 
 
     
