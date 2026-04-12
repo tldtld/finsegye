@@ -5,45 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>FINSEGYE</title>
     <link rel="stylesheet" href="style.css">
-
-<style>
-/* 하단 탭 메뉴: 황금색 바탕 + 검정 글씨 정밀 복원 */
-.nav {
-    display: flex;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background: #000; /* 배경은 검정 */
-    z-index: 1000;
-    height: 55px; /* 높이 고정 */
-    box-shadow: 0 -2px 10px rgba(255, 215, 0, 0.3); /* 상단에 은은한 황금빛 그림자 */
-}
-
-.nav button {
-    flex: 1;
-    height: 100%;
-    /* ★ 빨간색 제거 -> 리얼 황금색 그라데이션 적용 */
-    background: linear-gradient(to bottom, #FFD700 0%, #FFA500 100%) !important;
-    color: #000 !important; /* 글씨 검정색 */
-    border: 0.5px solid #333 !important; /* 아주 얇은 테두리 */
-    font-size: 0.85em;
-    font-weight: bold;
-    cursor: pointer;
-    line-height: 1.2;
-    padding: 0;
-    margin: 0;
-    transition: all 0.2s; /* 부드러운 전환 */
-}
-
-/* 탭 클릭 시 (활성화) 파란색으로 변경 */
-.nav button.active {
-    background: linear-gradient(to bottom, #1e90ff, #0052cc) !important;
-    color: #fff !important; /* 흰색 글씨 */
-}
-</style>
-
-    
 </head>
 <body style="background-color: black;">
 
@@ -514,5 +475,61 @@ window.addEventListener('load', () => {
 });
     
 </script>
+
+
+<style>
+    .nav {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100% !important;
+        height: 60px !important;
+        background: #000 !important;
+        z-index: 9999 !important; /* 최상단으로 올림 */
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .nav button {
+        flex: 1 !important;
+        height: 100% !important;
+        /* ★ 리얼 황금색 그라데이션 ★ */
+        background: linear-gradient(to bottom, #FFD700, #FFA500) !important;
+        color: #000 !important;
+        border: 0.5px solid #000 !important;
+        font-size: 0.85em !important;
+        font-weight: bold !important;
+        cursor: pointer !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+    }
+
+    /* 탭 클릭 시 파란색 변경 */
+    .nav button.active {
+        background: linear-gradient(to bottom, #1e90ff, #0052cc) !important;
+        color: #fff !important;
+    }
+</style>
+
+<div class="nav">
+    <button onclick="showSection('dashboard', this)" id="btn-dashboard" class="active">자산<br>현황</button>
+    <button onclick="showSection('adApplyForm', this)" id="btn-adApplyForm">행사<br>신청</button>
+    <button onclick="showSection('loanApplyForm', this)" id="btn-loanApplyForm">공유<br>신청</button>
+    <button onclick="showSection('routineForm', this)" id="btn-routineForm">행사<br>루틴</button>
+    <button onclick="showSection('bankForm', this)" id="btn-bankForm">지갑<br>설립</button>
+    <button onclick="showSection('mypage', this)" id="btn-mypage">나의<br>현황</button>
+</div>
+
+
+
+
+
+
+
+
+    
 </body>
 </html>
