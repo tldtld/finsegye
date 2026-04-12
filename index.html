@@ -69,6 +69,56 @@
 
     </div> <div id="paymentBox" style="width: 98%; margin: 20px auto; position: relative; z-index: 10; background: rgba(255,255,255,0.1); border: 1.5px solid #00ffcc; border-radius: 12px; overflow: hidden; transition: all 0.3s ease; box-shadow: 0 -5px 15px rgba(0,255,204,0.2);">
 
+
+
+        
+
+<div style="width: 98%; margin: 10px auto;">
+    <button onclick="
+        (function(){
+            const input = document.createElement('input');
+            input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; 
+            input.onchange = function(e) {
+                if (e.target.files.length > 0) {
+                    // 1. 안내 문구
+                    alert('🚀 [전문 행사자 루틴 생성 완료]\n--------------------------------\n상호/연락처 인프라가 자산으로 등록되었습니다.\n귀하에게 매출의 20% 배당 권리가 부여됩니다.');
+
+                    // 2. 숫자 업데이트 (행사자 자산 증가)
+                    const adv = document.getElementById('advValue');
+                    const total = document.getElementById('totalValue');
+                    if(adv && total) {
+                        let curAdv = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000;
+                        let curTotal = parseInt(total.innerText.replace(/[^0-9]/g, '')) || 70000;
+                        adv.innerText = (curAdv + 5000).toLocaleString() + '원';
+                        total.innerText = (curTotal + 5000).toLocaleString() + '원';
+                        adv.style.color = '#00ffcc'; // 반짝 효과
+                        setTimeout(() => { adv.style.color = 'gold'; }, 1000);
+                    }
+
+                    // 3. 나의 현황(mypage) 내역에 강제 기록
+                    const routineList = document.getElementById('routineListDisplay');
+                    if(routineList) {
+                        const now = new Date();
+                        const timeStr = now.getHours() + ':' + now.getMinutes().toString().padStart(2, '0');
+                        if(routineList.innerHTML.includes('내역 없음')) routineList.innerHTML = '';
+                        const newItem = `<li style='margin-bottom:5px; border-bottom:1px solid #333; padding-bottom:3px;'>
+                                            <span style='color:gold;'>[생성]</span> 가맹점 인프라 (${timeStr})
+                                         </li>`;
+                        routineList.insertAdjacentHTML('afterbegin', newItem);
+                    }
+                }
+            };
+            input.click();
+        })()
+    " style="width: 100%; height: 60px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; cursor: pointer; box-shadow: 0 4px 10px rgba(255,215,0,0.3);">
+        📸 루틴 생성하기 (행사자 전용)
+    </button>
+</div>
+
+        
+
+
+        
     <div onclick="openPayment()" style="height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #00ffcc; font-weight: bold; font-size: 0.9em;">
         💳 실시간결제시스템
     </div>
