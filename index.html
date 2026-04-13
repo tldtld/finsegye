@@ -172,30 +172,33 @@
 <script>
     var isMypageExpanded = false;
 
-    // [1] 화면 전환 함수 (자판기 감지 이름표 제거 포함)
-    function showSection(sectionId, btn) {
-        document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    // [원스토어 검증 통과용 강제 화면 전환 함수]
+function showSection(sectionId, btn) {
+    // 1. 모든 section 태그를 찾아서 강제로 숨김
+    var sections = document.getElementsByTagName('section');
+    for (var i = 0; i < sections.length; i++) {
+        sections[i].style.setProperty('display', 'none', 'important');
+    }
 
-        const target = document.getElementById(sectionId);
-        if(target) target.style.display = 'block';
-        if(btn) btn.classList.add('active');
+    // 2. 모든 내비게이션 버튼의 불을 끔
+    var buttons = document.querySelectorAll('.nav button');
+    buttons.forEach(function(b) { b.classList.remove('active'); });
 
-        if(sectionId === 'mypage') {
-            isMypageExpanded = !isMypageExpanded;
-            if(typeof forceUpdateAll === "function") forceUpdateAll();
-        } else {
-            isMypageExpanded = false;
-        }
-
-        // 입력 폼 첫 칸 포커스 (지갑설립 제외)
-        const focusMap = { 'adApplyForm': 'shopName', 'loanApplyForm': 'loanName', 'routineForm': 'routineOwner' };
-        if (focusMap[sectionId]) document.getElementById(focusMap[sectionId]).focus();
-        
-        // 화면 이동 시 자판기 흔적 제거
+    // 3. 목적지 섹션만 "강제로" 노출 (이게 핵심입니다)
+    var target = document.getElementById(sectionId);
+    if (target) {
+        target.style.setProperty('display', 'block', 'important');
         window.scrollTo(0, 0);
     }
 
+    // 4. 클릭한 버튼에 불 켜기
+    if (btn) btn.classList.add('active');
+    
+    // [추가] 나의 현황(mypage)일 경우 데이터 갱신 함수 실행
+    if (sectionId === 'mypage' && typeof forceUpdateAll === "function") {
+        forceUpdateAll();
+    }
+}
 // AI 지갑 설립 완료 함수 (클릭 시 메인 화면으로 즉시 이동)
 function submitBank() {
     const name = document.getElementById('bankName');
