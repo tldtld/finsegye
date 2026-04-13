@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -17,78 +18,157 @@
 </div>
 
 <div class="top-spacer"></div>
-<section id="dashboard" style="display:block; padding-top: 3px; margin-top: 0px;">
-    <div class="asset-wrapper" style="margin-top:10px;">
+    <!-- // 행사자 페딩 -->
+<section id="dashboard" style="display:block; padding-top: 16px; margin-top: 0px;">
+    <div class="asset-wrapper" style="margin-top:0px;">
         <div class="digital">행사자<br><span id="advValue">50,000원</span></div>
         <div class="digital">소비자<br><span id="consValue">20,000원</span></div>
     </div>
-<div style="font-size:1.4em; margin:0px 0; color:gold; font-weight:bold; border-bottom:1px solid #333; padding-bottom:10px; text-align:center;">
+    <!-- // 합계 페딩 -->
+<div style="font-size:1.4em; margin:0px 0; color:gold; font-weight:bold; border-bottom:1px solid #333; padding-bottom:0px; text-align:center;">
     <span>합계: <span id="totalValue">70,000원</span></span>
     
     <button onclick="if(confirm('수치를 초기화할까요?')) resetEconomy();" 
             style="display: inline-block; vertical-align: middle; margin-left: 5px; background: rgba(255,255,255,0.05); border: 1px solid #555; color: #777; font-size: 10px; padding: 1px 4px; border-radius: 3px; cursor: pointer; height: 18px;">
         RESET
     </button>
+    
 
 
-    <div id="aiSignalBox" style="margin: 0px auto; padding: 8px 5px; border: 1.5px solid #ff00ff; border-radius: 8px; background: rgba(255,0,255,0.1); width: 90%; height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+    <div id="aiSignalBox" style="margin: 0px auto; padding: 0px 0px; border: 1.5px solid #ff00ff; border-radius: 8px; background: rgba(255,0,255,0.1); width: 90%; height: 60px; display: flex; flex-direction: column; justify-content: center; align-items: center;">
         <div style="font-size: 11px; color: #ff00ff; font-weight: bold; margin-bottom: 4px;">📡 AI 딥러닝 투자 포착</div>
         <div id="signalDisplay" style="display:flex; justify-content:center; align-items:center; gap:6px;">
             <div id="assetName" style="font-size: 13px; color: #fff; font-weight: bold;">시장 분석 중...</div>
-            <div id="actionType" style="font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: bold; background: #444;">대기</div>
+            <div id="actionType" style="font-size: 10px; padding: 0px 0px; border-radius: 10px; font-weight: bold; background: #444;">대기</div>
         </div>
     </div>
 
-    <div style="display: flex; gap: 8px; margin: 15px auto; width: 98%; align-items: flex-start;">
 
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-            <button onclick="toggleQR()" style="width: 100%; height: 60px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 12px; font-size: 0.9em; font-weight: bold; box-shadow: 0 4px 8px rgba(0,0,0,0.3); cursor: pointer;">
-                🤝 QR참여
-            </button>
 
-            <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 0 15px rgba(161, 196, 253, 0.4); cursor:pointer;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_최정석" alt="QR" style="width:100%; max-width:100px; display:block; margin: 0 auto;">
-                <div style="font-size:0.65em; color:#444; font-weight:bold; margin-top:5px;">
-                    스캔 시 <br><span style="color:#ff416c;">추천인(CEO 채정석) 자동 연결</span>
-                </div>
+    
+
+    <!-- // 버튼구역 시작 -->
+<div id="integratedControlBox" style="width: 96%; margin: 5px auto 15px auto; background: rgba(255, 255, 255, 0.05); border: 1.5px solid rgba(0, 255, 204, 0.3); border-radius: 15px; overflow: hidden; box-shadow: 0 4px 15px rgba(0,0,0,0.5); position: relative; top: -5px;">
+    
+    <div style="display: flex; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(0, 0, 0, 0.2); align-items: center;">
+        <div style="flex: 1.2; padding: 5px 10px; border-right: 1.5px solid rgba(0, 255, 204, 0.2); text-align: center;">
+            <button onclick="toggleQR()" style="width: 100%; height: 45px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb); color: #222; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 0.85em;">🤝 QR입소문</button>
+            <div id="qrContainer" style="display: none; margin-top: 5px; padding: 5px; background: white; border-radius: 8px;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
+                <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_채정석" style="width: 80px;">
             </div>
         </div>
-
-        <div style="flex: 1; display: flex; flex-direction: column; gap: 8px;">
-<button onclick="toggleLiveList()" style="width: 100%; height: 60px; background: rgba(0, 255, 204, 0.1); border: 1.5px solid #00ffcc; color: #00ffcc; border-radius: 12px; font-size: 0.85em; font-weight: bold; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 5px; overflow: hidden;">
-    <span> 실시간</span>
-    <span id="realtimeUserCount" style="color: #fff; display: inline-block; transition: all 0.5s ease-out;">10,000</span>
-    <span>명</span>
-</button>
-            <div id="liveListContainer" style="display: none; padding: 10px; background: rgba(255,255,255,0.05); border: 1px solid rgba(0,255,204,0.3); border-radius: 12px; height: 130px;">
-                <div id="realtimeNameList" style="height: 100%; overflow-y: auto; font-size: 0.75em; color: #eee; line-height: 1.6; text-align: left;">
-                    데이터 로딩 중...
-                </div>
-            </div>
+        <div style="flex: 1; padding: 0 10px; text-align: left; display: flex; align-items: center; cursor: pointer;" onclick="toggleLiveList()">
+            <div id="realtimeUserCount" style="font-size: 1.1em; font-weight: bold; color: gold; text-shadow: 0 0 8px rgba(255, 215, 0, 0.6); transition: all 0.3s ease-out;">13,672</div>
         </div>
-
-    </div> <div id="paymentBox" style="width: 98%; margin: 20px auto; position: relative; z-index: 10; background: rgba(255,255,255,0.1); border: 1.5px solid #00ffcc; border-radius: 12px; overflow: hidden; transition: all 0.3s ease; box-shadow: 0 -5px 15px rgba(0,255,204,0.2);">
-
-    <div onclick="openPayment()" style="height: 50px; display: flex; justify-content: center; align-items: center; cursor: pointer; color: #00ffcc; font-weight: bold; font-size: 0.9em;">
-        💳 실시간결제시스템
     </div>
 
-    <div id="paymentFields" style="display: none; padding: 0px 15px 15px 15px; border-top: 1px solid rgba(0,255,204,0.3); text-align: center;">
+    <div style="padding: 1px 10px 3px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(255, 215, 0, 0.03);">
+        <button onclick="(function(){ const input = document.createElement('input'); input.type = 'file'; input.accept = 'image/*'; input.capture = 'camera'; input.onchange = function(e) { if (e.target.files.length > 0) { alert('🚀 [전문행사자 루틴생성완료]\n매출의 20% 배당 권리가 부여됩니다.'); const adv = document.getElementById('advValue'); if(adv) { let cur = parseInt(adv.innerText.replace(/[^0-9]/g, '')) || 50000; adv.innerText = (cur + 5000).toLocaleString() + '원'; if(typeof renderAssetUI === 'function') renderAssetUI(); } } }; input.click(); })()" style="width: 100%; height: 50px; background: linear-gradient(135deg, #FFD700, #FFA500); color: #000; border: none; border-radius: 10px; font-size: 0.95em; font-weight: bold; cursor: pointer; margin: 0;">
+            📸 루틴사진찍기(행사자전용)
+        </button>
+    </div>
 
-        <input id="payAmount" type="number" placeholder="결제 금액 입력 (원)"
-               style="width: 80%; padding: 12px; margin-top: -10px; border-radius: 8px; border: none; outline: none; font-size: 1.1em; text-align: center; background: #fff; color: #000; font-weight: bold;">
+    <div style="padding: 3px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2);">
+        <div onclick="const fields = document.getElementById('paymentFields'); if(fields.style.display === 'block') { closePayment(); } else { openPayment(); }" style="cursor: pointer; text-align: center; color: #ff416c; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
+            💳 실시간 결제 시스템 <span style="font-size: 0.8em; margin-left:5px;">▼</span>
+        </div>
+        <div id="paymentFields" style="display: none; margin-top: 5px; text-align: center; padding-bottom: 5px;">
+            <input id="payAmount" type="number" placeholder="금액(원)" style="width: 85%; padding: 10px; border-radius: 8px; border: none; font-size: 1em; text-align: center; background: #fff; color: #000; font-weight: bold;">
+            <div style="display: flex; gap: 5px; justify-content: center; margin-top: 8px;">
+                <button onclick="submitPayment()" style="padding: 8px 15px; background: #ff416c; color: #fff; border: none; border-radius: 8px; font-weight: bold; font-size: 0.8em;">완료</button>
+                <button onclick="closePayment()" style="padding: 8px 15px; background: #444; color: #fff; border: none; border-radius: 8px; font-size: 0.8em;">취소</button>
+            </div>
+        </div>
+    </div>
 
-        <div style="margin-top: 12px; display: flex; gap: 10px; justify-content: center;">
-            <button onclick="submitPayment()" style="padding: 10px 25px; background: #00ffcc; color: #000; border: none; border-radius: 8px; font-weight: bold; cursor: pointer;">완료</button>
-            <button onclick="closePayment()" style="padding: 10px 25px; background: #444; color: #fff; border: none; border-radius: 8px; cursor: pointer;">취소</button>
+    <div style="padding: 0px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(161, 196, 253, 0.05);">
+        <div onclick="alert('🌐 [글로벌 주문 시스템 가동]\n전주에서 LA까지 글로벌 주문 모드입니다.')" 
+             style="cursor: pointer; text-align: center; color: #a1c4fd; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
+            🌍 국내외주문 (GLOBAL ORDER)
+        </div>
+    </div>
+
+    <div style="padding: 0px 10px; border-bottom: 1.5px solid rgba(0, 255, 204, 0.2); background: rgba(255, 0, 255, 0.05);">
+        <div onclick="alert('🤖 [AI 재테크 엔진 가동]\n실시간 배당 및 AI 자동 자산 운용을 시작합니다.')" 
+             style="cursor: pointer; text-align: center; color: #ff00ff; font-weight: bold; font-size: 0.9em; height: 35px; display: flex; align-items: center; justify-content: center;">
+            📈 AI 재테크 (AI ASSET)
+        </div>
+    </div>
+
+<div style="display: flex; background: rgba(255, 255, 255, 0.05); align-items: center; border-top: 1px solid rgba(0, 255, 204, 0.2);">
+    <div onclick="alert('💡 [아이디어 뱅크]\n혁신적인 공유 경제 아이디어를 제안해주세요.')" 
+         style="flex: 1; border-right: 1.5px solid rgba(0, 255, 204, 0.2); cursor: pointer; text-align: center; color: #fff; font-size: 0.85em; height: 35px; display: flex; align-items: center; justify-content: center;">
+        💡 아이디어 뱅크
+    </div>
+    
+    <div onclick="presentGemini()" 
+         style="flex: 1; cursor: pointer; text-align: center; color: #fff; font-size: 0.85em; height: 35px; display: flex; align-items: center; justify-content: center; background: rgba(0, 255, 204, 0.1); position: relative;">
+        Q&A 
+        <div id="micVisual" style="display: inline-flex; flex-direction: column; align-items: center; justify-content: center; width: 14px; height: 18px; margin-left: 8px; position: relative;">
+            <span id="micPulse" style="position: absolute; width: 15px; height: 15px; background: rgba(0, 255, 204, 0.6); border-radius: 50%; display: none;"></span>
+            <span style="width: 5px; height: 10px; background: #00ffcc; border-radius: 3px; z-index: 2;"></span>
+            <span style="width: 1px; height: 4px; background: #00ffcc; z-index: 2;"></span>
+            <span style="width: 6px; height: 1px; background: #00ffcc; z-index: 2;"></span>
         </div>
     </div>
 </div>
 
-    </div>
+<style>
+/* 붕붕 애니메이션 효과 */
+@keyframes micFloating {
+    0% { transform: scale(1); opacity: 0.8; }
+    50% { transform: scale(2.5); opacity: 0; }
+    100% { transform: scale(1); opacity: 0; }
+}
+.mic-active { display: block !important; animation: micFloating 1.2s infinite ease-out; }
+</style>
 
-</section>
+<script>
+function presentGemini() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const micPulse = document.getElementById('micPulse');
+    if (!SpeechRecognition) { alert("크롬 브라우저를 사용해 주세요."); return; }
 
+    const recognition = new SpeechRecognition();
+    recognition.lang = 'ko-KR';
+    
+    function speak(text) {
+        window.speechSynthesis.cancel(); 
+        const msg = new SpeechSynthesisUtterance(text);
+        msg.lang = 'ko-KR';
+        window.speechSynthesis.speak(msg);
+    }
+
+    recognition.onstart = function() {
+        micPulse.classList.add('mic-active');
+        speak("재미나이가 가동되었습니다. 말씀하세요.");
+    };
+
+    recognition.onresult = function(event) {
+        const userText = event.results[0][0].transcript;
+        micPulse.classList.remove('mic-active');
+        
+        let aiResponse = "";
+        if(userText.includes("자산") || userText.includes("현황")) {
+            aiResponse = "자산 현황 탭은 행사자 수익과 소비자 배당금 합계를 실시간으로 보여줍니다.";
+        } else if(userText.includes("배당") || userText.includes("수익")) {
+            aiResponse = "핀세계는 28년 연구 알고리즘으로 공정한 실시간 배당을 지급합니다.";
+        } else if(userText.includes("지갑")) {
+            aiResponse = "지갑 설립 탭은 원클릭으로 나만의 에이아이 지갑을 만드는 곳입니다.";
+        } else {
+            aiResponse = "네 대표님, 핀세계 플랫폼은 음성으로 모든 경제 활동이 가능합니다.";
+        }
+        
+        alert("🗣️ 질문 포착: " + userText + "\n\n🤖 Gemini 답변: " + aiResponse);
+        speak(aiResponse);
+    };
+
+    recognition.onend = function() { micPulse.classList.remove('mic-active'); };
+    recognition.onerror = function() { micPulse.classList.remove('mic-active'); };
+
+    recognition.start();
+}
+</script>
 <section id="adApplyForm"><div class="form-box"><input id="shopName" type="text" placeholder="상호명"><input id="bizType" type="text" placeholder="업종/업태"><input id="area" type="text" placeholder="행사지역"><textarea id="adText" placeholder="행사문구 입력"></textarea><button class="submitBtn" onclick="submitAd()">📩 행사 신청하기</button></div></section>
 <section id="loanApplyForm"><div class="form-box"><input id="loanName" type="text" placeholder="신청자명"><input id="loanAmount" type="number" placeholder="신청금액(만원)"><textarea id="loanPurpose" placeholder="공유목적 입력"></textarea><button class="submitBtn" onclick="submitLoan()">💰 공유 신청하기</button></div></section>
 <section id="routineForm"><div class="form-box"><input id="routineOwner" type="text" placeholder="제작자 이름"><input id="routineRegion" type="text" placeholder="적용지역"><textarea id="routineText" placeholder="루틴 내용 입력"></textarea><button class="submitBtn" onclick="submitRoutine()">🌀 루틴 생성하기</button></div></section>
@@ -98,7 +178,7 @@
 
 
 <section id="bankForm">
-    <div class="form-box" style="padding: 15px; border: 1px solid rgba(255, 215, 0, 0.3); background: rgba(255, 255, 255, 0.03); width: 90%; max-width: 320px; margin: 0 auto; border-radius: 12px;">
+    <div class="form-box" style="padding: 0px; border: 1px solid rgba(255, 215, 0, 0.3); background: rgba(255, 255, 255, 0.03); width: 90%; max-width: 320px; margin: 0 auto; border-radius: 12px;">
         <h3 style="color: gold; font-size: 1.1em; margin-top: 5px; margin-bottom: 5px;">🏦 AI 지갑 설립</h3>
         <p style="font-size: 0.75em; color: #aaa; margin-bottom: 15px;">정보 입력 없이 원클릭으로 가입하세요.</p>
 
@@ -147,7 +227,7 @@
 
 <section id="mypage" style="display:none; padding: 0px 3px; margin-top: 20px;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 0;">
-        <div style="padding:10px 8px; background:rgba(255,255,255,0.05); border-radius:4px; border-top:2px solid gold;"><h4 style="margin:0 0 3px 0; font-size:0.75em; color:gold; letter-spacing:-0.5px;">🏦 AI 지갑설립</h4><div id="walletDisplay" style="font-size:0.75em; color:#ccc; line-height:1.2;">내역 없음</div></div>
+        <div style="padding:10px 8px; background:rgba(255,255,255,0.05); border-radius:4px; border-top:2px solid gold;"><h4 style="margin:0 0 3px 0; font-size:0.75em; color:gold; letter-spacing:-0.5px;">🏦 AI 지갑설립</h4><div id="walletDisplay" style="font-size:0.75em; color:#ccc; line-height:-1;">내역 없음</div></div>
         <div style="padding:10px 8px; background:rgba(255,255,255,0.05); border-radius:4px; border-top:2px solid #ff00ff;"><h4 style="margin:0 0 3px 0; font-size:0.75em; color:#ff00ff; letter-spacing:-0.5px;">📢 행사신청내역</h4><ul id="adListDisplay" style="margin:0; padding:0; font-size:0.72em; color:#ccc; list-style:none;">내역 없음</ul></div>
         <div style="padding:10px 8px; background:rgba(255,255,255,0.05); border-radius:4px; border-top:2px solid #ff9900;"><h4 style="margin:0 0 3px 0; font-size:0.75em; color:#ff9900; letter-spacing:-0.5px;">💰 공유신청내역</h4><ul id="loanListDisplay" style="margin:0; padding:0; font-size:0.72em; color:#ccc; list-style:none;">내역 없음</ul></div>
         <div style="padding:10px 8px; background:rgba(255,255,255,0.05); border-radius:4px; border-top:2px solid #cc99ff;"><h4 style="margin:0 0 3px 0; font-size:0.75em; color:#cc99ff; letter-spacing:-0.5px;">🌀 행사루틴내역</h4><ul id="routineListDisplay" style="margin:0; padding:0; font-size:0.72em; color:#ccc; list-style:none;">내역 없음</ul></div>
@@ -409,29 +489,30 @@ function updateDisplay() {
     }
 }
 
+/* 📈 2초 간격 실시간 인원 엔진 */
 function startGrowth() {
-    // 2. 무조건 1~2명씩만 증가 (뒤로 가기 없음)
-    const growth = Math.floor(Math.random() * 2) + 1;
+    // 1. 숫자를 1~3명씩 더 활발하게 증가
+    const growth = Math.floor(Math.random() * 3) + 1;
     liveCount += growth;
 
-    // 3. 증가한 숫자를 브라우저에 즉시 저장
+    // 2. 브라우저 저장
     localStorage.setItem('fin_live_users_v3', liveCount);
 
-    // 4. 아래에서 위로 슥 올라오는 애니메이션 효과
+    // 3. 숫자가 바뀔 때 살짝 커졌다가 돌아오는 효과
     const countEl = document.getElementById('realtimeUserCount');
     if (countEl) {
-        countEl.style.opacity = "0";
-        countEl.style.transform = "translateY(8px)";
+        countEl.innerText = liveCount.toLocaleString();
+        countEl.style.transform = "scale(1.1)";
+        countEl.style.color = "#fff"; // 순간적으로 흰색으로 반짝
         
         setTimeout(() => {
-            countEl.innerText = liveCount.toLocaleString();
-            countEl.style.opacity = "1";
-            countEl.style.transform = "translateY(0)";
-        }, 150);
+            countEl.style.transform = "scale(1)";
+            countEl.style.color = "gold"; // 다시 황금색으로 복귀
+        }, 300);
     }
 
-    // 5. 다음 증가 시간: 4초 ~ 8초 사이 (자연스러운 속도)
-    setTimeout(startGrowth, Math.random() * 4000 + 4000);
+    // 4. 정확히 2초(2000ms) 간격으로 무한 실행
+    setTimeout(startGrowth, 2000); 
 }
 
 // 페이지 로드 시 즉시 실행
