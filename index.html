@@ -260,62 +260,10 @@ function presentGemini() {
             setInterval(triggerAiInvestmentSignal, 10000);
         }
     });
+
+
+    
 </script>
-    // [1] 화면 전환 강제 실행 함수 (이게 안 되면 앱이 죽습니다)
-    window.showSection = function(sectionId, btn) {
-        console.log("화면 전환 시도: " + sectionId); // 브라우저 검사용 로그
 
-        // 1. 모든 섹션을 예외 없이 숨김 (강제성 부여)
-        var sections = document.getElementsByTagName('section');
-        for (var i = 0; i < sections.length; i++) {
-            sections[i].style.display = 'none';
-        }
-
-        // 2. 모든 내비 버튼 불 끄기
-        var buttons = document.querySelectorAll('.nav button');
-        buttons.forEach(function(b) { b.classList.remove('active'); });
-
-        // 3. 목적지 섹션 노출
-        var target = document.getElementById(sectionId);
-        if (target) {
-            target.style.display = 'block';
-            window.scrollTo(0, 0);
-        } else {
-            console.error("오류: " + sectionId + " 섹션을 찾을 수 없습니다.");
-        }
-
-        // 4. 클릭한 버튼 불 켜기
-        if (btn) btn.classList.add('active');
-
-        // [추가] 나의 현황일 경우 데이터 즉시 갱신
-        if (sectionId === 'mypage' && typeof forceUpdateAll === "function") {
-            forceUpdateAll();
-        }
-
-        // [핵심] 입력창으로 커서 강제 이동
-        var focusMap = { 'adApplyForm': 'shopName', 'loanApplyForm': 'loanName', 'routineForm': 'routineOwner' };
-        if (focusMap[sectionId]) {
-            setTimeout(function() {
-                var el = document.getElementById(focusMap[sectionId]);
-                if (el) el.focus();
-            }, 300);
-        }
-    };
-
-    // [2] 페이지 로드 시 초기 상태 설정
-    window.addEventListener('load', function() {
-        // 처음 실행 시 무조건 대시보드만 보이게 설정
-        showSection('dashboard', document.getElementById('btn-dashboard'));
-        
-        // AI 신호 및 인원 증가 엔진 가동
-        if (typeof updateAISignal === "function") updateAISignal();
-        if (typeof startGrowth === "function") startGrowth();
-    });
-
-    // [3] 외부 파일 로딩 오류 방지 (더미 함수 선언)
-    if (typeof forceUpdateAll !== "function") {
-        window.forceUpdateAll = function() { console.log("데이터 갱신 중..."); };
-    }
-</script>
 </body>
 </html>
