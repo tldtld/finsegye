@@ -244,24 +244,18 @@ function presentGemini() {
 </div>
 
 <script src="economy.js"></script> 
-<script src="ui_dashboard.js"></script> 
-<script src="ui_logic.js"></script> 
+<script src="ui_dashboard.js"></script>
+<script src="ui_logic.js"></script>
+<script src="economy.js"></script>
 
 <script>
     window.addEventListener('load', function() {
-        // ui_dashboard.js 안의 showSection을 전역(window)으로 만들었기 때문에
-        // 이제 여기서 불러도 탭이 사라지지 않고 정확히 응답합니다.
+        // 시작하자마자 첫 화면 강제 고정
         if (typeof window.showSection === 'function') {
             window.showSection('dashboard', document.getElementById('btn-dashboard'));
         }
-        
-        // 추천인 설정 등 나머지...
-        const ref = new URLSearchParams(window.location.search).get('ref') || "CEO 채정석";
-        const refInput = document.getElementById('bankReferrer');
-        if (refInput) { refInput.value = ref; }
     });
 </script>
-
 
     
 </script>
