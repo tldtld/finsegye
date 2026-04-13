@@ -1,14 +1,16 @@
 /* 📂 ui_dashboard.js - [데이터 강제 검색 및 무제한 출력 버전] */
 
-function showSection(id, btn) {
+// 기존 function showSection(id, btn) { ... } 부분을 아래와 같이 수정하세요.
+window.showSection = function(id, btn) {
     // 1. 모든 섹션 숨기기
-    document.querySelectorAll("section").forEach(s => s.style.display = "none");
+    document.querySelectorAll("section").forEach(s => {
+        s.style.display = "none";
+    });
 
-    // 2. 선택한 섹션 보이기
+    // 2. 선택한 섹션 강제로 보이기
     const target = document.getElementById(id);
     if(target) {
         target.style.display = "block";
-
         // 커서 자동 이동
         setTimeout(() => {
             const firstInput = target.querySelector('input:not([type="checkbox"]), textarea');
@@ -16,19 +18,16 @@ function showSection(id, btn) {
         }, 150);
     }
 
-    // 3. 하단 버튼 활성화
+    // 3. 하단 버튼 활성화 스타일
     document.querySelectorAll(".nav button").forEach(b => b.classList.remove("active"));
     const targetBtn = btn || document.getElementById('btn-' + id);
     if(targetBtn) targetBtn.classList.add("active");
 
-    // 4. 세션 저장
-    sessionStorage.setItem("lastTab", id);
     window.scrollTo(0, 0);
-
-    // 🚀 섹션 이동 시 즉시 데이터 새로고침
-    forceRefreshData();
-}
-
+    
+    // 데이터 새로고침 호출
+    if(typeof forceRefreshData === 'function') forceRefreshData();
+};
 // 📊 [강제 집행] 이름표가 무엇이든 데이터를 무조건 찾아오는 함수
 function forceRefreshData() {
     const configs = [
