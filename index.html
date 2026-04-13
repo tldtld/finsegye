@@ -230,54 +230,40 @@
         else isMypageExpanded = false;
     }
 
-   function forceUpdateAll() {
-    // 1. 현재 화면의 공유비율 값을 숫자로 가져옵니다.
-    const loanPercentEl = document.getElementById('loanPercent');
-    if (!loanPercentEl) return;
+    // 화면 업데이트 로직 (생략 없이 유지)
+    function forceUpdateAll() {
+        const config = [
+            { id: 'walletDisplay', key: 'fin_wallets', nameKey: 'bankName' },
+            { id: 'adListDisplay', key: 'fin_ads', nameKey: 'shopName' },
+            { id: 'loanListDisplay', key: 'fin_loans', nameKey: 'loanName' },
+            { id: 'routineListDisplay', key: 'fin_routines', nameKey: 'routineOwner' }
+        ];
 
-    const currentLoanPercent = parseFloat(loanPercentEl.innerText);
+        config.forEach(cat => {
+            const el = document.getElementById(cat.id);
+            if(!el) return;
+            let data = JSON.parse(localStorage.getItem(cat.key) || '[]');
+            if(data.length > 0) {
+                if(isMypageExpanded) {
+                    el.innerHTML = data.map(item =>
+                        `<div style="border-bottom:1px solid #333; padding:5px 0; font-size:0.8em; color:#fff;">
+                            ✅ ${item.date}<br>${item[cat.nameKey]}
+                        </div>`
+                    ).join('');
+                } else {
+                    const top = data[0];
+                    let shortTime = top.date.split(' ').slice(-2).join(' ');
+                    el.innerHTML = `<div style="color:gold; font-size:0.8em;">🕒 ${shortTime}<br>${top[cat.nameKey]} 완료</div>`;
+                }
+            } else {
+                el.innerHTML = "<span style='color:#666;'>내역 없음</span>";
+            }
+        });
 
-    // [핵심 로직] 공유비율이 0%가 아닐 때(즉, 0보다 클 때)는 업데이트를 멈춥니다.
-    if (currentLoanPercent > 0) {
-        // 이 블록이 실행되면 아래의 자산 갱신 코드를 모두 건너뜁니다.
-        // 즉, 행사자, 소비자, 합계 숫자가 변하지 않고 고정됩니다.
-        console.log("공유비율이 0%가 아니므로 자산 지표가 고정(잠금)되었습니다.");
-        return;
+        const total = JSON.parse(localStorage.getItem('fin_wallets') || '[]').length;
+        if(document.getElementById('realtimeUserCount')) document.getElementById('realtimeUserCount').innerText = total;
     }
 
-    // --- 여기서부터는 공유비율이 0%일 때만 실행되는 코드입니다 ---
-
-    const config = [
-        { id: 'walletDisplay', key: 'fin_wallets', nameKey: 'bankName' },
-        { id: 'adListDisplay', key: 'fin_ads', nameKey: 'shopName' },
-        { id: 'loanListDisplay', key: 'fin_loans', nameKey: 'loanName' },
-        { id: 'routineListDisplay', key: 'fin_routines', nameKey: 'routineOwner' }
-    ];
-
-    config.forEach(cat => {
-        const el = document.getElementById(cat.id);
-        if(!el) return;
-        let data = JSON.parse(localStorage.getItem(cat.key) || '[]');
-        if(data.length > 0) {
-            if(isMypageExpanded) {
-                el.innerHTML = data.map(item =>
-                    `<div style="border-bottom:1px solid #333; padding:5px 0; font-size:0.8em; color:#fff;">
-                        ✅ ${item.date}<br>${item[cat.nameKey]}
-                    </div>`
-                ).join('');
-            } else {
-                const top = data[0];
-                let shortTime = top.date.split(' ').slice(-2).join(' ');
-                el.innerHTML = `<div style="color:gold; font-size:0.8em;">🕒 ${shortTime}<br>${top[cat.nameKey]} 완료</div>`;
-            }
-        } else {
-            el.innerHTML = "<span style='color:#666;'>내역 없음</span>";
-        }
-    });
-
-    const total = JSON.parse(localStorage.getItem('fin_wallets') || '[]').length;
-    if(document.getElementById('realtimeUserCount')) document.getElementById('realtimeUserCount').innerText = total;
-}
     setInterval(forceUpdateAll, 1000);
     window.onload = forceUpdateAll;
 
@@ -317,143 +303,91 @@ function updateRealtimeList() {
         }
     }
 }
+
+
+
+
+
+
 let isSystemPaused = false; // 시스템 정지 상태 변수
 
-
-
-/* =========================================================
-   1. 탭 제어 로직 (공유참여, 실시간참여, 결제시스템)
-   ========================================================= */
-
-// [탭 1] 공유경제참여 (QR 코드) 토글
-function toggleQR() {
-    const qr = document.getElementById('qrContainer');
-    const liveList = document.getElementById('liveListContainer');
-    const payment = document.getElementById('paymentFields');
-
-    if (!qr) return;
-
-    // QR 열기/닫기
-    qr.style.display = (qr.style.display === 'none' || qr.style.display === '') ? 'block' : 'none';
-
-    // 다른 탭은 닫기
-    if (liveList) liveList.style.display = 'none';
-    if (payment) closePayment();
-}
-
-// [탭 2] 실시간참여 (명단) 토글
-function toggleLiveList() {
-    const qr = document.getElementById('qrContainer');
-    const liveList = document.getElementById('liveListContainer');
-    const payment = document.getElementById('paymentFields');
-
-    if (!liveList) return;
-
-    // 명단 열기/닫기
-    liveList.style.display = (liveList.style.display === 'none' || liveList.style.display === '') ? 'block' : 'none';
-
-    // 다른 탭은 닫기
-    if (qr) qr.style.display = 'none';
-    if (payment) closePayment();
-
-    // 명단 즉시 갱신
-    if (typeof updateRealtimeList === "function") updateRealtimeList();
-}
-
-// [탭 3] 실시간 결제 시스템 열기
+// [결제창 열기] 시스템 일시 정지 및 설정 변경
 function openPayment() {
+    if(isSystemPaused) return; // 이미 열려있으면 무시
+
+    isSystemPaused = true;
+
+    // 1. 입력창 영역을 변수에 담습니다.
     const fields = document.getElementById('paymentFields');
-    const payBox = document.getElementById('paymentBox');
-    const qr = document.getElementById('qrContainer');
-    const liveList = document.getElementById('liveListContainer');
+    const input = document.getElementById('payAmount'); // 금액 입력 칸
 
-    if (!fields) return;
+    fields.style.display = 'block'; // 창을 보이게 합니다.
+    document.getElementById('paymentBox').style.borderColor = '#ff416c'; // 강조색 변경
 
-    // 시스템 일시 정지 (economy.js와 연동)
-    window.isSystemPaused = true;
+    // 2. 공유비율 0% 고정
+    document.getElementById('loanPercent').innerText = "0.0%";
 
-    // 결제창 보이기
-    fields.style.display = 'block';
-    if (payBox) payBox.style.borderColor = '#ff416c';
+    // 🎯 [수정 포인트] 여기에 아래 코드를 추가합니다.
+    // 0.1초(100ms) 뒤에 입력창에 커서를 깜빡이게 만듭니다.
+    setTimeout(function() {
+        input.focus();
+    }, 100);
 
-    // 다른 탭 닫기
-    if (qr) qr.style.display = 'none';
-    if (liveList) liveList.style.display = 'none';
-
-    // 입력창 포커스
-    setTimeout(() => {
-        const input = document.getElementById('payAmount');
-        if (input) input.focus();
-    }, 150);
+    console.log("System Paused for Payment & Input Focused");
 }
 
-// 결제창 닫기 (취소 또는 완료 시)
-function closePayment() {
-    const fields = document.getElementById('paymentFields');
-    const payBox = document.getElementById('paymentBox');
-    const payInput = document.getElementById('payAmount');
-
-    window.isSystemPaused = false; // 시스템 재가동
-
-    if (fields) fields.style.display = 'none';
-    if (payBox) payBox.style.borderColor = '#00ffcc';
-    if (payInput) payInput.value = "";
-}
-
-/* =========================================================
-   2. 실시간 결제 금액 반영 알고리즘 (완성체)
-   ========================================================= */
-
+// [결제 완료] 데이터 반영 및 시스템 재가동
 function submitPayment() {
-    const payInput = document.getElementById('payAmount');
-    const amount = parseInt(payInput ? payInput.value : 0);
-
-    if (!amount || amount <= 0) {
+    const amount = document.getElementById('payAmount').value;
+    if(!amount || amount <= 0) {
         alert("금액을 입력해주세요.");
-        if (payInput) payInput.focus();
         return;
     }
 
-    // [데이터 주입] 원본 변수 수정 (economy.js의 window.advertiser 수정)
-    const advShare = Math.floor(amount * 0.7);
-    const consShare = amount - advShare;
+    // 1. 지표 업그레이드 로직 (예시: 입력 금액에 따라 합계 증가)
+    let currentTotal = parseInt(document.getElementById('totalValue').innerText.replace(/[^0-9]/g, "")) || 0;
+    let newTotal = currentTotal + parseInt(amount);
+    document.getElementById('totalValue').innerText = newTotal.toLocaleString() + "원";
 
-    window.advertiser += advShare;
-    window.consumer += consShare;
-
-    // [즉시 반영] 화면 갱신 함수 호출 (economy.js에 정의된 함수)
-    if (typeof renderAssetUI === "function") {
-        renderAssetUI();
-    } else {
-        // 백업용 수동 갱신
-        document.getElementById("advValue").innerText = Math.floor(window.advertiser).toLocaleString() + "원";
-        document.getElementById("consValue").innerText = Math.floor(window.consumer).toLocaleString() + "원";
-        document.getElementById("totalValue").innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
-    }
-
-    alert(amount.toLocaleString() + "원 결제가 완료되었습니다.\n합산된 금액에서 실시간 상승이 시작됩니다.");
-
+    // 2. 시스템 재가동
+    alert(amount + "원 결제가 완료되었습니다. 시스템을 업데이트합니다.");
     closePayment();
 }
 
-/* =========================================================
-   3. 보조 기능 (명단 업데이트 등)
-   ========================================================= */
-function updateRealtimeList() {
-    const data = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
-    const listEl = document.getElementById('realtimeNameList');
-    if (listEl) {
-        if (data.length > 0) {
-            listEl.innerHTML = data.slice(0, 10).map(u => `✅ ${u.bankName} 님 설립완료`).join('<br>');
-        } else {
-            listEl.innerHTML = "참여 내역이 없습니다.";
-        }
-    }
+// [창 닫기] 초기화 및 재가동
+function closePayment() {
+    isSystemPaused = false;
+    document.getElementById('paymentFields').style.display = 'none';
+    document.getElementById('paymentBox').style.borderColor = '#00ffcc';
+    document.getElementById('payAmount').value = "";
+
+    // 공유비율 원복 (100% 혹은 기존 로직에 따름)
+    document.getElementById('loanPercent').innerText = "100.0%";
 }
+
+// ⚠️ 기존 forceUpdateAll 함수 수정 (움직임 멈추기 기능 적용)
+// 기존에 정의된 forceUpdateAll 함수 안에 아래 if문을 가장 위에 추가해야 합니다.
+const originalForceUpdateAll = forceUpdateAll;
+forceUpdateAll = function() {
+    if (isSystemPaused) {
+        // 시스템이 멈춘 상태에서는 화면 갱신을 건너뜁니다.
+        return;
+    }
+    originalForceUpdateAll();
+};
+
+
+
+
+
+
+
+
 
 // 1초마다 명단 갱신
 setInterval(updateRealtimeList, 1000);
 
 </script>
+
 </body>
 </html>
