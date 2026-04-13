@@ -196,6 +196,81 @@
         window.scrollTo(0, 0);
     }
 
+    // [1] 통합 저장 및 화면 갱신 함수 (이게 핵심입니다)
+function saveAndRefresh(key, data) {
+    // 1. 내 스마트폰 창고(localStorage)에 저장
+    let list = JSON.parse(localStorage.getItem(key) || '[]');
+    data.date = new Date().toLocaleString(); // 날짜 추가
+    list.unshift(data); // 새 데이터를 맨 위로
+    localStorage.setItem(key, JSON.stringify(list));
+
+    // 2. 즉시 '나의 현황' 화면 업데이트
+    forceUpdateAll();
+}
+
+// [2] 행사 신청 저장
+function submitAd() {
+    const shop = document.getElementById('shopName');
+    const biz = document.getElementById('bizType');
+    const area = document.getElementById('area');
+    const text = document.getElementById('adText');
+
+    if(!shop.value.trim()) { alert("상호명을 입력하세요."); shop.focus(); return; }
+
+    saveAndRefresh('fin_ads', { title: shop.value, detail: biz.value + " | " + area.value });
+    alert("📩 [" + shop.value + "] 신청 완료!");
+    
+    // 초기화 및 이동
+    shop.value = ""; biz.value = ""; area.value = ""; text.value = "";
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+// [3] 공유 신청 저장
+function submitLoan() {
+    const name = document.getElementById('loanName');
+    const amount = document.getElementById('loanAmount');
+    if(!name.value.trim()) { alert("신청자명을 입력하세요."); name.focus(); return; }
+
+    saveAndRefresh('fin_loans', { title: name.value + " (" + amount.value + "만원)" });
+    alert("💰 공유 신청 완료!");
+    name.value = ""; amount.value = "";
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+// [4] 행사 루틴 저장
+function submitRoutine() {
+    const owner = document.getElementById('routineOwner');
+    if(!owner.value.trim()) { alert("제작자를 입력하세요."); owner.focus(); return; }
+
+    saveAndRefresh('fin_routines', { title: owner.value + "님의 루틴" });
+    alert("🌀 루틴 생성 완료!");
+    owner.value = "";
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+// [5] 나의 현황 강제 갱신 (이게 있어야 리스트가 보입니다)
+function forceUpdateAll() {
+    // 지갑 내역 출력
+    const wallets = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
+    document.getElementById('walletDisplay').innerHTML = wallets.map(w => 
+        `<div style="border-bottom:1px solid #333; padding:5px;">✅ ${w.bankName}<br><small>${w.date}</small></div>`).join('') || "내역 없음";
+
+    // 행사 내역 출력
+    const ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
+    document.getElementById('adListDisplay').innerHTML = ads.map(a => 
+        `<li>📢 ${a.title}</li>`).join('') || "내역 없음";
+
+    // 공유 내역 출력
+    const loans = JSON.parse(localStorage.getItem('fin_loans') || '[]');
+    document.getElementById('loanListDisplay').innerHTML = loans.map(l => 
+        `<li>💰 ${l.title}</li>`).join('') || "내역 없음";
+
+    // 루틴 내역 출력
+    const routines = JSON.parse(localStorage.getItem('fin_routines') || '[]');
+    document.getElementById('routineListDisplay').innerHTML = routines.map(r => 
+        `<li>🌀 ${r.title}</li>`).join('') || "내역 없음";
+}
+
 // AI 지갑 설립 완료 함수 (클릭 시 메인 화면으로 즉시 이동)
 function submitBank() {
     const name = document.getElementById('bankName');
