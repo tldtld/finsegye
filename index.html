@@ -433,7 +433,7 @@ function autoFillKakao() {
 
 <script>
 /* =========================================================
-   1. 자산 엔진 (행사자 7만, 소비자 2만 고정 및 실시간 누적)
+   1. 자산 엔진 (행사자 7만 / 소비자 2만 시작)
    ========================================================= */
 window.advertiser = parseFloat(localStorage.getItem('fin_advertiser')) || 70000;
 window.consumer = parseFloat(localStorage.getItem('fin_consumer')) || 20000;
@@ -448,13 +448,6 @@ function updateAssetDisplay() {
 }
 
 function updateStatus() {
-    const reserveElem = document.getElementById("reserveValue");
-    if(reserveElem) reserveElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
-    
-    const loanElem = document.getElementById("loanPercent");
-    if(loanElem) loanElem.innerText = (95.0 + Math.random() * 5.0).toFixed(1) + "%";
-
-    // 자산 실시간 미세 증가 및 저장
     window.advertiser += 0.24; 
     window.consumer += 0.1;
     localStorage.setItem('fin_advertiser', window.advertiser);
@@ -464,25 +457,7 @@ function updateStatus() {
 setInterval(updateStatus, 100);
 
 /* =========================================================
-   2. 실시간 결제 시스템 (즉시 반영)
-   ========================================================= */
-function submitPayment() {
-    const payInput = document.getElementById('payAmount');
-    const amount = parseInt(payInput.value || 0);
-    if (amount <= 0) { alert("금액을 입력해주세요."); return; }
-
-    window.advertiser += (amount * 0.7);
-    window.consumer += (amount * 0.3);
-    localStorage.setItem('fin_advertiser', window.advertiser);
-    localStorage.setItem('fin_consumer', window.consumer);
-
-    updateAssetDisplay();
-    alert(amount.toLocaleString() + "원 결제 및 실시간 배당 완료!");
-    closePayment();
-}
-
-/* =========================================================
-   3. 화면 전환 & 철벽 검증 저장
+   2. 화면 전환 & 입력창 초기화 로직
    ========================================================= */
 function showSection(id, btn) {
     document.querySelectorAll('section').forEach(s => s.style.display = 'none');
@@ -494,6 +469,17 @@ function showSection(id, btn) {
     window.scrollTo(0, 0);
 }
 
+// [핵심] 모든 입력창을 깨끗이 비우는 함수
+function clearInputs(sectionId) {
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.querySelectorAll('input, textarea').forEach(el => {
+            if (el.type === 'checkbox') el.checked = false;
+            else el.value = '';
+        });
+    }
+}
+
 function saveAndRefresh(key, data) {
     let list = JSON.parse(localStorage.getItem(key) || '[]');
     data.date = new Date().toLocaleString();
@@ -502,121 +488,105 @@ function saveAndRefresh(key, data) {
     forceUpdateAll();
 }
 
+/* =========================================================
+   3. 각 기능별 저장 + "초기화" + "메인 이동"
+   ========================================================= */
+
+// [행사 신청]
 function submitAd() {
     const shop = document.getElementById('shopName'), biz = document.getElementById('bizType'), area = document.getElementById('area'), text = document.getElementById('adText');
     if(!shop.value.trim() || !biz.value.trim() || !area.value.trim() || !text.value.trim()) { alert("모든 항목을 입력하세요."); return; }
+    
     saveAndRefresh('fin_ads', { title: shop.value });
-    alert("📩 행사 신청 완료!");
-    showSection('dashboard', document.getElementById('btn-dashboard'));
+    alert("📩 신청 완료!");
+    
+    clearInputs('adApplyForm'); // 입력창 비우기
+    showSection('dashboard', document.getElementById('btn-dashboard')); // 메인 이동
 }
 
+// [공유 신청]
 function submitLoan() {
     const name = document.getElementById('loanName'), amount = document.getElementById('loanAmount'), purpose = document.getElementById('loanPurpose');
     if(!name.value.trim() || !amount.value || !purpose.value.trim()) { alert("모든 항목을 입력하세요."); return; }
+    
     saveAndRefresh('fin_loans', { title: name.value + "(" + amount.value + "만)" });
-    alert("💰 공유 신청 완료!");
+    alert("💰 신청 완료!");
+    
+    clearInputs('loanApplyForm'); // 입력창 비우기
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
+// [루틴 생성]
 function submitRoutine() {
     const owner = document.getElementById('routineOwner'), reg = document.getElementById('routineRegion'), txt = document.getElementById('routineText');
     if(!owner.value.trim() || !reg.value.trim() || !txt.value.trim()) { alert("모든 항목을 입력하세요."); return; }
+    
     saveAndRefresh('fin_routines', { title: owner.value });
-    alert("🌀 루틴 생성 완료!");
+    alert("🌀 생성 완료!");
+    
+    clearInputs('routineForm'); // 입력창 비우기
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
+// [지갑 설립] - 대표님이 강조하신 "초기화" 완벽 복구
 function submitBank() {
-    const name = document.getElementById('bankName'), agree = document.getElementById('bankAgree');
+    const name = document.getElementById('bankName'), phone = document.getElementById('bankPhone'), addr = document.getElementById('bankAddress'), agree = document.getElementById('bankAgree');
     if(!name.value.trim() || !agree.checked) { alert("성함 입력 및 동의가 필요합니다."); return; }
-    saveAndRefresh('fin_wallets', { bankName: name.value });
-    alert("🏦 AI 지갑 설립 완료!");
-    showSection('dashboard', document.getElementById('btn-dashboard'));
+    
+    saveAndRefresh('fin_wallets', { bankName: name.value, bankPhone: phone.value });
+    alert(`🏦 [${name.value}] 님 설립 완료!\n메인 화면으로 이동하며 입력창은 초기화됩니다.`);
+    
+    clearInputs('bankForm'); // 이름, 전번 등 입력창 싹 비우기 (복구 완료!)
+    showSection('dashboard', document.getElementById('btn-dashboard')); // 대시보드로 이동
 }
 
 /* =========================================================
-   4. 나의 현황 출력 엔진
+   4. 실시간 결제 & 나의 현황 & 시연 기능 (유지)
    ========================================================= */
+function submitPayment() {
+    const payInput = document.getElementById('payAmount');
+    const amount = parseInt(payInput.value || 0);
+    if (amount <= 0) { alert("금액을 입력해주세요."); return; }
+    window.advertiser += (amount * 0.7); window.consumer += (amount * 0.3);
+    updateAssetDisplay();
+    alert(amount.toLocaleString() + "원 결제 및 배당 완료!");
+    document.getElementById('paymentFields').style.display = 'none';
+    payInput.value = ''; // 결제창 초기화
+}
+
 function forceUpdateAll() {
-    const keys = [
-        {k:'fin_wallets', id:'walletDisplay', p:'✅ '}, 
-        {k:'fin_ads', id:'adListDisplay', p:'📢 '}, 
-        {k:'fin_loans', id:'loanListDisplay', p:'💰 '}, 
-        {k:'fin_routines', id:'routineListDisplay', p:'🌀 '}
-    ];
+    const keys = [{k:'fin_wallets', id:'walletDisplay', p:'✅ '}, {k:'fin_ads', id:'adListDisplay', p:'📢 '}, {k:'fin_loans', id:'loanListDisplay', p:'💰 '}, {k:'fin_routines', id:'routineListDisplay', p:'🌀 '}];
     keys.forEach(item => {
         const list = JSON.parse(localStorage.getItem(item.k) || '[]');
         const el = document.getElementById(item.id);
-        if(el) {
-            el.innerHTML = list.map(d => `<div style="border-bottom:1px solid #333; padding:5px; text-align:left;">${item.p}${d.bankName || d.title}<br><small style="color:#888;">${d.date}</small></div>`).join('') || "내역 없음";
-        }
+        if(el) el.innerHTML = list.map(d => `<div style="border-bottom:1px solid #333; padding:5px; text-align:left;">${item.p}${d.bankName || d.title}<br><small style="color:#888;">${d.date}</small></div>`).join('') || "내역 없음";
     });
 }
 
-/* =========================================================
-   5. 시연용 자동 입력 (카카오/자동입력)
-   ========================================================= */
-function autoFillInfo() {
-    const names = ["김전북", "이전주", "박완산", "최익산"];
-    const name = names[Math.floor(Math.random() * names.length)];
-    document.getElementById('bankName').value = name;
-    document.getElementById('bankPhone').value = "010-" + Math.floor(1000 + Math.random() * 9000) + "-7788";
+function autoFillKakao() {
+    alert("💬 카카오톡 보안 인증 완료!");
+    document.getElementById('bankName').value = "김전북";
+    document.getElementById('bankPhone').value = "010-1234-7788";
     document.getElementById('bankAddress').value = "전북특별자치도 전주시";
     document.getElementById('bankAgree').checked = true;
 }
 
-function autoFillKakao() {
-    alert("💬 카카오톡 보안 인증이 완료되었습니다!");
-    autoFillInfo();
-}
-
-/* =========================================================
-   6. 초기 가동 및 기타 제어
-   ========================================================= */
 window.addEventListener('load', function() {
-    updateAssetDisplay();
-    forceUpdateAll();
-    updateAISignal();
-    setTimeout(startGrowth, 5000);
-    
-    const ref = new URLSearchParams(window.location.search).get('ref');
-    if (ref && document.getElementById('bankReferrer')) {
-        document.getElementById('bankReferrer').value = ref;
-    }
+    updateAssetDisplay(); forceUpdateAll();
+    // QR로 들어왔을 때 추천인 자동 세팅
+    const ref = new URLSearchParams(window.location.search).get('ref') || "CEO 채정석";
+    if(document.getElementById('bankReferrer')) document.getElementById('bankReferrer').value = ref;
 });
-
-function updateAISignal() {
-    const assets = ["KOSPI200", "삼성전자", "나스닥100", "GOLD"];
-    const actionEl = document.getElementById('actionType');
-    if(actionEl) {
-        document.getElementById('assetName').innerText = assets[Math.floor(Math.random()*assets.length)];
-        actionEl.innerText = "매수 포착";
-        actionEl.style.background = "#ff416c";
-    }
-    setTimeout(updateAISignal, 4000);
-}
-
-let liveCount = parseInt(localStorage.getItem('fin_live_users_v3')) || 13672;
-function startGrowth() {
-    liveCount += (Math.floor(Math.random() * 2) + 1);
-    localStorage.setItem('fin_live_users_v3', liveCount);
-    if(document.getElementById('realtimeUserCount')) document.getElementById('realtimeUserCount').innerText = liveCount.toLocaleString();
-    setTimeout(startGrowth, 5000);
-}
 
 function toggleQR() { const qr = document.getElementById('qrContainer'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none'; }
 function openPayment() { document.getElementById('paymentFields').style.display = 'block'; }
-function closePayment() { document.getElementById('paymentFields').style.display = 'none'; document.getElementById('payAmount').value = ""; }
+function closePayment() { document.getElementById('paymentFields').style.display = 'none'; }
 
-// 자산 초기화 리셋 버튼
-window.resetEconomy = function() {
-    if(confirm('모든 수치를 초기화할까요?')) {
-        window.advertiser = 70000; window.consumer = 20000;
-        localStorage.setItem('fin_advertiser', 70000); localStorage.setItem('fin_consumer', 20000);
-        updateAssetDisplay();
-        alert("70,000원 / 20,000원으로 초기화되었습니다.");
-    }
-}
+let liveCount = 13672;
+setInterval(() => {
+    liveCount += 1;
+    if(document.getElementById('realtimeUserCount')) document.getElementById('realtimeUserCount').innerText = liveCount.toLocaleString();
+}, 5000);
 </script>
     
 </body>
