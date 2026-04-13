@@ -243,12 +243,24 @@ function presentGemini() {
     <button onclick="showSection('mypage', this)" id="btn-mypage">나의<br>현황</button>
 </div>
 
-<script src="ui_forms.js?v=1.1"></script>
-<script src="economy.js"></script>
-<script src="ui_logic.js"></script>
-<script src="ui_dashboard.js"></script>
+<script src="economy.js"></script> <script src="ui_dashboard.js"></script> <script src="ui_logic.js"></script> <script>
+    // 페이지 로드 시 초기화
+    window.addEventListener('load', function() {
+        // [1] 초기 탭 설정
+        const last = sessionStorage.getItem("lastTab") || "dashboard";
+        showSection(last, document.getElementById('btn-' + last));
+        
+        // [2] 추천인 자동 설정
+        const ref = new URLSearchParams(window.location.search).get('ref') || "CEO 채정석";
+        const refInput = document.getElementById('bankReferrer');
+        if (refInput) { refInput.value = ref; }
 
-<script>
+        // [3] AI 신호 가동
+        if (typeof triggerAiInvestmentSignal === "function") {
+            setInterval(triggerAiInvestmentSignal, 10000);
+        }
+    });
+</script>
     // [1] 화면 전환 강제 실행 함수 (이게 안 되면 앱이 죽습니다)
     window.showSection = function(sectionId, btn) {
         console.log("화면 전환 시도: " + sectionId); // 브라우저 검사용 로그
