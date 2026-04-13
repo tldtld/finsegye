@@ -342,6 +342,27 @@ function toggleQR() {
 }
 function openPayment() { document.getElementById('paymentFields').style.display = 'block'; }
 function closePayment() { document.getElementById('paymentFields').style.display = 'none'; }
+
+// [시연용] 카카오 인증 및 자동 입력 복구 함수
+function autoFillInfo() {
+    const names = ["김전북", "이전주", "박완산", "최익산"];
+    const name = names[Math.floor(Math.random() * names.length)];
+    
+    document.getElementById('bankName').value = name;
+    document.getElementById('bankPhone').value = "010-" + Math.floor(1000 + Math.random() * 9000) + "-7788";
+    document.getElementById('bankAddress').value = "전북특별자치도 전주시";
+    document.getElementById('bankAgree').checked = true;
+    
+    console.log("자동 입력 완료: " + name);
+}
+
+function autoFillKakao() {
+    alert("💬 카카오톡 보안 인증이 완료되었습니다!");
+    autoFillInfo();
+}
+
+
+    
 </script>
 </body>
 </html>
