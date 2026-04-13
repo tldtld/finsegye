@@ -483,69 +483,95 @@ function submitLoan() {
     forceUpdateAll();
 }
 
-// 1. 행사 신청 (HTML의 id="shopName", "bizType", "area", "adText"와 일치시킴)
+// 1. 행사 신청 (스마트폰 최적화 버전)
 function submitAd() {
     var shop = document.getElementById('shopName');
     var biz = document.getElementById('bizType');
     var area = document.getElementById('area');
     var text = document.getElementById('adText');
 
-    // 비어있는 칸을 순서대로 검사하고 커서를 보냅니다.
-    if (!shop.value.trim()) { alert("상호명을 입력해 주세요."); shop.focus(); return; }
-    if (!biz.value.trim()) { alert("업종/업태를 입력해 주세요."); biz.focus(); return; }
-    if (!area.value.trim()) { alert("행사지역을 입력해 주세요."); area.focus(); return; }
-    if (!text.value.trim()) { alert("행사문구를 입력해 주세요."); text.focus(); return; }
+    function checkAndFocus(el, msg) {
+        if (!el.value.trim()) {
+            alert(msg);
+            // 스마트폰 키보드가 꼬이지 않게 0.1초 뒤에 강제 포커스
+            setTimeout(function() { 
+                el.focus(); 
+                el.scrollIntoView({behavior: "smooth", block: "center"});
+            }, 100);
+            return false;
+        }
+        return true;
+    }
 
-    // 모든 칸이 채워졌을 때만 아래 저장 로직 실행
+    if (!checkAndFocus(shop, "상호명을 입력해 주세요.")) return;
+    if (!checkAndFocus(biz, "업종/업태를 입력해 주세요.")) return;
+    if (!checkAndFocus(area, "행사지역을 입력해 주세요.")) return;
+    if (!checkAndFocus(text, "행사문구를 입력해 주세요.")) return;
+
+    // 모든 통과 후 저장 로직
     var ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
     ads.unshift({ title: shop.value, date: new Date().toLocaleString() });
     localStorage.setItem('fin_ads', JSON.stringify(ads));
 
     alert("📩 [" + shop.value + "] 행사 신청이 완료되었습니다!");
-
-    // 신청 후 깨끗이 비우기
     shop.value = ""; biz.value = ""; area.value = ""; text.value = "";
     showSection('dashboard', document.getElementById('btn-dashboard'));
     forceUpdateAll();
 }
 
-// 2. 공유 신청 (HTML의 id="loanName", "loanAmount", "loanPurpose"와 일치시킴)
+// 2. 공유 신청 (시간차 포커스 적용)
 function submitLoan() {
     var name = document.getElementById('loanName');
     var amount = document.getElementById('loanAmount');
     var purpose = document.getElementById('loanPurpose');
 
-    if (!name.value.trim()) { alert("신청자명을 입력해 주세요."); name.focus(); return; }
-    if (!amount.value || amount.value <= 0) { alert("신청금액을 입력해 주세요."); amount.focus(); return; }
-    if (!purpose.value.trim()) { alert("공유목적을 입력해 주세요."); purpose.focus(); return; }
+    function checkAndFocus(el, msg) {
+        if (!el.value || !el.value.trim()) {
+            alert(msg);
+            setTimeout(function() { el.focus(); }, 100);
+            return false;
+        }
+        return true;
+    }
+
+    if (!checkAndFocus(name, "신청자명을 입력해 주세요.")) return;
+    if (!checkAndFocus(amount, "신청금액을 입력해 주세요.")) return;
+    if (!checkAndFocus(purpose, "공유목적을 입력해 주세요.")) return;
 
     var loans = JSON.parse(localStorage.getItem('fin_loans') || '[]');
     loans.unshift({ title: name.value + " (" + amount.value + "만원)", date: new Date().toLocaleString() });
     localStorage.setItem('fin_loans', JSON.stringify(loans));
 
-    alert("💰 " + name.value + "님, 공유 신청이 완료되었습니다!");
-
+    alert("💰 " + name.value + "님, 공유 신청 완료!");
     name.value = ""; amount.value = ""; purpose.value = "";
     showSection('dashboard', document.getElementById('btn-dashboard'));
     forceUpdateAll();
 }
 
-// 3. 루틴 생성 (HTML의 id="routineOwner", "routineRegion", "routineText"와 일치시킴)
+// 3. 루틴 생성 (시간차 포커스 적용)
 function submitRoutine() {
     var owner = document.getElementById('routineOwner');
     var region = document.getElementById('routineRegion');
     var text = document.getElementById('routineText');
 
-    if (!owner.value.trim()) { alert("제작자 이름을 입력해 주세요."); owner.focus(); return; }
-    if (!region.value.trim()) { alert("적용지역을 입력해 주세요."); region.focus(); return; }
-    if (!text.value.trim()) { alert("루틴 내용을 입력해 주세요."); text.focus(); return; }
+    function checkAndFocus(el, msg) {
+        if (!el.value.trim()) {
+            alert(msg);
+            setTimeout(function() { el.focus(); }, 100);
+            return false;
+        }
+        return true;
+    }
+
+    if (!checkAndFocus(owner, "제작자 이름을 입력해 주세요.")) return;
+    if (!checkAndFocus(region, "적용지역을 입력해 주세요.")) return;
+    if (!checkAndFocus(text, "루틴 내용을 입력해 주세요.")) return;
 
     var routines = JSON.parse(localStorage.getItem('fin_routines') || '[]');
     routines.unshift({ title: owner.value + "님의 루틴", date: new Date().toLocaleString() });
     localStorage.setItem('fin_routines', JSON.stringify(routines));
 
-    alert("🌀 " + owner.value + "님의 루틴 생성이 완료되었습니다!");
-
+    alert("🌀 " + owner.value + "님의 루틴 생성 완료!");
     owner.value = ""; region.value = ""; text.value = "";
     showSection('dashboard', document.getElementById('btn-dashboard'));
     forceUpdateAll();
