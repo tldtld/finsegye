@@ -113,37 +113,57 @@ window.addEventListener('load', () => FinData.updateUI());
    ========================================================= */
 let loanPercent = 100.0, aiRate = 0.0, advertiser = 20000, consumer = 10000, decreasing = true, pause = false;
 
+/* =========================================================
+   3. 경제 지표 및 배당 로직 (수정본)
+   - 공유비율이 0%일 때만 자산 합계가 동작하도록 변경
+   ========================================================= */
 function updateStatus() {
+    // [1] 지급준비율 업데이트 (항시 작동)
     const reserveElem = document.getElementById("reserveValue");
     if(reserveElem) reserveElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
 
+    // [2] 공유비율 감소 로직
     if(!pause) {
         if(decreasing) {
             loanPercent -= 0.5;
             if(loanPercent <= 0) {
-                loanPercent = 0; decreasing = false; pause = true;
-                setTimeout(() => { loanPercent = 100.0; decreasing = true; pause = false; }, 5000);
+                loanPercent = 0; 
+                decreasing = false; 
+                pause = true;
+                // 0% 도달 시 5초간 멈추며 자산 합산 진행
+                setTimeout(() => { 
+                    loanPercent = 100.0; 
+                    decreasing = true; 
+                    pause = false; 
+                }, 5000);
             }
         }
     }
+
     const loanElem = document.getElementById("loanPercent");
     if(loanElem) loanElem.innerText = loanPercent.toFixed(1) + "%";
 
+    // [3] AI 수익률 업데이트 (항시 작동)
     aiRate += (Math.random() * 0.05);
     const aiRateElem = document.getElementById("aiRate");
     if(aiRateElem) aiRateElem.innerText = "+" + aiRate.toFixed(1) + "%";
 
-    let baseAmount = 20;
-    let bonusRate = 1.2;
-    advertiser += (baseAmount * bonusRate);
-    consumer += baseAmount;
+    // [4] ★ 핵심 수정: 공유비율이 0일 때만 자산 합계 동작 ★
+    if (loanPercent === 0) {
+        let baseAmount = 20;
+        let bonusRate = 1.2;
+        advertiser += (baseAmount * bonusRate);
+        consumer += baseAmount;
 
-    if(document.getElementById("advValue")) document.getElementById("advValue").innerText = Math.floor(advertiser).toLocaleString() + "원";
-    if(document.getElementById("consValue")) document.getElementById("consValue").innerText = Math.floor(consumer).toLocaleString() + "원";
-    if(document.getElementById("totalValue")) document.getElementById("totalValue").innerText = Math.floor(advertiser + consumer).toLocaleString() + "원";
+        // 화면 숫자 업데이트
+        if(document.getElementById("advValue")) 
+            document.getElementById("advValue").innerText = Math.floor(advertiser).toLocaleString() + "원";
+        if(document.getElementById("consValue")) 
+            document.getElementById("consValue").innerText = Math.floor(consumer).toLocaleString() + "원";
+        if(document.getElementById("totalValue")) 
+            document.getElementById("totalValue").innerText = Math.floor(advertiser + consumer).toLocaleString() + "원";
+    }
 }
-setInterval(updateStatus, 100);
-
 /* =========================================================
    4. AI 투자 포착 로직 (수정 없음)
    ========================================================= */
