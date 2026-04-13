@@ -837,10 +837,12 @@ setInterval(() => {
 
 <script>
 /* =========================================================
-   1. 자산 엔진 (숫자 및 글자 흔들림 방지 정밀 로직)
+   1. 핀세계 핵심 엔진 (공유비율 0% 수익확정 & 흔들림 완전 차단)
    ========================================================= */
 window.advertiser = parseFloat(localStorage.getItem('fin_advertiser')) || 70000;
 window.consumer = parseFloat(localStorage.getItem('fin_consumer')) || 20000;
+window.loanPercent = 100.0;
+window.isDecreasing = true;
 
 function updateAssetDisplay() {
     const advEl = document.getElementById('advValue');
@@ -848,25 +850,48 @@ function updateAssetDisplay() {
     const totalEl = document.getElementById('totalValue');
 
     if (advEl && consEl && totalEl) {
-        // [핵심 수정] 숫자가 들어가는 칸의 스타일을 강제로 고정하여 주변 글자가 밀리지 않게 합니다.
-        const fixedStyle = "display: inline-block; min-width: 100px; text-align: center; font-variant-numeric: tabular-nums;";
+        // [완전 차단] 숫자가 밀리지 않도록 고정 폭 상자 안에 우측 정렬로 가둡니다.
+        // tabular-nums는 숫자의 가로폭을 일정하게 맞춰 흔들림을 막습니다.
+        const boxStyle = "display: inline-block; width: 95px; text-align: right; font-variant-numeric: tabular-nums; letter-spacing: -0.5px; font-weight: bold; margin-right: 2px;";
         
-        advEl.style.cssText = fixedStyle;
-        consEl.style.cssText = fixedStyle;
-        totalEl.style.cssText = "display: inline-block; min-width: 120px; text-align: center; font-variant-numeric: tabular-nums;";
-
-        advEl.innerText = Math.floor(window.advertiser).toLocaleString() + "원";
-        consEl.innerText = Math.floor(window.consumer).toLocaleString() + "원";
-        totalEl.innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
+        advEl.innerHTML = `<span style="${boxStyle}">${Math.floor(window.advertiser).toLocaleString()}</span>원`;
+        consEl.innerHTML = `<span style="${boxStyle}">${Math.floor(window.consumer).toLocaleString()}</span>원`;
+        totalEl.innerHTML = `<span style="${boxStyle} width: 115px;">${Math.floor(window.advertiser + window.consumer).toLocaleString()}</span>원`;
     }
 }
 
-// 0.1초마다 자산 미세 증가 (28년 연구 알고리즘 시뮬레이션)
+// 0.1초마다 실행되는 핀세계 시스템 루프
 setInterval(() => {
-    window.advertiser += 0.24; 
-    window.consumer += 0.1;
-    localStorage.setItem('fin_advertiser', window.advertiser);
-    localStorage.setItem('fin_consumer', window.consumer);
+    const reserveElem = document.getElementById("reserveValue");
+    if(reserveElem) reserveElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
+
+    const loanElem = document.getElementById("loanPercent");
+    
+    // [대표님 핵심 알고리즘] 공유 비율 연동 수익 확정 로직
+    if (window.isDecreasing) {
+        window.loanPercent -= 1.0; // 100에서 0으로 하락
+        
+        if (window.loanPercent <= 0) {
+            window.loanPercent = 0;
+            window.isDecreasing = false;
+
+            // ★ [수익 확정] 공유 비율이 0%가 된 '찰나'에만 자산이 늘어납니다.
+            window.advertiser += 240; 
+            window.consumer += 100;
+            localStorage.setItem('fin_advertiser', window.advertiser);
+            localStorage.setItem('fin_consumer', window.consumer);
+            
+            // 0% 상태에서 3초간 머물며 수익 확인 후 다시 100%로 복귀
+            setTimeout(() => { 
+                window.loanPercent = 100.0; 
+                window.isDecreasing = true; 
+            }, 3000);
+        }
+    }
+    
+    if(loanElem) loanElem.innerText = window.loanPercent.toFixed(1) + "%";
+    
+    // 자산 화면 갱신 (비율이 0%일 때만 숫자가 변하고 그 외엔 고정됨)
     updateAssetDisplay();
 }, 100);
 
@@ -908,7 +933,7 @@ function submitAd() {
     const s = document.getElementById('shopName'), b = document.getElementById('bizType'), a = document.getElementById('area'), t = document.getElementById('adText');
     if(!s.value.trim() || !b.value.trim() || !a.value.trim() || !t.value.trim()) { alert("모든 항목을 입력하세요."); return; }
     saveAndRefresh('fin_ads', { title: s.value });
-    alert("📩 신청 완료!");
+    alert("📩 행사 신청이 완료되었습니다!");
     clearInputs('adApplyForm');
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
@@ -917,7 +942,7 @@ function submitLoan() {
     const n = document.getElementById('loanName'), a = document.getElementById('loanAmount'), p = document.getElementById('loanPurpose');
     if(!n.value.trim() || !a.value || !p.value.trim()) { alert("모든 항목을 입력하세요."); return; }
     saveAndRefresh('fin_loans', { title: n.value + "(" + a.value + "만)" });
-    alert("💰 신청 완료!");
+    alert("💰 공유 신청이 완료되었습니다!");
     clearInputs('loanApplyForm');
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
@@ -926,34 +951,22 @@ function submitRoutine() {
     const o = document.getElementById('routineOwner'), r = document.getElementById('routineRegion'), t = document.getElementById('routineText');
     if(!o.value.trim() || !r.value.trim() || !t.value.trim()) { alert("모든 항목을 입력하세요."); return; }
     saveAndRefresh('fin_routines', { title: o.value });
-    alert("🌀 생성 완료!");
+    alert("🌀 루틴 생성이 완료되었습니다!");
     clearInputs('routineForm');
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-/* =========================================================
-   4. 지갑 설립 & 자동 입력 (시연 기능)
-   ========================================================= */
-function autoFillInfo() {
-    document.getElementById('bankName').value = "김전북";
-    document.getElementById('bankPhone').value = "010-1234-7788";
-    document.getElementById('bankAddress').value = "전북특별자치도 전주시";
-    document.getElementById('bankAgree').checked = true;
-}
-
-function autoFillKakao() { alert("💬 카카오 인증 완료!"); autoFillInfo(); }
-
 function submitBank() {
     const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'), a = document.getElementById('bankAddress'), agree = document.getElementById('bankAgree');
-    if(!n.value.trim() || !p.value.trim() || !a.value.trim() || !agree.checked) { alert("모든 항목을 입력하고 동의해주세요."); return; }
+    if(!n.value.trim() || !p.value.trim() || !a.value.trim() || !agree.checked) { alert("모든 정보를 입력하고 동의해주세요."); return; }
     saveAndRefresh('fin_wallets', { bankName: n.value });
-    alert(`🏦 [${n.value}] 님 설립 완료!`);
+    alert(`🏦 [${n.value}] 님 AI 지갑 설립 완료!`);
     clearInputs('bankForm');
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 /* =========================================================
-   5. 나의 현황 출력 (디자인 고정 및 스크롤)
+   4. 나의 현황 & 시연 기능 (카카오, 결제 등)
    ========================================================= */
 function forceUpdateAll() {
     const keys = [{k:'fin_wallets', id:'walletDisplay', p:'✅ '}, {k:'fin_ads', id:'adListDisplay', p:'📢 '}, {k:'fin_loans', id:'loanListDisplay', p:'💰 '}, {k:'fin_routines', id:'routineListDisplay', p:'🌀 '}];
@@ -967,24 +980,30 @@ function forceUpdateAll() {
     });
 }
 
-/* =========================================================
-   6. 기타 UI 제어 (결제, QR, AI신호)
-   ========================================================= */
+function autoFillInfo() {
+    document.getElementById('bankName').value = "김전북";
+    document.getElementById('bankPhone').value = "010-1234-7788";
+    document.getElementById('bankAddress').value = "전북특별자치도 전주시";
+    document.getElementById('bankAgree').checked = true;
+}
+
+function autoFillKakao() { alert("💬 카카오 인증 완료!"); autoFillInfo(); }
+
 function submitPayment() {
     const p = document.getElementById('payAmount');
     const v = parseInt(p.value || 0);
     if(v <= 0) { alert("금액을 입력하세요."); return; }
     window.advertiser += (v * 0.7); window.consumer += (v * 0.3);
     updateAssetDisplay();
-    alert(v.toLocaleString() + "원 결제 및 배당 완료!");
+    alert(v.toLocaleString() + "원 결제 및 실시간 배당 완료!");
     p.value = ''; document.getElementById('paymentFields').style.display = 'none';
 }
 
 window.addEventListener('load', () => {
     updateAssetDisplay(); forceUpdateAll();
-    updateAISignal();
     const ref = new URLSearchParams(window.location.search).get('ref') || "CEO 채정석";
     if(document.getElementById('bankReferrer')) document.getElementById('bankReferrer').value = ref;
+    updateAISignal();
 });
 
 function updateAISignal() {
@@ -1015,11 +1034,6 @@ window.resetEconomy = function() {
         updateAssetDisplay(); alert("초기화 완료!");
     }
 }
-
-
-
-    
-    
 </script>
     
 </body>
