@@ -483,144 +483,60 @@ function submitLoan() {
     forceUpdateAll();
 }
 
-// 1. 행사 신청 (스마트폰 최적화 버전)
-function submitAd() {
-    var shop = document.getElementById('shopName');
-    var biz = document.getElementById('bizType');
-    var area = document.getElementById('area');
-    var text = document.getElementById('adText');
 
-    function checkAndFocus(el, msg) {
-        if (!el.value.trim()) {
-            alert(msg);
-            // 스마트폰 키보드가 꼬이지 않게 0.1초 뒤에 강제 포커스
-            setTimeout(function() { 
-                el.focus(); 
-                el.scrollIntoView({behavior: "smooth", block: "center"});
-            }, 100);
-            return false;
-        }
-        return true;
-    }
 
-    if (!checkAndFocus(shop, "상호명을 입력해 주세요.")) return;
-    if (!checkAndFocus(biz, "업종/업태를 입력해 주세요.")) return;
-    if (!checkAndFocus(area, "행사지역을 입력해 주세요.")) return;
-    if (!checkAndFocus(text, "행사문구를 입력해 주세요.")) return;
 
-    // 모든 통과 후 저장 로직
-    var ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
-    ads.unshift({ title: shop.value, date: new Date().toLocaleString() });
-    localStorage.setItem('fin_ads', JSON.stringify(ads));
 
-    alert("📩 [" + shop.value + "] 행사 신청이 완료되었습니다!");
-    shop.value = ""; biz.value = ""; area.value = ""; text.value = "";
-    showSection('dashboard', document.getElementById('btn-dashboard'));
-    forceUpdateAll();
-}
 
-// 2. 공유 신청 (시간차 포커스 적용)
-function submitLoan() {
-    var name = document.getElementById('loanName');
-    var amount = document.getElementById('loanAmount');
-    var purpose = document.getElementById('loanPurpose');
-
-    function checkAndFocus(el, msg) {
-        if (!el.value || !el.value.trim()) {
-            alert(msg);
-            setTimeout(function() { el.focus(); }, 100);
-            return false;
-        }
-        return true;
-    }
-
-    if (!checkAndFocus(name, "신청자명을 입력해 주세요.")) return;
-    if (!checkAndFocus(amount, "신청금액을 입력해 주세요.")) return;
-    if (!checkAndFocus(purpose, "공유목적을 입력해 주세요.")) return;
-
-    var loans = JSON.parse(localStorage.getItem('fin_loans') || '[]');
-    loans.unshift({ title: name.value + " (" + amount.value + "만원)", date: new Date().toLocaleString() });
-    localStorage.setItem('fin_loans', JSON.stringify(loans));
-
-    alert("💰 " + name.value + "님, 공유 신청 완료!");
-    name.value = ""; amount.value = ""; purpose.value = "";
-    showSection('dashboard', document.getElementById('btn-dashboard'));
-    forceUpdateAll();
-}
-
-// 3. 루틴 생성 (시간차 포커스 적용)
-function submitRoutine() {
-    var owner = document.getElementById('routineOwner');
-    var region = document.getElementById('routineRegion');
-    var text = document.getElementById('routineText');
-
-    function checkAndFocus(el, msg) {
-        if (!el.value.trim()) {
-            alert(msg);
-            setTimeout(function() { el.focus(); }, 100);
-            return false;
-        }
-        return true;
-    }
-
-    if (!checkAndFocus(owner, "제작자 이름을 입력해 주세요.")) return;
-    if (!checkAndFocus(region, "적용지역을 입력해 주세요.")) return;
-    if (!checkAndFocus(text, "루틴 내용을 입력해 주세요.")) return;
-
-    var routines = JSON.parse(localStorage.getItem('fin_routines') || '[]');
-    routines.unshift({ title: owner.value + "님의 루틴", date: new Date().toLocaleString() });
-    localStorage.setItem('fin_routines', JSON.stringify(routines));
-
-    alert("🌀 " + owner.value + "님의 루틴 생성 완료!");
-    owner.value = ""; region.value = ""; text.value = "";
-    showSection('dashboard', document.getElementById('btn-dashboard'));
-    forceUpdateAll();
-}
     
-    
-</script>
-
-
-
-<script>
-// [긴급] 기존 함수들을 무력화하고 새로 정의합니다.
+// [강제 직권 명령] 경고창 없이 커서를 바로 보내는 함수
 window.submitAd = function() {
-    var inputs = [
-        { el: document.getElementById('shopName'), msg: "상호명을 입력해 주세요." },
-        { el: document.getElementById('bizType'), msg: "업종/업태를 입력해 주세요." },
-        { el: document.getElementById('area'), msg: "행사지역을 입력해 주세요." },
-        { el: document.getElementById('adText'), msg: "행사문구를 입력해 주세요." }
+    // 1. 검사 대상 설정
+    var fields = [
+        { id: 'shopName', msg: "상호명을 입력해 주세요." },
+        { id: 'bizType', msg: "업종을 입력해 주세요." },
+        { id: 'area', msg: "지역을 입력해 주세요." },
+        { id: 'adText', msg: "문구를 입력해 주세요." }
     ];
 
-    for (var i = 0; i < inputs.length; i++) {
-        if (!inputs[i].el || !inputs[i].el.value.trim()) {
-            alert(inputs[i].msg);
-            const targetEl = inputs[i].el;
-            setTimeout(function() {
-                targetEl.focus();
-                targetEl.scrollIntoView({behavior: "smooth", block: "center"});
-            }, 200);
-            return; // 여기서 중단
+    for (var i = 0; i < fields.length; i++) {
+        var inputEl = document.getElementById(fields[i].id);
+        
+        if (!inputEl || !inputEl.value.trim()) {
+            // [핵심] alert 대신 입력창 배경색을 잠시 바꿔 주의를 줍니다.
+            inputEl.style.backgroundColor = "#441111"; 
+            inputEl.placeholder = fields[i].msg; // 가이드 문구 변경
+            
+            // 즉시 커서 이동 (alert이 없으므로 막히지 않습니다)
+            inputEl.focus();
+            
+            // 화면 중앙으로 부드럽게 이동
+            inputEl.scrollIntoView({behavior: "smooth", block: "center"});
+            
+            // 1초 뒤에 배경색 원복
+            setTimeout(function() { 
+                inputEl.style.backgroundColor = "#fff"; 
+            }, 1000);
+            
+            return; // 검사 중단
         }
     }
 
-    // 모두 입력된 경우 저장
+    // 2. 모든 칸이 채워졌을 때만 실행되는 저장 로직
     var ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
-    ads.unshift({ title: inputs[0].el.value, date: new Date().toLocaleString() });
+    ads.unshift({ title: document.getElementById('shopName').value, date: new Date().toLocaleString() });
     localStorage.setItem('fin_ads', JSON.stringify(ads));
 
-    alert("📩 [" + inputs[0].el.value + "] 신청 완료!");
-    inputs.forEach(function(obj) { obj.el.value = ""; }); // 초기화
+    alert("📩 [" + document.getElementById('shopName').value + "] 신청 완료!");
+    
+    // 초기화 및 이동
+    fields.forEach(function(f) { document.getElementById(f.id).value = ""; });
     showSection('dashboard', document.getElementById('btn-dashboard'));
-    if (typeof forceUpdateAll === "function") forceUpdateAll();
+    if(typeof forceUpdateAll === 'function') forceUpdateAll();
 };
-
-// 공유 신청 및 루틴 생성도 위와 같은 'window.함수명' 방식으로 정의하여 
-// 외부 파일의 방해를 완전히 차단해야 합니다.
+    
+    
 </script>
 
-
-
-    
 </body>
 </html>
