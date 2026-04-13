@@ -2,102 +2,72 @@
    [UI LOGIC] 모든 항목 필수 입력 및 자동 커서 강화 버전
    --------------------------------------------------------- */
 
-// 1. 행사 신청 (상호명 ~ 행사문구까지 전체 검증)
+/* 📂 ui_logic.js - 데이터 이름표 통일 버전 */
 function submitAd() {
     const shop = document.getElementById("shopName");
     const biz = document.getElementById("bizType");
     const area = document.getElementById("area");
-    const text = document.getElementById("adText"); // 마지막 행사문구 칸
+    const text = document.getElementById("adText");
 
     if(!shop.value.trim()) { alert("⚠️ 상호명을 입력해 주세요."); shop.focus(); return; }
-    if(!biz.value.trim()) { alert("⚠️ 업종/업태를 입력해 주세요."); biz.focus(); return; }
-    if(!area.value.trim()) { alert("⚠️ 행사 지역을 입력해 주세요."); area.focus(); return; }
-    // 🚀 [추가] 행사 문구 입력 검증
-    if(!text.value.trim()) { alert("⚠️ 행사 문구를 입력해 주세요."); text.focus(); return; }
+    if(!biz.value.trim()) { alert("⚠️ 업종을 입력해 주세요."); biz.focus(); return; }
+    if(!area.value.trim()) { alert("⚠️ 지역을 입력해 주세요."); area.focus(); return; }
+    if(!text.value.trim()) { alert("⚠️ 문구를 입력해 주세요."); text.focus(); return; }
 
-    let adList = JSON.parse(localStorage.getItem("myAds") || "[]");
-    adList.push({
-        shopName: shop.value,
-        bizType: biz.value,
-        area: area.value,
-        adText: text.value,
-        date: new Date().toLocaleString()
-    });
-    localStorage.setItem("myAds", JSON.stringify(adList));
-
-    alert("✅ [" + shop.value + "] 행사 신청이 완료되었습니다.");
+    const item = { shopName: shop.value, bizType: biz.value, area: area.value, date: new Date().toLocaleString() };
+    saveFinData('ads', item);
+    alert("✅ [" + shop.value + "] 행사 신청 완료!");
     resetAndGoHome();
 }
 
-// 2. 공유 신청 (검증 후 실제 저장 기능 추가)
 function submitLoan() {
     const lName = document.getElementById("loanName");
     const lAmount = document.getElementById("loanAmount");
     const lPurpose = document.getElementById("loanPurpose");
 
     if(!lName.value.trim()) { alert("⚠️ 신청자명을 입력해 주세요."); lName.focus(); return; }
-    if(!lAmount.value.trim()) { alert("⚠️ 신청금액을 입력해 주세요."); lAmount.focus(); return; }
-    if(!lPurpose.value.trim()) { alert("⚠️ 공유 목적을 입력해 주세요."); lPurpose.focus(); return; }
+    if(!lAmount.value.trim()) { alert("⚠️ 금액을 입력해 주세요."); lAmount.focus(); return; }
+    if(!lPurpose.value.trim()) { alert("⚠️ 목적을 입력해 주세요."); lPurpose.focus(); return; }
 
-    // 🚀 [저장 로직 추가]
-    let loanList = JSON.parse(localStorage.getItem("myLoans") || "[]");
-    loanList.push({
-        loanName: lName.value,
-        loanAmount: lAmount.value,
-        loanPurpose: lPurpose.value,
-        date: new Date().toLocaleString()
-    });
-    localStorage.setItem("myLoans", JSON.stringify(loanList));
-
-    alert("💰 공유 신청이 정상적으로 접수되었습니다.");
+    saveFinData('loans', { loanName: lName.value, loanAmount: lAmount.value });
+    alert("💰 공유 신청 접수 완료!");
     resetAndGoHome();
 }
 
-// 3. 행사 루틴 (검증 후 실제 저장 기능 추가)
 function submitRoutine() {
     const rOwner = document.getElementById("routineOwner");
     const rRegion = document.getElementById("routineRegion");
     const rText = document.getElementById("routineText");
 
-    if(!rOwner.value.trim()) { alert("⚠️ 제작자 이름을 입력해 주세요."); rOwner.focus(); return; }
-    if(!rRegion.value.trim()) { alert("⚠️ 적용 지역을 입력해 주세요."); rRegion.focus(); return; }
-    if(!rText.value.trim()) { alert("⚠️ 루틴 내용을 입력해 주세요."); rText.focus(); return; }
+    if(!rOwner.value.trim()) { alert("⚠️ 제작자명을 입력해 주세요."); rOwner.focus(); return; }
+    if(!rRegion.value.trim()) { alert("⚠️ 지역을 입력해 주세요."); rRegion.focus(); return; }
+    if(!rText.value.trim()) { alert("⚠️ 내용을 입력해 주세요."); rText.focus(); return; }
 
-    // 🚀 [저장 로직 추가]
-    let routineList = JSON.parse(localStorage.getItem("myRoutines") || "[]");
-    routineList.push({
-        routineOwner: rOwner.value,
-        routineRegion: rRegion.value,
-        routineText: rText.value,
-        date: new Date().toLocaleString()
-    });
-    localStorage.setItem("myRoutines", JSON.stringify(routineList));
-
-    alert("🌀 새로운 루틴이 성공적으로 생성되었습니다.");
+    saveFinData('routines', { routineOwner: rOwner.value, routineRegion: rRegion.value });
+    alert("🌀 루틴 생성 완료!");
     resetAndGoHome();
 }
 
-// 4. 지갑 설립 (이미 정상이므로 유지)
 function submitBank() {
     const name = document.getElementById("bankName");
-    const phone = document.getElementById("bankPhone");
-    const addr = document.getElementById("bankAddress");
     const agree = document.getElementById("bankAgree");
 
     if(!name.value.trim()) { alert("⚠️ 성명을 입력해 주세요."); name.focus(); return; }
-    if(!phone.value.trim()) { alert("⚠️ 전화번호를 입력해 주세요."); phone.focus(); return; }
-    if(!addr.value.trim()) { alert("⚠️ 주소를 입력해 주세요."); addr.focus(); return; }
     if(!agree.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
 
-    const walletData = { userName: name.value, userPhone: phone.value, userAddress: addr.value, setupDate: new Date().toLocaleString() };
-    localStorage.setItem("myWallet", JSON.stringify(walletData));
-
-    alert("🏦 [" + name.value + "]님, AI 지갑 설립이 완료되었습니다!");
-    checkWalletStatus();
+    saveFinData('wallets', { bankName: name.value });
+    alert("🏦 [" + name.value + "]님, AI 지갑 설립 완료!");
     resetAndGoHome();
 }
 
-// --- 공통 보조 함수 (기존과 동일) ---
+// [공통 저장 보조 함수]
+function saveFinData(key, item) {
+    let list = JSON.parse(localStorage.getItem('fin_' + key) || '[]');
+    item.date = new Date().toLocaleString();
+    list.unshift(item);
+    localStorage.setItem('fin_' + key, JSON.stringify(list));
+    if(typeof forceRefreshData === 'function') forceRefreshData();
+}
 
 function resetAndGoHome() {
     document.querySelectorAll('input, textarea').forEach(el => {
