@@ -453,45 +453,8 @@ window.addEventListener('load', () => {
 
 
 
-
-// 1. 행사 신청 저장 (기존 submitAd 교체)
-function submitAd() {
-    const shop = document.getElementById('shopName').value;
-    if (!shop) { alert("상호명을 입력해주세요."); return; }
-
-    const ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
-    ads.unshift({ title: shop, date: new Date().toLocaleString() });
-    localStorage.setItem('fin_ads', JSON.stringify(ads));
-
-    alert("📩 행사 신청 완료!");
-    showSection('dashboard', document.getElementById('btn-dashboard'));
-    forceUpdateAll(); // 즉시 갱신
-}
-
-// 2. 공유 신청 저장 (기존 submitLoan 교체)
-function submitLoan() {
-    const name = document.getElementById('loanName').value;
-    const amount = document.getElementById('loanAmount').value;
-    if (!name || !amount) { alert("내용을 입력해주세요."); return; }
-
-    const loans = JSON.parse(localStorage.getItem('fin_loans') || '[]');
-    loans.unshift({ title: name + " (" + amount + "만원)", date: new Date().toLocaleString() });
-    localStorage.setItem('fin_loans', JSON.stringify(loans));
-
-    alert("💰 공유 신청 완료!");
-    showSection('dashboard', document.getElementById('btn-dashboard'));
-    forceUpdateAll();
-}
-
-
-
-
-
-
-    
-// [강제 직권 명령] 경고창 없이 커서를 바로 보내는 함수
+// [1] 행사 신청 (커서 자동 이동 + 배경색 강조 버전)
 window.submitAd = function() {
-    // 1. 검사 대상 설정
     var fields = [
         { id: 'shopName', msg: "상호명을 입력해 주세요." },
         { id: 'bizType', msg: "업종을 입력해 주세요." },
@@ -501,35 +464,85 @@ window.submitAd = function() {
 
     for (var i = 0; i < fields.length; i++) {
         var inputEl = document.getElementById(fields[i].id);
-        
         if (!inputEl || !inputEl.value.trim()) {
-            // [핵심] alert 대신 입력창 배경색을 잠시 바꿔 주의를 줍니다.
-            inputEl.style.backgroundColor = "#441111"; 
-            inputEl.placeholder = fields[i].msg; // 가이드 문구 변경
-            
-            // 즉시 커서 이동 (alert이 없으므로 막히지 않습니다)
+            // 경고창(alert) 없이 바로 커서 이동 (이게 포인트입니다!)
+            inputEl.style.backgroundColor = "#fff0f0"; // 연한 빨강으로 강조
+            inputEl.placeholder = fields[i].msg;
             inputEl.focus();
-            
-            // 화면 중앙으로 부드럽게 이동
             inputEl.scrollIntoView({behavior: "smooth", block: "center"});
             
-            // 1초 뒤에 배경색 원복
-            setTimeout(function() { 
-                inputEl.style.backgroundColor = "#fff"; 
-            }, 1000);
-            
-            return; // 검사 중단
+            // 1초 뒤 원래 색으로
+            setTimeout(function() { inputEl.style.backgroundColor = "#fff"; }, 1000);
+            return; 
         }
     }
 
-    // 2. 모든 칸이 채워졌을 때만 실행되는 저장 로직
+    // 저장 로직
     var ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
     ads.unshift({ title: document.getElementById('shopName').value, date: new Date().toLocaleString() });
     localStorage.setItem('fin_ads', JSON.stringify(ads));
 
     alert("📩 [" + document.getElementById('shopName').value + "] 신청 완료!");
     
-    // 초기화 및 이동
+    // 비우고 이동
+    fields.forEach(function(f) { document.getElementById(f.id).value = ""; });
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+    if(typeof forceUpdateAll === 'function') forceUpdateAll();
+};
+
+// [2] 공유 신청 (통일된 커서 이동 방식)
+window.submitLoan = function() {
+    var fields = [
+        { id: 'loanName', msg: "신청자명을 입력해 주세요." },
+        { id: 'loanAmount', msg: "금액을 입력해 주세요." },
+        { id: 'loanPurpose', msg: "목적을 입력해 주세요." }
+    ];
+
+    for (var i = 0; i < fields.length; i++) {
+        var inputEl = document.getElementById(fields[i].id);
+        if (!inputEl || !inputEl.value.trim()) {
+            inputEl.style.backgroundColor = "#fff0f0";
+            inputEl.focus();
+            inputEl.scrollIntoView({behavior: "smooth", block: "center"});
+            setTimeout(function() { inputEl.style.backgroundColor = "#fff"; }, 1000);
+            return;
+        }
+    }
+
+    var loans = JSON.parse(localStorage.getItem('fin_loans') || '[]');
+    loans.unshift({ title: document.getElementById('loanName').value + " (" + document.getElementById('loanAmount').value + "만원)", date: new Date().toLocaleString() });
+    localStorage.setItem('fin_loans', JSON.stringify(loans));
+
+    alert("💰 공유 신청 완료!");
+    fields.forEach(function(f) { document.getElementById(f.id).value = ""; });
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+    if(typeof forceUpdateAll === 'function') forceUpdateAll();
+};
+
+// [3] 행사 루틴 (통일된 커서 이동 방식)
+window.submitRoutine = function() {
+    var fields = [
+        { id: 'routineOwner', msg: "제작자 성함을 입력해 주세요." },
+        { id: 'routineRegion', msg: "지역을 입력해 주세요." },
+        { id: 'routineText', msg: "내용을 입력해 주세요." }
+    ];
+
+    for (var i = 0; i < fields.length; i++) {
+        var inputEl = document.getElementById(fields[i].id);
+        if (!inputEl || !inputEl.value.trim()) {
+            inputEl.style.backgroundColor = "#fff0f0";
+            inputEl.focus();
+            inputEl.scrollIntoView({behavior: "smooth", block: "center"});
+            setTimeout(function() { inputEl.style.backgroundColor = "#fff"; }, 1000);
+            return;
+        }
+    }
+
+    var routines = JSON.parse(localStorage.getItem('fin_routines') || '[]');
+    routines.unshift({ title: document.getElementById('routineOwner').value + " 루틴", date: new Date().toLocaleString() });
+    localStorage.setItem('fin_routines', JSON.stringify(routines));
+
+    alert("🌀 루틴 생성 완료!");
     fields.forEach(function(f) { document.getElementById(f.id).value = ""; });
     showSection('dashboard', document.getElementById('btn-dashboard'));
     if(typeof forceUpdateAll === 'function') forceUpdateAll();
