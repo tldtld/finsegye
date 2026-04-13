@@ -249,188 +249,60 @@ function presentGemini() {
 <script src="ui_dashboard.js"></script>
 
 <script>
-    // [1] 전역 변수 및 상태 관리
-    var isMypageExpanded = false;
-    var liveCount = parseInt(localStorage.getItem('fin_live_users_v3')) || 13672;
+    // [1] 화면 전환 강제 실행 함수 (이게 안 되면 앱이 죽습니다)
+    window.showSection = function(sectionId, btn) {
+        console.log("화면 전환 시도: " + sectionId); // 브라우저 검사용 로그
 
-    // [2] 화면 전환 및 스마트 커서 이동 통합 함수
-    function showSection(sectionId, btn) {
-        // 모든 섹션 숨기기
-        document.querySelectorAll('section').forEach(function(s) { 
-            s.style.setProperty('display', 'none', 'important'); 
-        });
-        // 모든 내비게이션 버튼 활성화 해제
-        document.querySelectorAll('.nav button').forEach(function(b) { 
-            b.classList.remove('active'); 
-        });
+        // 1. 모든 섹션을 예외 없이 숨김 (강제성 부여)
+        var sections = document.getElementsByTagName('section');
+        for (var i = 0; i < sections.length; i++) {
+            sections[i].style.display = 'none';
+        }
 
-        // 대상 섹션 보이기
+        // 2. 모든 내비 버튼 불 끄기
+        var buttons = document.querySelectorAll('.nav button');
+        buttons.forEach(function(b) { b.classList.remove('active'); });
+
+        // 3. 목적지 섹션 노출
         var target = document.getElementById(sectionId);
-        if(target) {
-            target.style.setProperty('display', 'block', 'important');
+        if (target) {
+            target.style.display = 'block';
             window.scrollTo(0, 0);
-        }
-        // 버튼 활성화 표시
-        if(btn) btn.classList.add('active');
-
-        // 나의 현황 페이지일 경우 데이터 즉시 갱신
-        if(sectionId === 'mypage') {
-            isMypageExpanded = true;
-            forceUpdateAll();
         } else {
-            isMypageExpanded = false;
+            console.error("오류: " + sectionId + " 섹션을 찾을 수 없습니다.");
         }
 
-        // [핵심] 화면 전환 시 첫 번째 입력칸으로 커서 자동 이동 (지갑설립 제외)
+        // 4. 클릭한 버튼 불 켜기
+        if (btn) btn.classList.add('active');
+
+        // [추가] 나의 현황일 경우 데이터 즉시 갱신
+        if (sectionId === 'mypage' && typeof forceUpdateAll === "function") {
+            forceUpdateAll();
+        }
+
+        // [핵심] 입력창으로 커서 강제 이동
         var focusMap = { 'adApplyForm': 'shopName', 'loanApplyForm': 'loanName', 'routineForm': 'routineOwner' };
         if (focusMap[sectionId]) {
-            setTimeout(function() { 
+            setTimeout(function() {
                 var el = document.getElementById(focusMap[sectionId]);
-                if(el) el.focus(); 
+                if (el) el.focus();
             }, 300);
         }
-    }
+    };
 
-    // [3] 공통 입력 검증 및 스마트 커서 복구 로직
-    function validateAndFocus(fields) {
-        for (var i = 0; i < fields.length; i++) {
-            var el = document.getElementById(fields[i].id);
-            if (!el || !el.value.trim()) {
-                alert(fields[i].msg);
-                (function(targetEl) {
-                    setTimeout(function() {
-                        targetEl.focus();
-                        targetEl.scrollIntoView({behavior: "smooth", block: "center"});
-                    }, 200);
-                })(el);
-                return false;
-            }
-        }
-        return true;
-    }
-
-    // [4] 각 기능별 저장 함수 (나의 현황 연동)
-    function submitAd() {
-        var fields = [{id:'shopName', msg:'상호명을 입력하세요.'}, {id:'bizType', msg:'업종을 입력하세요.'}, {id:'area', msg:'지역을 입력하세요.'}, {id:'adText', msg:'문구를 입력하세요.'}];
-        if (!validateAndFocus(fields)) return;
-        saveData('fin_ads', { title: document.getElementById('shopName').value });
-        alert("📩 행사 신청이 완료되었습니다!");
-        clearAndGoHome(fields);
-    }
-
-    function submitLoan() {
-        var fields = [{id:'loanName', msg:'신청자명을 입력하세요.'}, {id:'loanAmount', msg:'금액을 입력하세요.'}, {id:'loanPurpose', msg:'목적을 입력하세요.'}];
-        if (!validateAndFocus(fields)) return;
-        saveData('fin_loans', { title: document.getElementById('loanName').value + " (" + document.getElementById('loanAmount').value + "만원)" });
-        alert("💰 공유 신청이 완료되었습니다!");
-        clearAndGoHome(fields);
-    }
-
-    function submitRoutine() {
-        var fields = [{id:'routineOwner', msg:'제작자를 입력하세요.'}, {id:'routineRegion', msg:'지역을 입력하세요.'}, {id:'routineText', msg:'내용을 입력하세요.'}];
-        if (!validateAndFocus(fields)) return;
-        saveData('fin_routines', { title: document.getElementById('routineOwner').value + " 루틴" });
-        alert("🌀 루틴 생성이 완료되었습니다!");
-        clearAndGoHome(fields);
-    }
-
-    function submitBank() {
-        var name = document.getElementById('bankName');
-        var agree = document.getElementById('bankAgree');
-        if (!name.value.trim()) { alert("성함을 입력해주세요."); name.focus(); return; }
-        if (!agree.checked) { alert("개인정보 동의가 필요합니다."); return; }
-        
-        var newUser = { bankName: name.value, date: new Date().toLocaleString() };
-        saveData('fin_wallets', newUser);
-        alert("🏦 [" + name.value + "] 님 설립 완료! 메인으로 이동합니다.");
-        
-        document.getElementById('bankName').value = "";
-        document.getElementById('bankPhone').value = "";
-        document.getElementById('bankAddress').value = "";
-        agree.checked = false;
-        showSection('dashboard', document.getElementById('btn-dashboard'));
-    }
-
-    // [5] 데이터 저장 및 화면 갱신 보조 함수
-    function saveData(key, dataObj) {
-        dataObj.date = new Date().toLocaleString();
-        var list = JSON.parse(localStorage.getItem(key) || '[]');
-        list.unshift(dataObj);
-        localStorage.setItem(key, JSON.stringify(list));
-    }
-
-    function clearAndGoHome(fields) {
-        fields.forEach(function(f) { document.getElementById(f.id).value = ""; });
-        showSection('dashboard', document.getElementById('btn-dashboard'));
-        forceUpdateAll();
-    }
-
-    function forceUpdateAll() {
-        updateListDisplay('fin_wallets', 'walletDisplay', '✅ ');
-        updateListDisplay('fin_ads', 'adListDisplay', '📢 ');
-        updateListDisplay('fin_loans', 'loanListDisplay', '💰 ');
-        updateListDisplay('fin_routines', 'routineListDisplay', '🌀 ');
-    }
-
-    function updateListDisplay(key, elementId, prefix) {
-        var data = JSON.parse(localStorage.getItem(key) || '[]');
-        var el = document.getElementById(elementId);
-        if (el) {
-            el.innerHTML = data.length > 0 ? data.map(function(item) {
-                return '<div style="margin-bottom:8px; border-bottom:1px solid #333; padding-bottom:4px;">' + prefix + (item.bankName || item.title) + '<br><small style="color:#888;">' + item.date + '</small></div>';
-            }).join('') : "내역 없음";
-        }
-    }
-
-    // [6] 실시간 참여 및 AI 신호 로직
-    function updateAISignal() {
-        var assets = ["KOSPI200 선물", "삼성전자", "현대차", "나스닥100", "원/달러 환율", "금 선물", "이더리움"];
-        var actions = ["매수 포착", "비중 확대", "관망(대기)", "차익 실현", "강력 매수"];
-        var colors = ["#ff416c", "#ff4b2b", "#888", "#00ffcc", "#ff00ff"];
-        var assetEl = document.getElementById('assetName'), actionEl = document.getElementById('actionType');
-        if (!assetEl || !actionEl) return;
-        var idx = Math.floor(Math.random() * actions.length);
-        assetEl.innerText = assets[Math.floor(Math.random() * assets.length)];
-        actionEl.innerText = actions[idx];
-        actionEl.style.background = colors[idx];
-        setTimeout(updateAISignal, Math.random() * 2000 + 2000);
-    }
-
-    function startGrowth() {
-        liveCount += Math.floor(Math.random() * 3) + 1;
-        localStorage.setItem('fin_live_users_v3', liveCount);
-        var countEl = document.getElementById('realtimeUserCount');
-        if (countEl) {
-            countEl.innerText = liveCount.toLocaleString();
-            countEl.style.transform = "scale(1.1)";
-            setTimeout(function() { countEl.style.transform = "scale(1)"; }, 300);
-        }
-        setTimeout(startGrowth, 2000);
-    }
-
-    // [7] 초기화 및 기타 UI 제어
+    // [2] 페이지 로드 시 초기 상태 설정
     window.addEventListener('load', function() {
-        updateAISignal();
-        var countEl = document.getElementById('realtimeUserCount');
-        if (countEl) countEl.innerText = liveCount.toLocaleString();
-        setTimeout(startGrowth, 5000);
+        // 처음 실행 시 무조건 대시보드만 보이게 설정
+        showSection('dashboard', document.getElementById('btn-dashboard'));
         
-        // 추천인 로직
-        var refInput = document.getElementById('bankReferrer');
-        var ref = new URLSearchParams(window.location.search).get('ref') || "CEO 채정석";
-        if (refInput) { refInput.value = ref; refInput.style.backgroundColor = "#111"; }
-        forceUpdateAll();
+        // AI 신호 및 인원 증가 엔진 가동
+        if (typeof updateAISignal === "function") updateAISignal();
+        if (typeof startGrowth === "function") startGrowth();
     });
 
-    function toggleQR() { var q = document.getElementById('qrContainer'); q.style.display = (q.style.display === 'none') ? 'block' : 'none'; }
-    function toggleLiveList() { var l = document.getElementById('liveListContainer'); l.style.display = (l.style.display === 'none') ? 'block' : 'none'; }
-    function openPayment() { document.getElementById('paymentFields').style.display = 'block'; setTimeout(function(){ document.getElementById('payAmount').focus(); }, 300); }
-    function closePayment() { document.getElementById('paymentFields').style.display = 'none'; document.getElementById('payAmount').value = ""; }
-    function submitPayment() {
-        var amt = parseInt(document.getElementById('payAmount').value || 0);
-        if (amt <= 0) { alert("금액을 입력해주세요."); return; }
-        alert(amt.toLocaleString() + "원 결제 완료!");
-        closePayment();
+    // [3] 외부 파일 로딩 오류 방지 (더미 함수 선언)
+    if (typeof forceUpdateAll !== "function") {
+        window.forceUpdateAll = function() { console.log("데이터 갱신 중..."); };
     }
 </script>
 </body>
