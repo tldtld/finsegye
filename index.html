@@ -483,53 +483,90 @@ function submitLoan() {
     forceUpdateAll();
 }
 
-// 3. 루틴 생성 저장 (기존 submitRoutine 교체)
-function submitRoutine() {
-    const owner = document.getElementById('routineOwner').value;
-    if (!owner) { alert("제작자 이름을 입력해주세요."); return; }
+// 1. 행사 신청 (입력 체크 + 초기화 추가)
+function submitAd() {
+    const shop = document.getElementById('shopName');
+    const biz = document.getElementById('bizType');
+    const area = document.getElementById('area');
+    const text = document.getElementById('adText');
 
-    const routines = JSON.parse(localStorage.getItem('fin_routines') || '[]');
-    routines.unshift({ title: owner + "님의 루틴", date: new Date().toLocaleString() });
-    localStorage.setItem('fin_routines', JSON.stringify(routines));
+    // [체크] 상호명이 비어있으면 진행 불가
+    if (!shop.value.trim()) {
+        alert("상호명을 입력해야 신청이 가능합니다.");
+        shop.focus();
+        return;
+    }
 
-    alert("🌀 루틴 생성 완료!");
+    const ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
+    ads.unshift({ title: shop.value, date: new Date().toLocaleString() });
+    localStorage.setItem('fin_ads', JSON.stringify(ads));
+
+    alert(`📩 [${shop.value}] 신청이 완료되었습니다!`);
+
+    // [초기화] 다음 신청을 위해 입력창을 싹 비웁니다.
+    shop.value = "";
+    biz.value = "";
+    area.value = "";
+    text.value = "";
+
     showSection('dashboard', document.getElementById('btn-dashboard'));
     forceUpdateAll();
 }
 
-// 4. [핵심] 나의 현황 화면에 뿌려주는 함수 (기존 내용 교체)
-function forceUpdateAll() {
-    // [A] 지갑 내역 (이미 잘 되는 부분 유지)
-    const wallets = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
-    const walletDisp = document.getElementById('walletDisplay');
-    if (walletDisp) {
-        walletDisp.innerHTML = wallets.length > 0 ? 
-            wallets.map(w => `<div style="margin-bottom:5px; border-bottom:1px solid #333;">✅ ${w.bankName}<br><small>${w.date}</small></div>`).join('') : "내역 없음";
+// 2. 공유 신청 (입력 체크 + 초기화 추가)
+function submitLoan() {
+    const name = document.getElementById('loanName');
+    const amount = document.getElementById('loanAmount');
+    const purpose = document.getElementById('loanPurpose');
+
+    // [체크] 이름과 금액이 없으면 진행 불가
+    if (!name.value.trim() || !amount.value) {
+        alert("신청자명과 금액을 정확히 입력해주세요.");
+        name.focus();
+        return;
     }
 
-    // [B] 행사 신청 내역 출력
-    const ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
-    const adList = document.getElementById('adListDisplay');
-    if (adList) {
-        adList.innerHTML = ads.length > 0 ? 
-            ads.map(a => `<li style="margin-bottom:5px;">📢 ${a.title}<br><small>${a.date}</small></li>`).join('') : "내역 없음";
-    }
-
-    // [C] 공유 신청 내역 출력
     const loans = JSON.parse(localStorage.getItem('fin_loans') || '[]');
-    const loanList = document.getElementById('loanListDisplay');
-    if (loanList) {
-        loanList.innerHTML = loans.length > 0 ? 
-            loans.map(l => `<li style="margin-bottom:5px;">💰 ${l.title}<br><small>${l.date}</small></li>`).join('') : "내역 없음";
+    loans.unshift({ title: name.value + " (" + amount.value + "만원)", date: new Date().toLocaleString() });
+    localStorage.setItem('fin_loans', JSON.stringify(loans));
+
+    alert(`💰 ${name.value}님, 공유 신청 완료!`);
+
+    // [초기화]
+    name.value = "";
+    amount.value = "";
+    purpose.value = "";
+
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+    forceUpdateAll();
+}
+
+// 3. 루틴 생성 (입력 체크 + 초기화 추가)
+function submitRoutine() {
+    const owner = document.getElementById('routineOwner');
+    const region = document.getElementById('routineRegion');
+    const text = document.getElementById('routineText');
+
+    // [체크] 제작자 이름이 없으면 진행 불가
+    if (!owner.value.trim()) {
+        alert("제작자 이름을 입력해주세요.");
+        owner.focus();
+        return;
     }
 
-    // [D] 루틴 내역 출력
     const routines = JSON.parse(localStorage.getItem('fin_routines') || '[]');
-    const routineList = document.getElementById('routineListDisplay');
-    if (routineList) {
-        routineList.innerHTML = routines.length > 0 ? 
-            routines.map(r => `<li style="margin-bottom:5px;">🌀 ${r.title}<br><small>${r.date}</small></li>`).join('') : "내역 없음";
-    }
+    routines.unshift({ title: owner.value + "님의 루틴", date: new Date().toLocaleString() });
+    localStorage.setItem('fin_routines', JSON.stringify(routines));
+
+    alert(`🌀 ${owner.value}님의 루틴 생성 완료!`);
+
+    // [초기화]
+    owner.value = "";
+    region.value = "";
+    text.value = "";
+
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+    forceUpdateAll();
 }
 
     
