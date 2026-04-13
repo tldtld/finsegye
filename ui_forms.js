@@ -1,3 +1,5 @@
+ui_form.js
+
 /* 📂 ui_forms.js 저장 로직 확인 */
 function submitBank() {
     var n = document.getElementById('bankName').value;
