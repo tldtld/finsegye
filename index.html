@@ -449,6 +449,56 @@ window.addEventListener('load', () => {
         startGrowth();
     }, 5000); 
 });
+
+
+
+
+
+// [행사 신청] 버튼을 눌렀을 때 데이터를 저장하고 화면에 보여주는 함수
+function submitAd() {
+    const shop = document.getElementById('shopName').value;
+    const biz = document.getElementById('bizType').value;
+    const area = document.getElementById('area').value;
+    const text = document.getElementById('adText').value;
+
+    // 1. 유효성 검사 (상호명은 필수!)
+    if (!shop.trim()) {
+        alert("상호명을 입력해주세요.");
+        document.getElementById('shopName').focus();
+        return;
+    }
+
+    // 2. 데이터 저장 (내 스마트폰 메모리 'fin_ads'에 기록)
+    const ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
+    const newAd = {
+        shop: shop,
+        biz: biz,
+        area: area,
+        text: text,
+        date: new Date().toLocaleDateString()
+    };
+    ads.unshift(newAd); // 최신글을 맨 위로
+    localStorage.setItem('fin_ads', JSON.stringify(ads));
+
+    // 3. 완료 알림 및 화면 전환
+    alert(`📩 [${shop}] 행사 신청이 완료되었습니다!`);
+    
+    // 입력창 초기화
+    document.getElementById('shopName').value = "";
+    document.getElementById('bizType').value = "";
+    document.getElementById('area').value = "";
+    document.getElementById('adText').value = "";
+
+    // 자산 현황(메인)으로 이동
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+
+    // 나의 현황 화면 즉시 갱신
+    if (typeof forceUpdateAll === "function") forceUpdateAll();
+}
+
+
+
+    
     
 </script>
 </body>
