@@ -579,5 +579,48 @@ function submitRoutine() {
     
     
 </script>
+
+
+
+<script>
+// [긴급] 기존 함수들을 무력화하고 새로 정의합니다.
+window.submitAd = function() {
+    var inputs = [
+        { el: document.getElementById('shopName'), msg: "상호명을 입력해 주세요." },
+        { el: document.getElementById('bizType'), msg: "업종/업태를 입력해 주세요." },
+        { el: document.getElementById('area'), msg: "행사지역을 입력해 주세요." },
+        { el: document.getElementById('adText'), msg: "행사문구를 입력해 주세요." }
+    ];
+
+    for (var i = 0; i < inputs.length; i++) {
+        if (!inputs[i].el || !inputs[i].el.value.trim()) {
+            alert(inputs[i].msg);
+            const targetEl = inputs[i].el;
+            setTimeout(function() {
+                targetEl.focus();
+                targetEl.scrollIntoView({behavior: "smooth", block: "center"});
+            }, 200);
+            return; // 여기서 중단
+        }
+    }
+
+    // 모두 입력된 경우 저장
+    var ads = JSON.parse(localStorage.getItem('fin_ads') || '[]');
+    ads.unshift({ title: inputs[0].el.value, date: new Date().toLocaleString() });
+    localStorage.setItem('fin_ads', JSON.stringify(ads));
+
+    alert("📩 [" + inputs[0].el.value + "] 신청 완료!");
+    inputs.forEach(function(obj) { obj.el.value = ""; }); // 초기화
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+    if (typeof forceUpdateAll === "function") forceUpdateAll();
+};
+
+// 공유 신청 및 루틴 생성도 위와 같은 'window.함수명' 방식으로 정의하여 
+// 외부 파일의 방해를 완전히 차단해야 합니다.
+</script>
+
+
+
+    
 </body>
 </html>
