@@ -122,6 +122,7 @@
 .mic-active { display: block !important; animation: micFloating 1.2s infinite ease-out; }
 </style>
 
+
 <script>
 function presentGemini() {
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -243,21 +244,27 @@ function presentGemini() {
     <button onclick="showSection('mypage', this)" id="btn-mypage">나의<br>현황</button>
 </div>
 
+
+
+    
 <script src="economy.js"></script> 
 <script src="ui_dashboard.js"></script>
 <script src="ui_logic.js"></script>
-<script src="economy.js"></script>
 
 <script>
     window.addEventListener('load', function() {
-        // 시작하자마자 첫 화면 강제 고정
+        // [핵심] 시작하자마자 첫 화면(대시보드) 강제 고정
         if (typeof window.showSection === 'function') {
             window.showSection('dashboard', document.getElementById('btn-dashboard'));
+        } else {
+            console.error("ui_dashboard.js가 로드되지 않았습니다.");
         }
-    });
-</script>
 
-    
+        // 추천인 자동 설정 (필요시)
+        const ref = new URLSearchParams(window.location.search).get('ref') || "CEO 채정석";
+        const refInput = document.getElementById('bankReferrer');
+        if (refInput) { refInput.value = ref; }
+    });
 </script>
 
 </body>
