@@ -430,7 +430,7 @@ function autoFillKakao() {
 
 
 
-
+<!--
 <script>
 /* =========================================================
    1. 자산 엔진 (행사자 7만 / 소비자 2만 고정 시작)
@@ -615,6 +615,215 @@ window.addEventListener('load', () => {
 function toggleQR() { const qr = document.getElementById('qrContainer'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none'; }
 function openPayment() { document.getElementById('paymentFields').style.display = 'block'; }
 function closePayment() { document.getElementById('paymentFields').style.display = 'none'; }
+-->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    
+<script>
+/* =========================================================
+   1. 자산 엔진 (숫자 떨림 방지 및 실시간 누적)
+   ========================================================= */
+window.advertiser = parseFloat(localStorage.getItem('fin_advertiser')) || 70000;
+window.consumer = parseFloat(localStorage.getItem('fin_consumer')) || 20000;
+
+function updateAssetDisplay() {
+    const advEl = document.getElementById('advValue');
+    const consEl = document.getElementById('consValue');
+    const totalEl = document.getElementById('totalValue');
+    
+    // [보정] 숫자가 변해도 칸이 흔들리지 않도록 고정
+    if (advEl) {
+        advEl.innerText = Math.floor(window.advertiser).toLocaleString() + "원";
+        consEl.innerText = Math.floor(window.consumer).toLocaleString() + "원";
+        totalEl.innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
+    }
+}
+
+// 0.1초마다 미세 증가
+setInterval(() => {
+    window.advertiser += 0.24; 
+    window.consumer += 0.1;
+    localStorage.setItem('fin_advertiser', window.advertiser);
+    localStorage.setItem('fin_consumer', window.consumer);
+    updateAssetDisplay();
+}, 100);
+
+/* =========================================================
+   2. 나의 현황 출력 엔진 (박스 고정 및 내부 스크롤)
+   ========================================================= */
+function forceUpdateAll() {
+    const keys = [
+        {k:'fin_wallets', id:'walletDisplay', p:'✅ '}, 
+        {k:'fin_ads', id:'adListDisplay', p:'📢 '}, 
+        {k:'fin_loans', id:'loanListDisplay', p:'💰 '}, 
+        {k:'fin_routines', id:'routineListDisplay', p:'🌀 '}
+    ];
+
+    keys.forEach(item => {
+        const list = JSON.parse(localStorage.getItem(item.k) || '[]');
+        const el = document.getElementById(item.id);
+        if(el) {
+            // [개선] 박스 크기를 고정하고 내용이 많아지면 안에서 스크롤되게 함
+            el.style.height = "100px"; // 박스 높이 고정
+            el.style.overflowY = "auto"; // 내용 많으면 안에서 스크롤
+            el.style.fontSize = "0.75em";
+
+            el.innerHTML = list.map(d => `
+                <div style="border-bottom:1px solid #333; padding:5px 0; color:#eee;">
+                    ${item.p}${d.bankName || d.title}
+                    <div style="font-size:0.8em; color:#777;">${d.date}</div>
+                </div>
+            `).join('') || '<div style="color:#444; padding:10px;">내역 없음</div>';
+        }
+    });
+}
+
+/* =========================================================
+   3. 화면 전환 및 철벽 검증 저장 (기능 유지)
+   ========================================================= */
+function showSection(id, btn) {
+    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    const target = document.getElementById(id);
+    if(target) target.style.display = 'block';
+    if(btn) btn.classList.add('active');
+    if(id === 'mypage') forceUpdateAll();
+    window.scrollTo(0, 0);
+}
+
+function clearInputs(sectionId) {
+    const sec = document.getElementById(sectionId);
+    if(sec) sec.querySelectorAll('input, textarea').forEach(el => {
+        if(el.type === 'checkbox') el.checked = false;
+        else el.value = '';
+    });
+}
+
+function saveAndRefresh(key, data) {
+    let list = JSON.parse(localStorage.getItem(key) || '[]');
+    data.date = new Date().toLocaleString();
+    list.unshift(data);
+    localStorage.setItem(key, JSON.stringify(list));
+    forceUpdateAll();
+}
+
+// 각 신청 함수 (철벽 검증 포함)
+function submitAd() {
+    const s = document.getElementById('shopName'), b = document.getElementById('bizType'), a = document.getElementById('area'), t = document.getElementById('adText');
+    if(!s.value.trim() || !b.value.trim() || !a.value.trim() || !t.value.trim()) { alert("모든 항목을 입력하세요."); return; }
+    saveAndRefresh('fin_ads', { title: s.value });
+    alert("📩 신청 완료!");
+    clearInputs('adApplyForm');
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+function submitLoan() {
+    const n = document.getElementById('loanName'), a = document.getElementById('loanAmount'), p = document.getElementById('loanPurpose');
+    if(!n.value.trim() || !a.value || !p.value.trim()) { alert("모든 항목을 입력하세요."); return; }
+    saveAndRefresh('fin_loans', { title: n.value + "(" + a.value + "만)" });
+    alert("💰 신청 완료!");
+    clearInputs('loanApplyForm');
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+function submitRoutine() {
+    const o = document.getElementById('routineOwner'), r = document.getElementById('routineRegion'), t = document.getElementById('routineText');
+    if(!o.value.trim() || !r.value.trim() || !t.value.trim()) { alert("모든 항목을 입력하세요."); return; }
+    saveAndRefresh('fin_routines', { title: o.value });
+    alert("🌀 생성 완료!");
+    clearInputs('routineForm');
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+function submitBank() {
+    const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'), a = document.getElementById('bankAddress'), agree = document.getElementById('bankAgree');
+    if(!n.value.trim() || !p.value.trim() || !a.value.trim() || !agree.checked) { alert("모든 정보를 입력하고 동의해주세요."); return; }
+    saveAndRefresh('fin_wallets', { bankName: n.value, bankPhone: p.value });
+    alert(`🏦 [${n.value}] 님 설립 완료!`);
+    clearInputs('bankForm');
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+/* =========================================================
+   4. 시연 및 UI 제어 (카카오, 결제 등)
+   ========================================================= */
+function autoFillInfo() {
+    document.getElementById('bankName').value = "김전북";
+    document.getElementById('bankPhone').value = "010-1234-7788";
+    document.getElementById('bankAddress').value = "전북특별자치도 전주시";
+    document.getElementById('bankAgree').checked = true;
+}
+
+function autoFillKakao() { alert("💬 카카오 인증 완료!"); autoFillInfo(); }
+
+function submitPayment() {
+    const p = document.getElementById('payAmount');
+    const v = parseInt(p.value || 0);
+    if(v <= 0) { alert("금액을 입력하세요."); return; }
+    window.advertiser += (v * 0.7); window.consumer += (v * 0.3);
+    updateAssetDisplay();
+    alert(v.toLocaleString() + "원 결제 완료!");
+    p.value = ''; document.getElementById('paymentFields').style.display = 'none';
+}
+
+window.addEventListener('load', () => {
+    updateAssetDisplay(); forceUpdateAll();
+    const ref = new URLSearchParams(window.location.search).get('ref') || "CEO 채정석";
+    if(document.getElementById('bankReferrer')) document.getElementById('bankReferrer').value = ref;
+    updateAISignal();
+});
+
+function updateAISignal() {
+    const assets = ["KOSPI200", "삼성전자", "NASDAQ", "GOLD"];
+    const actionEl = document.getElementById('actionType');
+    if(actionEl) {
+        document.getElementById('assetName').innerText = assets[Math.floor(Math.random()*assets.length)];
+        actionEl.innerText = "매수 포착";
+        actionEl.style.background = "#ff416c";
+    }
+    setTimeout(updateAISignal, 4000);
+}
+
+function openPayment() { document.getElementById('paymentFields').style.display = 'block'; }
+function closePayment() { document.getElementById('paymentFields').style.display = 'none'; }
+function toggleQR() { const qr = document.getElementById('qrContainer'); qr.style.display = (qr.style.display === 'none') ? 'block' : 'none'; }
+
+let liveCount = 13672;
+setInterval(() => {
+    liveCount += 1;
+    if(document.getElementById('realtimeUserCount')) document.getElementById('realtimeUserCount').innerText = liveCount.toLocaleString();
+}, 5000);
+</script>
+    
 </script>
     
 </body>
