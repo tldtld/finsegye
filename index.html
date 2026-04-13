@@ -243,23 +243,24 @@ function presentGemini() {
     <button onclick="showSection('mypage', this)" id="btn-mypage">나의<br>현황</button>
 </div>
 
-<script src="economy.js"></script> <script src="ui_dashboard.js"></script> <script src="ui_logic.js"></script> <script>
-    // 페이지 로드 시 초기화
+<script src="economy.js"></script> 
+<script src="ui_dashboard.js"></script> 
+<script src="ui_logic.js"></script> 
+
+<script>
     window.addEventListener('load', function() {
-        // [1] 초기 탭 설정
-        const last = sessionStorage.getItem("lastTab") || "dashboard";
-        showSection(last, document.getElementById('btn-' + last));
+        // ui_dashboard.js 안의 showSection을 전역(window)으로 만들었기 때문에
+        // 이제 여기서 불러도 탭이 사라지지 않고 정확히 응답합니다.
+        if (typeof window.showSection === 'function') {
+            window.showSection('dashboard', document.getElementById('btn-dashboard'));
+        }
         
-        // [2] 추천인 자동 설정
+        // 추천인 설정 등 나머지...
         const ref = new URLSearchParams(window.location.search).get('ref') || "CEO 채정석";
         const refInput = document.getElementById('bankReferrer');
         if (refInput) { refInput.value = ref; }
-
-        // [3] AI 신호 가동
-        if (typeof triggerAiInvestmentSignal === "function") {
-            setInterval(triggerAiInvestmentSignal, 10000);
-        }
     });
+</script>
 
 
     
