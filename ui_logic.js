@@ -79,33 +79,22 @@ function submitRoutine() {
 
 // 4. 지갑 설립 (이미 정상이므로 유지)
 function submitBank() {
-    const name = document.getElementById('bankName');
-    const phone = document.getElementById('bankPhone');
-    const agree = document.getElementById('bankAgree');
+    const name = document.getElementById("bankName");
+    const phone = document.getElementById("bankPhone");
+    const addr = document.getElementById("bankAddress");
+    const agree = document.getElementById("bankAgree");
 
-    // 🚀 [수정 포인트 1] 추천인 이름을 "직접 가입" 대신 실제 인식된 이름으로 가져옵니다.
-    // 만약 window.currentReferrer가 없으면 "직접 가입"으로 표시합니다.
-    const finalReferrer = window.currentReferrer || "직접 가입";
+    if(!name.value.trim()) { alert("⚠️ 성명을 입력해 주세요."); name.focus(); return; }
+    if(!phone.value.trim()) { alert("⚠️ 전화번호를 입력해 주세요."); phone.focus(); return; }
+    if(!addr.value.trim()) { alert("⚠️ 주소를 입력해 주세요."); addr.focus(); return; }
+    if(!agree.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
 
-    if (!name.value.trim()) { alert("성함을 입력해주세요."); name.focus(); return; }
-    if (!agree.checked) { alert("개인정보 동의가 필요합니다."); return; }
+    const walletData = { userName: name.value, userPhone: phone.value, userAddress: addr.value, setupDate: new Date().toLocaleString() };
+    localStorage.setItem("myWallet", JSON.stringify(walletData));
 
-    const newUser = {
-        bankName: name.value,
-        bankPhone: phone.value,
-        referrer: finalReferrer, // 🚀 여기에 실제 이름이 들어갑니다.
-        date: new Date().toLocaleString()
-    };
-
-    let wallets = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
-    wallets.unshift(newUser);
-    localStorage.setItem('fin_wallets', JSON.stringify(wallets));
-
-    // 🚀 [수정 포인트 2] 알림창에 추천인 이름을 제대로 보여줍니다.
-    alert(`${name.value} 님 설립 완료!\n추천인: ${finalReferrer}`);
-
-    // 가입 후 메인화면(나의 현황)으로 이동해서 변화를 보여줍니다.
-    showSection('mypage', document.getElementById('btn-mypage'));
+    alert("🏦 [" + name.value + "]님, AI 지갑 설립이 완료되었습니다!");
+    checkWalletStatus();
+    resetAndGoHome();
 }
 
 // --- 공통 보조 함수 (기존과 동일) ---
