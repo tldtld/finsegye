@@ -189,7 +189,7 @@
 
 <script>
 /* =========================================================
-   1. 핀세계 핵심 경제 엔진 (실시간 자산 수치)
+   1. 핀세계 핵심 경제 엔진 (자산 수치 및 실시간 업데이트)
    ========================================================= */
 window.loanPercent = 100.0;
 window.aiRate = 0.0;
@@ -247,7 +247,7 @@ const FinData = {
 };
 
 /* =========================================================
-   3. [원포인트 수리] 자동 입력 및 지갑 설립 로직
+   3. [원포인트 수리] 정밀 유도형 자동 입력 및 지갑 설립
    ========================================================= */
 
 // [만능 청소기] 모든 입력창 비우기
@@ -262,20 +262,24 @@ function clearAllInputs() {
 window.autoFillKakao = function() {
     alert("💬 카카오 인증 성공! 대표님의 인적 사항을 자동으로 입력합니다.");
 
-    // [전략] ID가 틀려도 placeholder나 타입을 보고 어떻게든 찾아냅니다.
+    // [핵심 전략] ID가 틀려도 placeholder(설명글)나 타입을 보고 어떻게든 찾아냅니다.
     const nameField = document.getElementById('bankName') || document.querySelector('input[placeholder*="성함"]') || document.querySelector('input[placeholder*="이름"]');
     const phoneField = document.getElementById('bankPhone') || document.querySelector('input[placeholder*="휴대폰"]') || document.querySelector('input[type="tel"]');
     const addrField = document.getElementById('bankAddress') || document.querySelector('input[placeholder*="주소"]');
     const agreeField = document.getElementById('bankAgree') || document.querySelector('input[type="checkbox"]');
 
+    // 1. 값 강제 주입
     if (nameField) nameField.value = "채정석";
     if (phoneField) phoneField.value = "010-2828-7788";
     if (addrField) addrField.value = "전북특별자치도 전주시";
     if (agreeField) agreeField.checked = true;
 
-    // 입력된 후 브라우저가 인식하도록 강제로 이벤트 발생
+    // 2. 브라우저에게 "값이 바뀌었으니 인식해라!"라고 신호를 보냄 (중요)
     [nameField, phoneField, addrField].forEach(f => {
-        if(f) f.dispatchEvent(new Event('input', { bubbles: true }));
+        if(f) {
+            f.dispatchEvent(new Event('input', { bubbles: true }));
+            f.dispatchEvent(new Event('change', { bubbles: true }));
+        }
     });
 };
 
@@ -295,7 +299,7 @@ function submitBank() {
 }
 
 /* =========================================================
-   4. 기타 신청 로직 (유효성 검사 및 리셋 유지)
+   4. 기타 신청 및 UI 로직 (기존 로직 유지)
    ========================================================= */
 function submitAd() {
     const s = document.getElementById("shopName"), b = document.getElementById("bizType"), a = document.getElementById("area"), t = document.getElementById("adText");
@@ -318,7 +322,7 @@ function submitRoutine() {
 function resetEconomy() {
     window.advertiser = 50000; window.consumer = 20000; window.loanPercent = 100.0; window.aiRate = 0.0;
     if(document.getElementById("advValue")) document.getElementById("advValue").innerText = "50,000원";
-    alert("🚨 수치가 초기화되었습니다.");
+    alert("🚨 모든 경제 수치가 초기화되었습니다.");
 }
 
 function showSection(id, btn) {
