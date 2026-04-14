@@ -262,7 +262,7 @@ function updateStatus() {
 setInterval(updateStatus, 100);
 
 /* =========================================================
-   2. 데이터 관리 엔진 (장부 기록 및 UI 업데이트)
+   2. 데이터 관리 엔진
    ========================================================= */
 const FinData = {
     get: (key) => JSON.parse(localStorage.getItem('fin_' + key)) || [],
@@ -289,9 +289,65 @@ const FinData = {
 };
 
 /* =========================================================
-   3. [스마트 로직] 하이패스 입력 및 안내 시스템
+   3. [대표님 핵심 요청] 버튼 클릭 시 안내 & 음성 출력
    ========================================================= */
 
+// 목소리 내보내는 함수 (대표님께서 문구를 수정하면 목소리도 바뀝니다)
+function speak(text) {
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.cancel(); // 겹치지 않게 기존 음성 중단
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'ko-KR';
+        utterance.rate = 1.0; 
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+// 탭 전환 및 신규 기능 안내 통합 함수
+function showSection(id, btn) {
+    // 1. AI 재테크 안내
+    if (id === 'aiInvest') {
+        const msg = "핀세계 딥러닝 엔진이 수익률을 극대화할 최적의 포트폴리오를 구성하고 있습니다. 잠시만 기다려 주세요.";
+        alert("📈 [AI 재테크 안내]\n\n" + msg);
+        speak(msg);
+        return;
+    }
+
+    // 2. 국내외 주문 안내
+    if (id === 'globalOrder') {
+        const msg = "전 세계 주요 거래소와 실시간 연동 중입니다. 통합 주문 시스템을 곧 만나보실 수 있습니다.";
+        alert("🌐 [국내외 주문 안내]\n\n" + msg);
+        speak(msg);
+        return;
+    }
+
+    // 기존 섹션 이동 로직
+    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    
+    const target = document.getElementById(id);
+    if(target) {
+        target.style.display = 'block';
+        // 하이패스 커서 포커스
+        const firstInput = target.querySelector('input:not([type="checkbox"]), textarea');
+        if (firstInput) setTimeout(() => firstInput.focus(), 150);
+    }
+    
+    if(btn) btn.classList.add('active');
+    window.scrollTo(0, 0); 
+    if(id === 'mypage') FinData.updateUI();
+}
+
+// 3. 음성 주문 (마이크 버튼 전용)
+function startVoiceCommand() {
+    const msg = "어떤 상품을 주문할까요? 말씀해 주세요.";
+    alert("🎙️ 음성 안내: " + msg);
+    speak(msg);
+}
+
+/* =========================================================
+   4. 기타 입력 및 검증 로직 (행사신청, 공유신청 등)
+   ========================================================= */
 function clearAllInputs() {
     document.querySelectorAll('input, textarea').forEach(el => {
         if (el.type === 'checkbox') el.checked = false;
@@ -299,15 +355,6 @@ function clearAllInputs() {
     });
 }
 
-function focusFirstInput(sectionId) {
-    const section = document.getElementById(sectionId);
-    if (section) {
-        const firstInput = section.querySelector('input:not([type="checkbox"]), textarea');
-        if (firstInput) { setTimeout(() => firstInput.focus(), 150); }
-    }
-}
-
-// 📢 [행사 신청] 정밀 검증 및 커서 이동
 function submitAd() {
     const s = document.getElementById("shopName"), b = document.getElementById("bizType"), a = document.getElementById("area"), t = document.getElementById("adText");
     if (!s.value.trim()) { alert("⚠️ 상호명을 입력해 주세요."); s.focus(); return; }
@@ -317,7 +364,6 @@ function submitAd() {
     FinData.add('ads', { shopName: s.value }); alert("📢 행사 신청 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// 💰 [공유 신청] 정밀 검증 및 커서 이동
 function submitLoan() {
     const n = document.getElementById("loanName"), m = document.getElementById("loanAmount"), p = document.getElementById("loanPurpose");
     if (!n.value.trim()) { alert("⚠️ 신청자명을 입력해 주세요."); n.focus(); return; }
@@ -326,7 +372,6 @@ function submitLoan() {
     FinData.add('loans', { loanName: n.value }); alert("💰 공유 신청 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// 🌀 [행사 루틴] 정밀 검증 및 커서 이동
 function submitRoutine() {
     const o = document.getElementById("routineOwner"), r = document.getElementById("routineRegion"), t = document.getElementById("routineText");
     if (!o.value.trim()) { alert("⚠️ 제작자 이름을 입력해 주세요."); o.focus(); return; }
@@ -335,7 +380,6 @@ function submitRoutine() {
     FinData.add('routines', { routineOwner: o.value }); alert("🌀 루틴 생성 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// 🏦 [지갑 설립] 정밀 검증 및 커서 이동
 function submitBank() {
     const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'), a = document.getElementById('bankAddress'), g = document.getElementById('bankAgree');
     if (!n.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); n.focus(); return; }
@@ -345,7 +389,6 @@ function submitBank() {
     FinData.add('wallets', { bankName: n.value }); alert(`🏦 [${n.value}]님, AI 지갑 설립 완료!`); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// [카카오 인증] 자동입력
 function autoFillKakao() {
     alert("💬 카카오 인증 성공! 대표님의 인적 사항을 적용합니다.");
     document.getElementById('bankName').value = "채정석";
@@ -356,79 +399,8 @@ function autoFillKakao() {
 }
 
 /* =========================================================
-   4. [신규] 제미나이식 음성 대화 및 탭 안내 시스템
+   5. UI 초기화 및 기타 기능
    ========================================================= */
-
-// 음성 주문 실행 (말하기 기능 포함)
-function startVoiceCommand() {
-    const msg = "안녕하세요  핀세계예요  무엇을 도와 드릴까요?  문자와 음성 모두 가능합니다. 제가 안내하는 멘트에 따라서 진행해 주시면 됩니다.";
-    alert("🎙️ 음성 안내: " + msg);
-    if ('speechSynthesis' in window) {
-        const utterance = new SpeechSynthesisUtterance(msg);
-        utterance.lang = 'ko-KR';
-        window.speechSynthesis.speak(utterance);
-    }
-}
-
-/* =========================================================
-   [업그레이드] 클릭 시 문구 표시와 음성 설명을 동시에 실행
-   ========================================================= */
-
-function alertFunction(type) {
-    let title = "";
-    let msg = "";
-
-    // 1. 유형에 따른 문구 설정 (대표님께서 이 안의 내용을 자유롭게 수정하세요!)
-    if(type === 'aiInvest') {
-        title = "📈 [AI 재테크 안내]";
-        msg = "핀세계 딥러닝 엔진이 수익률을 극대화할 최적의 포트폴리오를 구성하고 있습니다. 잠시만 기다려 주세요.";
-    } else if(type === 'globalOrder') {
-        title = "🌐 [국내외 주문 안내]";
-        msg = "전 세계 주요 거래소와 실시간 연동 중입니다. 국내 및 해외 주식 통합 주문 시스템을 곧 만나보실 수 있습니다.";
-    }
-
-    // 2. 화면에 알림창 띄우기
-    alert(title + "\n\n" + msg);
-
-    // 3. [핵심] 설정된 문구를 음성으로 읽어주기
-    if ('speechSynthesis' in window) {
-        // 읽어주기 전에 혹시 다른 목소리가 나오고 있다면 멈춤
-        window.speechSynthesis.cancel(); 
-
-        const utterance = new SpeechSynthesisUtterance(msg);
-        utterance.lang = 'ko-KR'; // 한국어
-        utterance.rate = 1.0;     // 읽기 속도 (0.8~1.2 사이가 적당합니다)
-        utterance.pitch = 1.0;    // 목소리 높낮이
-        
-        window.speechSynthesis.speak(utterance);
-    }
-}
-
-/* =========================================================
-   5. UI 제어 및 초기화
-   ========================================================= */
-
-function showSection(id, btn) {
-    // 만약 아직 페이지가 없는 'AI 재테크'나 '국내외 주문'을 눌렀다면 안내문구만 띄움
-    if (id === 'aiInvest' || id === 'globalOrder') {
-        alertFunction(id);
-        return;
-    }
-
-    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-    
-    const target = document.getElementById(id);
-    if(target) {
-        target.style.display = 'block';
-        focusFirstInput(id);
-    }
-    
-    if(btn) btn.classList.add('active');
-    window.scrollTo(0, 0); 
-    if(id === 'mypage') FinData.updateUI();
-}
-
 function toggleLiveList() { const q = document.getElementById('liveListContainer'); q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none'; }
 function openPayment() { const p = document.getElementById('paymentFields'); if(p.style.display === 'block') closePayment(); else { p.style.display = 'block'; document.getElementById('payAmount').focus(); } }
 function closePayment() { document.getElementById('paymentFields').style.display = 'none'; document.getElementById('payAmount').value = ''; }
@@ -447,9 +419,7 @@ window.addEventListener('load', () => {
     FinData.updateUI(); 
     updateAISignal(); 
     setTimeout(startGrowth, 2000); 
-    focusFirstInput('dashboard');
 });
-
 
     
 </script>
