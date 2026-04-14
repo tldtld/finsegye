@@ -114,15 +114,27 @@ window.addEventListener('load', () => FinData.updateUI());
 let loanPercent = 100.0, aiRate = 0.0, advertiser = 20000, consumer = 10000, decreasing = true, pause = false;
 
 /* =========================================================
-   3. 경제 지표 및 배당 로직 (수정본)
-   - 공유비율이 0%일 때만 자산 합계가 동작하도록 변경
+   3. 핀세계 경제 지표 및 배당 엔진 (변수 포함 완결본)
+   - 공유비율이 0%일 때만 자산 합산이 일어납니다.
    ========================================================= */
-function updateStatus() {
-    // [1] 지급준비율 업데이트 (항시 작동)
-    const reserveElem = document.getElementById("reserveValue");
-    if(reserveElem) reserveElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
 
-    // [2] 공유비율 감소 로직
+// [연료: 기본 데이터 설정]
+let loanPercent = 100.0; 
+let aiRate = 0.0; 
+let advertiser = 50000; // 초기 행사자 금액
+let consumer = 20000;   // 초기 소비자 금액
+let decreasing = true; 
+let pause = false;
+
+// [엔진: 수치 계산 함수]
+function updateStatus() {
+    // 1. 지급준비율 (실시간 랜덤 변동)
+    const reserveElem = document.getElementById("reserveValue");
+    if(reserveElem) {
+        reserveElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
+    }
+
+    // 2. 공유비율 감소 로직 (100% -> 0% 하강)
     if(!pause) {
         if(decreasing) {
             loanPercent -= 0.5;
@@ -130,7 +142,8 @@ function updateStatus() {
                 loanPercent = 0; 
                 decreasing = false; 
                 pause = true;
-                // 0% 도달 시 5초간 멈추며 자산 합산 진행
+                
+                // 0% 도달 시 5초 동안 멈추며 수익 배분 (이때 숫자가 올라감)
                 setTimeout(() => { 
                     loanPercent = 100.0; 
                     decreasing = true; 
@@ -141,21 +154,25 @@ function updateStatus() {
     }
 
     const loanElem = document.getElementById("loanPercent");
-    if(loanElem) loanElem.innerText = loanPercent.toFixed(1) + "%";
+    if(loanElem) {
+        loanElem.innerText = loanPercent.toFixed(1) + "%";
+    }
 
-    // [3] AI 수익률 업데이트 (항시 작동)
+    // 3. AI 수익률 (지속 상승)
     aiRate += (Math.random() * 0.05);
     const aiRateElem = document.getElementById("aiRate");
-    if(aiRateElem) aiRateElem.innerText = "+" + aiRate.toFixed(1) + "%";
+    if(aiRateElem) {
+        aiRateElem.innerText = "+" + aiRate.toFixed(1) + "%";
+    }
 
-    // [4] ★ 핵심 수정: 공유비율이 0일 때만 자산 합계 동작 ★
+    // 4. 자산 합산 (공유비율 0%일 때만 5초간 가동)
     if (loanPercent === 0) {
-        let baseAmount = 20;
-        let bonusRate = 1.2;
+        let baseAmount = 20; 
+        let bonusRate = 1.2; 
+        
         advertiser += (baseAmount * bonusRate);
         consumer += baseAmount;
 
-        // 화면 숫자 업데이트
         if(document.getElementById("advValue")) 
             document.getElementById("advValue").innerText = Math.floor(advertiser).toLocaleString() + "원";
         if(document.getElementById("consValue")) 
@@ -164,6 +181,11 @@ function updateStatus() {
             document.getElementById("totalValue").innerText = Math.floor(advertiser + consumer).toLocaleString() + "원";
     }
 }
+
+// [시동: 엔진 가동]
+// 기존에 혹시 돌아가고 있을지 모를 엔진을 끄고 새로 시동을 겁니다.
+if (window.finEngine) clearInterval(window.finEngine);
+window.finEngine = setInterval(updateStatus, 100);
 /* =========================================================
    4. AI 투자 포착 로직 (수정 없음)
    ========================================================= */
