@@ -1,7 +1,8 @@
 /* =========================================================
    1. 배경 애니메이션 (별 내리는 효과 - 선생님 원본 유지)
    ========================================================= */
-const canvas = document.getElementById("stars"), ctx = canvas.getContext("2d");
+
+/*const canvas = document.getElementById("stars"), ctx = canvas.getContext("2d");
 let stars = [];
 function init() {
     canvas.width = window.innerWidth; canvas.height = window.innerHeight;
@@ -19,11 +20,13 @@ function draw() {
     requestAnimationFrame(draw);
 }
 window.addEventListener('resize', init);
-init(); draw();
+init(); draw();  */
 
 /* =========================================================
    2. 핀세계 통합 데이터 엔진 (최신순 정렬 & 자동 갱신)
    ========================================================= */
+
+/*
 const FinData = {
     // 데이터 가져오기 (키값 앞에 fin_을 붙여 관리)
     get: (key) => JSON.parse(localStorage.getItem('fin_' + key)) || [],
@@ -32,7 +35,7 @@ const FinData = {
     add: (key, item) => {
         let list = FinData.get(key);
         item.date = new Date().toLocaleString(); // 날짜 자동 기록
-        list.unshift(item); // 🚀 새 데이터를 배열 맨 앞에 추가
+        list.unshift(item); //  새 데이터를 배열 맨 앞에 추가
         localStorage.setItem('fin_' + key, JSON.stringify(list));
         FinData.updateUI(); // 저장 즉시 화면 갱신
     },
@@ -84,7 +87,7 @@ const FinData = {
 };
 
 // 페이지 로드 시 실행
-window.addEventListener('load', () => FinData.updateUI());
+window.addEventListener('load', () => FinData.updateUI());  */
 
 
 /* =========================================================
@@ -93,6 +96,7 @@ window.addEventListener('load', () => FinData.updateUI());
    ========================================================= */
 
 // [연료: 기본 데이터 설정]
+/*
 let loanPercent = 100.0; 
 let aiRate = 0.0; 
 let advertiser = 50000; // 초기 행사자 금액
@@ -159,10 +163,13 @@ function updateStatus() {
 // [시동: 엔진 가동]
 // 기존에 혹시 돌아가고 있을지 모를 엔진을 끄고 새로 시동을 겁니다.
 if (window.finEngine) clearInterval(window.finEngine);
-window.finEngine = setInterval(updateStatus, 100);
+window.finEngine = setInterval(updateStatus, 100);  */
+
 /* =========================================================
    4. AI 투자 포착 로직 (수정 없음)
-   ========================================================= */
+   ========================================================= */  
+
+/*
 const assets = ["★핀세계(FINSEGYE)★", "삼성전자", "미국국채10Y", "GOLD(금)", "SILVER(은)", "USD/KRW(달러)", "비트코인"];
 const actions = ["적극매수(STRONG BUY)", "매수(BUY)", "보유(HOLD)"];
 
