@@ -22,86 +22,64 @@ window.addEventListener('resize', init);
 init(); draw();
 
 /* =========================================================
-   2. 핀세계 통합 데이터 엔진 (모든 항목 무제한 출력 보강)
+   2. 핀세계 통합 데이터 엔진 (최신순 정렬 & 자동 갱신)
    ========================================================= */
 const FinData = {
-    // 1. 데이터 가져오기 (키값 통일: fin_ 접두사 사용)
+    // 데이터 가져오기 (키값 앞에 fin_을 붙여 관리)
     get: (key) => JSON.parse(localStorage.getItem('fin_' + key)) || [],
 
-    // 2. 데이터 추가 (unshift로 맨 위에 쌓기)
+    // 데이터 추가 (unshift를 사용하여 새 데이터가 무조건 맨 위로!)
     add: (key, item) => {
         let list = FinData.get(key);
-        item.date = new Date().toLocaleString();
-        item.id = Date.now();
-        list.unshift(item); // 🚀 새 데이터를 맨 앞에 추가
+        item.date = new Date().toLocaleString(); // 날짜 자동 기록
+        list.unshift(item); // 🚀 새 데이터를 배열 맨 앞에 추가
         localStorage.setItem('fin_' + key, JSON.stringify(list));
-
-        // 저장 즉시 모든 UI 업데이트
-        FinData.updateUI();
+        FinData.updateUI(); // 저장 즉시 화면 갱신
     },
 
-    // 3. 모든 화면 새로고침 (숫자 + 4대 리스트 전체)
+    // 모든 리스트 화면 새로고침
     updateUI: () => {
-        const wallets = FinData.get('wallets');
-
-        // [메인 & 지갑설립 탭 숫자 업데이트]
-        // ID가 totalUserCount인 모든 곳에 숫자 반영
-        const countElements = document.querySelectorAll('#totalUserCount, #realtimeUserCount');
-        countElements.forEach(el => {
-            el.innerText = wallets.length.toLocaleString();
-        });
-
-        // [나의 현황 - 4대 리스트 전체 출력]
-        // 지갑 설립 리스트
+        // 1. 지갑 설립 내역
         FinData.renderList('wallets', 'walletDisplay', (item) => `
-            <div style="border-bottom:1px solid #444; padding:8px 0; font-size:0.85em;">
-                <b style="color:gold;">[지갑설립]</b> ${item.bankName}<br>
-                <small style="color:#aaa;">${item.date}</small>
+            <div style="border-bottom:1px solid #333; padding:5px 0; margin-bottom:5px;">
+                <b style="color:gold; font-size:0.9em;">${item.bankName}</b><br>
+                <small style="color:#888;">${item.date}</small>
             </div>
         `);
 
-        // 행사 신청 리스트
+        // 2. 행사 신청 내역
         FinData.renderList('ads', 'adListDisplay', (item) => `
-            <div style="border-bottom:1px solid #444; padding:8px 0; font-size:0.85em;">
-                <b style="color:#ff00ff;">[행사]</b> ${item.shopName}<br>
-                <small style="color:#aaa;">${item.bizType} | ${item.area}</small>
+            <div style="border-bottom:1px solid #333; padding:5px 0; margin-bottom:5px;">
+                <b style="color:#ff00ff; font-size:0.9em;">${item.shopName}</b><br>
+                <small style="color:#888;">${item.bizType} | ${item.area}</small>
             </div>
         `);
 
-        // 공유 신청 리스트
+        // 3. 공유 신청 내역
         FinData.renderList('loans', 'loanListDisplay', (item) => `
-            <div style="border-bottom:1px solid #444; padding:8px 0; font-size:0.85em;">
-                <b style="color:#ff9900;">[공유]</b> ${item.loanName}<br>
-                <small style="color:#aaa;">${item.loanAmount}만원 | ${item.date}</small>
+            <div style="border-bottom:1px solid #333; padding:5px 0; margin-bottom:5px;">
+                <b style="color:#ff9900; font-size:0.9em;">${item.loanName}</b><br>
+                <small style="color:#888;">${item.loanAmount}만원 | ${item.date}</small>
             </div>
         `);
 
-        // 행사 루틴 리스트
+        // 4. 행사 루틴 내역
         FinData.renderList('routines', 'routineListDisplay', (item) => `
-            <div style="border-bottom:1px solid #444; padding:8px 0; font-size:0.85em;">
-                <b style="color:#cc99ff;">[루틴]</b> ${item.routineOwner}<br>
-                <small style="color:#aaa;">${item.routineRegion} | ${item.date}</small>
+            <div style="border-bottom:1px solid #333; padding:5px 0; margin-bottom:5px;">
+                <b style="color:#cc99ff; font-size:0.9em;">${item.routineOwner}</b><br>
+                <small style="color:#888;">${item.routineRegion}</small>
             </div>
         `);
-
-        // [지갑설립 탭 전용] 실시간 명단 업데이트 (최근 10명)
-        const liveList = document.getElementById('realtimeNameList');
-        if(liveList) {
-            if(wallets.length > 0) {
-                liveList.innerHTML = wallets.slice(0, 10).map(u => `✅ ${u.bankName} 님 설립완료`).join('<br>');
-            } else {
-                liveList.innerHTML = "신규 설립을 기다리고 있습니다.";
-            }
-        }
     },
 
-    // 리스트 그리기 함수 (제한 없이 전체 출력)
+    // 실제 HTML에 그려주는 함수 (높이 제한은 HTML 구조에서 처리)
     renderList: (key, elementId, template) => {
         const list = FinData.get(key);
         const el = document.getElementById(elementId);
         if(!el) return;
-        // 🚀 slice(0, 2)를 제거하여 모든 리스트가 나오게 수정함
-        el.innerHTML = list.length === 0 ? '<div style="color:#666; font-size:0.8em; padding:10px;">내역 없음</div>' : list.map(template).join('');
+        el.innerHTML = list.length === 0 
+            ? '<div style="color:#555; font-size:0.8em; padding:10px;">내역 없음</div>' 
+            : list.map(template).join('');
     }
 };
 
