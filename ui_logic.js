@@ -10,12 +10,9 @@ function submitAd() {
     const text = document.getElementById("adText");
 
     if(!shop.value.trim()) { alert("⚠️ 상호명을 입력해 주세요."); shop.focus(); return; }
-    if(!biz.value.trim()) { alert("⚠️ 업종을 입력해 주세요."); biz.focus(); return; }
-    if(!area.value.trim()) { alert("⚠️ 지역을 입력해 주세요."); area.focus(); return; }
-    if(!text.value.trim()) { alert("⚠️ 문구를 입력해 주세요."); text.focus(); return; }
-
-    const item = { shopName: shop.value, bizType: biz.value, area: area.value, date: new Date().toLocaleString() };
-    saveFinData('ads', item);
+    
+    // FinData 엔진에 저장
+    FinData.add('ads', { shopName: shop.value, bizType: biz.value, area: area.value });
     alert("✅ [" + shop.value + "] 행사 신청 완료!");
     resetAndGoHome();
 }
@@ -23,13 +20,10 @@ function submitAd() {
 function submitLoan() {
     const lName = document.getElementById("loanName");
     const lAmount = document.getElementById("loanAmount");
-    const lPurpose = document.getElementById("loanPurpose");
-
+    
     if(!lName.value.trim()) { alert("⚠️ 신청자명을 입력해 주세요."); lName.focus(); return; }
-    if(!lAmount.value.trim()) { alert("⚠️ 금액을 입력해 주세요."); lAmount.focus(); return; }
-    if(!lPurpose.value.trim()) { alert("⚠️ 목적을 입력해 주세요."); lPurpose.focus(); return; }
-
-    saveFinData('loans', { loanName: lName.value, loanAmount: lAmount.value });
+    
+    FinData.add('loans', { loanName: lName.value, loanAmount: lAmount.value });
     alert("💰 공유 신청 접수 완료!");
     resetAndGoHome();
 }
@@ -37,13 +31,10 @@ function submitLoan() {
 function submitRoutine() {
     const rOwner = document.getElementById("routineOwner");
     const rRegion = document.getElementById("routineRegion");
-    const rText = document.getElementById("routineText");
-
+    
     if(!rOwner.value.trim()) { alert("⚠️ 제작자명을 입력해 주세요."); rOwner.focus(); return; }
-    if(!rRegion.value.trim()) { alert("⚠️ 지역을 입력해 주세요."); rRegion.focus(); return; }
-    if(!rText.value.trim()) { alert("⚠️ 내용을 입력해 주세요."); rText.focus(); return; }
-
-    saveFinData('routines', { routineOwner: rOwner.value, routineRegion: rRegion.value });
+    
+    FinData.add('routines', { routineOwner: rOwner.value, routineRegion: rRegion.value });
     alert("🌀 루틴 생성 완료!");
     resetAndGoHome();
 }
@@ -55,7 +46,7 @@ function submitBank() {
     if(!name.value.trim()) { alert("⚠️ 성명을 입력해 주세요."); name.focus(); return; }
     if(!agree.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
 
-    saveFinData('wallets', { bankName: name.value });
+    FinData.add('wallets', { bankName: name.value });
     alert("🏦 [" + name.value + "]님, AI 지갑 설립 완료!");
     resetAndGoHome();
 }
