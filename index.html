@@ -189,7 +189,7 @@
 
 <script>
 /* =========================================================
-   1. 핀세계 핵심 경제 엔진 (실시간 수치 유지)
+   1. 핵심 경제 엔진 (실시간 자산 수치 & 리셋 수리)
    ========================================================= */
 window.loanPercent = 100.0;
 window.aiRate = 0.0;
@@ -219,8 +219,58 @@ function updateStatus() {
 }
 setInterval(updateStatus, 100);
 
+// [리셋 버튼 수리]
+function resetEconomy() {
+    window.advertiser = 50000; window.consumer = 20000; window.loanPercent = 100.0; window.aiRate = 0.0;
+    alert("🚨 모든 수치가 초기화되었습니다.");
+    clearAllInputs();
+}
+
 /* =========================================================
-   2. 데이터 엔진 (나의 현황 관리)
+   2. [원포인트 수리] 자동 입력 및 지갑 설립 (무조건 작동 모드)
+   ========================================================= */
+
+// ★ 자동 입력 (모든 입력창을 샅샅이 뒤져서 채우는 마스터 키)
+window.autoFillKakao = function() {
+    alert("💬 카카오 인증 성공! 정보를 자동으로 입력합니다.");
+
+    const inputs = document.querySelectorAll('input');
+    inputs.forEach(input => {
+        const p = input.placeholder || "";
+        const id = input.id || "";
+
+        // 성함/이름 칸 찾기
+        if (id.includes('Name') || p.includes('성함') || p.includes('이름')) input.value = "채정석";
+        // 휴대폰/번호 칸 찾기
+        if (id.includes('Phone') || p.includes('휴대폰') || p.includes('번호')) input.value = "010-2828-7788";
+        // 주소 칸 찾기
+        if (id.includes('Address') || p.includes('주소')) input.value = "전북특별자치도 전주시";
+        // 동의 체크박스 찾기
+        if (input.type === 'checkbox') input.checked = true;
+
+        // 브라우저가 값을 강제로 인식하게 만듦
+        input.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+};
+
+function clearAllInputs() {
+    document.querySelectorAll('input, textarea').forEach(el => {
+        if (el.type === 'checkbox') el.checked = false;
+        else el.value = ''; 
+    });
+}
+
+function submitBank() {
+    const name = document.querySelector('input[id*="Name"]') || document.querySelector('input[placeholder*="성함"]');
+    if (!name || !name.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); return; }
+    FinData.add('wallets', { bankName: name.value });
+    alert(`🏦 [${name.value}]님 지갑 설립 완료!`);
+    clearAllInputs();
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+/* =========================================================
+   3. 데이터 엔진 & 복구된 아이템 (AI 신호/인원수)
    ========================================================= */
 const FinData = {
     get: (key) => JSON.parse(localStorage.getItem('fin_' + key)) || [],
@@ -233,8 +283,7 @@ const FinData = {
     },
     updateUI: () => {
         const draw = (key, id, label) => {
-            const el = document.getElementById(id);
-            if(!el) return;
+            const el = document.getElementById(id); if(!el) return;
             const list = FinData.get(key);
             el.innerHTML = list.length === 0 ? '<div style="color:#555; padding:10px;">내역 없음</div>' : 
                 list.map(i => `<div style="border-bottom:1px solid #333; padding:8px 0; font-size:0.85em;"><b>${label}</b> ${i.bankName || i.shopName || i.loanName || i.routineOwner}</div>`).join('');
@@ -246,70 +295,34 @@ const FinData = {
     }
 };
 
-/* =========================================================
-   3. [원포인트 수리] 지갑 자동 입력 & 초기화 (QR 환경 보강)
-   ========================================================= */
-
-// [만능 청소기] 모든 입력창 비우기
-function clearAllInputs() {
-    document.querySelectorAll('input, textarea').forEach(el => {
-        if (el.type === 'checkbox') el.checked = false;
-        else el.value = ''; 
-    });
+// [삭제됐던 아이템 복구: AI 투자 신호]
+function updateAISignal() {
+    const ast = ["KOSPI200", "삼성전자", "핀세계 AI", "GOLD", "나스닥100"];
+    const act = ["적극 매수", "비중 확대", "관망(대기)"];
+    if(document.getElementById('assetName')) document.getElementById('assetName').innerText = ast[Math.floor(Math.random() * ast.length)];
+    if(document.getElementById('actionType')) document.getElementById('actionType').innerText = act[Math.floor(Math.random() * act.length)];
+    setTimeout(updateAISignal, 3000);
 }
 
-// ★ 지갑 자동 입력 (QR 접속 시 먹통 완벽 해결 버전)
-window.autoFillKakao = function() {
-    alert("💬 카카오 인증 성공! 정보를 자동으로 입력합니다.");
-
-    // [전략] ID가 틀려도, Placeholder 글자만 보고도 무조건 찾아내는 로직
-    const inputs = document.querySelectorAll('input');
-    
-    inputs.forEach(input => {
-        const p = input.placeholder || "";
-        const id = input.id || "";
-
-        // 1. 성함 찾기
-        if (id.includes('Name') || p.includes('성함') || p.includes('이름')) {
-            input.value = "채정석";
-        }
-        // 2. 휴대폰 찾기
-        if (id.includes('Phone') || p.includes('휴대폰') || p.includes('전화')) {
-            input.value = "010-2828-7788";
-        }
-        // 3. 주소 찾기
-        if (id.includes('Address') || p.includes('주소')) {
-            input.value = "전북특별자치도 전주시";
-        }
-        // 4. 동의 체크박스 찾기
-        if (input.type === 'checkbox' || id.includes('Agree')) {
-            input.checked = true;
-        }
-
-        // 브라우저가 입력을 강제로 인식하게 만듦
-        input.dispatchEvent(new Event('input', { bubbles: true }));
-        input.dispatchEvent(new Event('change', { bubbles: true }));
-    });
-};
-
-// 🏦 지갑 설립 완료 버튼 (저장 후 청소)
-function submitBank() {
-    const name = document.getElementById('bankName') || document.querySelector('input[placeholder*="성함"]');
-    const agree = document.getElementById('bankAgree') || document.querySelector('input[type="checkbox"]');
-
-    if (!name || !name.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); if(name) name.focus(); return; }
-    if (!agree || !agree.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
-
-    FinData.add('wallets', { bankName: name.value });
-    alert(`🏦 [${name.value}]님, 핀세계 AI 지갑 설립 완료!`);
-
-    clearAllInputs(); // 청소
-    showSection('dashboard', document.getElementById('btn-dashboard'));
+// [삭제됐던 아이템 복구: 실시간 참여 인원]
+let liveCount = 10000;
+function startGrowth() {
+    const e = document.getElementById('realtimeUserCount');
+    if (e) { liveCount += 1; e.innerText = liveCount.toLocaleString(); }
+    setTimeout(startGrowth, 5000);
 }
 
 /* =========================================================
-   4. 기타 UI 및 연출 기능 (기존 로직 유지)
+   4. UI 제어 및 신청 기능 (빈칸 검사 강화)
    ========================================================= */
+function showSection(id, btn) {
+    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    if(document.getElementById(id)) document.getElementById(id).style.display = 'block';
+    if(btn) btn.classList.add('active');
+    window.scrollTo(0, 0); if(id === 'mypage') FinData.updateUI();
+}
+
 function submitAd() {
     const s = document.getElementById("shopName"), b = document.getElementById("bizType"), a = document.getElementById("area"), t = document.getElementById("adText");
     if (!s.value.trim() || !b.value.trim() || !a.value.trim() || !t.value.trim()) { alert("⚠️ 모든 항목을 입력해 주세요."); return; }
@@ -328,33 +341,10 @@ function submitRoutine() {
     FinData.add('routines', { routineOwner: o.value }); alert("🌀 루틴 생성 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-function resetEconomy() {
-    window.advertiser = 50000; window.consumer = 20000; window.loanPercent = 100.0; window.aiRate = 0.0;
-    if(document.getElementById("advValue")) document.getElementById("advValue").innerText = "50,000원";
-    alert("🚨 모든 수치가 초기화되었습니다.");
-}
-
-function showSection(id, btn) {
-    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-    if(document.getElementById(id)) document.getElementById(id).style.display = 'block';
-    if(btn) btn.classList.add('active');
-    window.scrollTo(0, 0); if(id === 'mypage') FinData.updateUI();
-}
-
 function toggleQR() { const q = document.getElementById('qrContainer'); q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none'; }
-function openPayment() { const p = document.getElementById('paymentFields'); if(p.style.display === 'block') closePayment(); else { p.style.display = 'block'; document.getElementById('payAmount').focus(); } }
-function closePayment() { document.getElementById('paymentFields').style.display = 'none'; document.getElementById('payAmount').value = ''; }
+function openPayment() { const p = document.getElementById('paymentFields'); if(p.style.display === 'block') closePayment(); else { p.style.display = 'block'; if(document.getElementById('payAmount')) document.getElementById('payAmount').focus(); } }
+function closePayment() { if(document.getElementById('paymentFields')) document.getElementById('paymentFields').style.display = 'none'; if(document.getElementById('payAmount')) document.getElementById('payAmount').value = ''; }
 function submitPayment() { const i = document.getElementById('payAmount'); const a = parseInt(i.value || 0); if(a <= 0) { alert("⚠️ 금액을 입력하세요."); return; } window.advertiser += Math.floor(a * 0.7); window.consumer += Math.floor(a * 0.3); alert("✅ 결제 완료!"); closePayment(); }
-
-let liveCount = 10000;
-function startGrowth() { const e = document.getElementById('realtimeUserCount'); if (e) { liveCount += 1; e.innerText = liveCount.toLocaleString(); } setTimeout(startGrowth, 5000); }
-function updateAISignal() {
-    const ast = ["KOSPI200", "삼성전자", "핀세계 AI", "GOLD"], act = ["매수 포착", "비중 확대", "관망"];
-    if(document.getElementById('assetName')) document.getElementById('assetName').innerText = ast[Math.floor(Math.random() * ast.length)];
-    if(document.getElementById('actionType')) document.getElementById('actionType').innerText = act[Math.floor(Math.random() * act.length)];
-    setTimeout(updateAISignal, 3000);
-}
 
 window.addEventListener('load', () => { FinData.updateUI(); updateAISignal(); setTimeout(startGrowth, 2000); });
 </script>
