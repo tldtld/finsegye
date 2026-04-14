@@ -243,24 +243,39 @@ function updateStatus() {
     try {
         const resElem = document.getElementById("reserveValue");
         if(resElem) resElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
+        
         if(!window.pause) {
             window.loanPercent -= 0.5;
             if(window.loanPercent <= 0) {
-                window.loanPercent = 0; window.pause = true;
-                setTimeout(() => { window.loanPercent = 100.0; window.pause = false; }, 5000);
+                window.loanPercent = 0; 
+                window.pause = true; 
+                
+                // ★ 여기가 20000(20초)으로 바뀌었습니다!
+                setTimeout(() => { 
+                    window.loanPercent = 100.0; 
+                    window.pause = false; 
+                }, 20000); 
             }
         }
+        
         if(document.getElementById("loanPercent")) document.getElementById("loanPercent").innerText = window.loanPercent.toFixed(1) + "%";
         window.aiRate += 0.01;
         if(document.getElementById("aiRate")) document.getElementById("aiRate").innerText = "+" + window.aiRate.toFixed(1) + "%";
-        if (window.loanPercent === 0) { window.advertiser += 24; window.consumer += 20; }
+        
+        // 0%일 때 자산이 20초 동안 꾸준히 증가합니다.
+        if (window.loanPercent === 0) { 
+            window.advertiser += 24; 
+            window.consumer += 20; 
+        }
+        
         if(document.getElementById("advValue")) document.getElementById("advValue").innerText = Math.floor(window.advertiser).toLocaleString() + "원";
         if(document.getElementById("consValue")) document.getElementById("consValue").innerText = Math.floor(window.consumer).toLocaleString() + "원";
         if(document.getElementById("totalValue")) document.getElementById("totalValue").innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
     } catch(e) {}
 }
-setInterval(updateStatus, 100);
 
+// 0.1초마다 상태를 업데이트합니다.
+setInterval(updateStatus, 100);
 /* =========================================================
    2. 데이터 관리 엔진
    ========================================================= */
