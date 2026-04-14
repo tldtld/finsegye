@@ -277,19 +277,46 @@ function submitAd() {
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// 💰 공유 신청 (3개 항목 필수)
+/* =========================================================
+   💰 공유 신청 (빈칸 검사관 정밀 수리 버전)
+   ========================================================= */
 function submitLoan() {
+    // 1. 이름표(ID)를 정확히 매칭합니다. 
+    // 대표님의 HTML에 있는 '공유 목적' 입력창의 ID가 loanPurpose 혹은 loanPhone 등 무엇이든 작동하게 보강했습니다.
     const name = document.getElementById("loanName");
     const amt = document.getElementById("loanAmount");
-    const phone = document.getElementById("loanPhone"); // 3번째 칸: 연락처 등
+    const purpose = document.getElementById("loanPurpose") || document.getElementById("loanPhone") || document.getElementById("loanText");
 
-    if (!name.value.trim()) { alert("⚠️ 신청자명을 입력해 주세요."); name.focus(); return; }
-    if (!amt.value.trim()) { alert("⚠️ 공유 금액을 입력해 주세요."); amt.focus(); return; }
-    if (!phone.value.trim()) { alert("⚠️ 연락처(또는 목적)를 입력해 주세요."); phone.focus(); return; }
+    // 2. [검사 1] 신청자명 확인
+    if (!name || !name.value.trim()) { 
+        alert("⚠️ 신청자명을 입력해 주세요."); 
+        if(name) name.focus(); 
+        return; 
+    }
 
+    // 3. [검사 2] 공유 금액 확인
+    if (!amt || !amt.value.trim()) { 
+        alert("⚠️ 공유 금액을 입력해 주세요."); 
+        if(amt) amt.focus(); 
+        return; 
+    }
+
+    // 4. [검사 3] 공유 목적 확인 (대표님이 말씀하신 그 부분!)
+    if (!purpose || !purpose.value.trim()) { 
+        alert("⚠️ 공유 목적을 입력해 주세요."); 
+        if(purpose) purpose.focus(); 
+        return; 
+    }
+
+    // 5. 모든 관문을 통과하면 저장!
     FinData.add('loans', { loanName: name.value });
-    alert("💰 공유 신청 완료!");
+    
+    alert("💰 핀세계 공유 신청이 성공적으로 완료되었습니다!");
+
+    // 6. [청소] 입력창 깨끗이 비우기
     clearAllInputs();
+
+    // 7. 메인 화면으로 이동
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
