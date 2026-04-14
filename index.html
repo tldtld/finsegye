@@ -185,7 +185,81 @@
 <script src="ui_logic.js"></script>
 <script src="ui_dashboard.js"></script>
 
+
+
+
+
+    
 <script>
+
+
+    
+
+/* =========================================================
+   핀세계 메인 경제 엔진 (최상단 배치용)
+   ========================================================= */
+// 1. 전역 변수 설정 (어디서든 접근 가능하도록 window 객체 사용)
+window.loanPercent = 100.0;
+window.aiRate = 0.0;
+window.advertiser = 50000; // 행사자 초기값
+window.consumer = 20000;   // 소비자 초기값
+window.decreasing = true;
+window.pause = false;
+
+// 2. 메인 수치 업데이트 함수
+function updateStatus() {
+    // [지급준비율]
+    const reserveElem = document.getElementById("reserveValue");
+    if(reserveElem) reserveElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
+
+    // [공유비율 및 자산 합산]
+    if(!window.pause) {
+        if(window.decreasing) {
+            window.loanPercent -= 0.5;
+            if(window.loanPercent <= 0) {
+                window.loanPercent = 0; 
+                window.decreasing = false; 
+                window.pause = true;
+                // 0% 도달 시 5초간 멈추며 수익 배분
+                setTimeout(() => { 
+                    window.loanPercent = 100.0; 
+                    window.decreasing = true; 
+                    window.pause = false; 
+                }, 5000);
+            }
+        }
+    }
+    const loanElem = document.getElementById("loanPercent");
+    if(loanElem) loanElem.innerText = window.loanPercent.toFixed(1) + "%";
+
+    // [AI 수익률]
+    window.aiRate += (Math.random() * 0.05);
+    const aiRateElem = document.getElementById("aiRate");
+    if(aiRateElem) aiRateElem.innerText = "+" + window.aiRate.toFixed(1) + "%";
+
+    // [자산 업데이트] 공유비율 0%일 때 수익 발생
+    if (window.loanPercent === 0) {
+        window.advertiser += 24; 
+        window.consumer += 20;
+    }
+
+    // [화면 숫자 출력]
+    if(document.getElementById("advValue")) 
+        document.getElementById("advValue").innerText = Math.floor(window.advertiser).toLocaleString() + "원";
+    if(document.getElementById("consValue")) 
+        document.getElementById("consValue").innerText = Math.floor(window.consumer).toLocaleString() + "원";
+    if(document.getElementById("totalValue")) 
+        document.getElementById("totalValue").innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
+}
+
+// 3. 엔진 가동 (0.1초마다 실행)
+if (window.finEngine) clearInterval(window.finEngine);
+window.finEngine = setInterval(updateStatus, 100);
+
+    
+
+
+    
     var isMypageExpanded = false;
 
     // [1] 화면 전환 함수 (자판기 감지 이름표 제거 포함)
