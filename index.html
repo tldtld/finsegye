@@ -196,23 +196,19 @@
     
 
 /* =========================================================
-   핀세계 메인 경제 엔진 (최상단 배치용)
+   [1] 메인 경제 엔진 & 전역 변수
    ========================================================= */
-// 1. 전역 변수 설정 (어디서든 접근 가능하도록 window 객체 사용)
 window.loanPercent = 100.0;
 window.aiRate = 0.0;
-window.advertiser = 50000; // 행사자 초기값
-window.consumer = 20000;   // 소비자 초기값
+window.advertiser = 50000;
+window.consumer = 20000;
 window.decreasing = true;
 window.pause = false;
 
-// 2. 메인 수치 업데이트 함수
 function updateStatus() {
-    // [지급준비율]
     const reserveElem = document.getElementById("reserveValue");
     if(reserveElem) reserveElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
 
-    // [공유비율 및 자산 합산]
     if(!window.pause) {
         if(window.decreasing) {
             window.loanPercent -= 0.5;
@@ -220,7 +216,6 @@ function updateStatus() {
                 window.loanPercent = 0; 
                 window.decreasing = false; 
                 window.pause = true;
-                // 0% 도달 시 5초간 멈추며 수익 배분
                 setTimeout(() => { 
                     window.loanPercent = 100.0; 
                     window.decreasing = true; 
@@ -232,18 +227,15 @@ function updateStatus() {
     const loanElem = document.getElementById("loanPercent");
     if(loanElem) loanElem.innerText = window.loanPercent.toFixed(1) + "%";
 
-    // [AI 수익률]
     window.aiRate += (Math.random() * 0.05);
     const aiRateElem = document.getElementById("aiRate");
     if(aiRateElem) aiRateElem.innerText = "+" + window.aiRate.toFixed(1) + "%";
 
-    // [자산 업데이트] 공유비율 0%일 때 수익 발생
     if (window.loanPercent === 0) {
         window.advertiser += 24; 
         window.consumer += 20;
     }
 
-    // [화면 숫자 출력]
     if(document.getElementById("advValue")) 
         document.getElementById("advValue").innerText = Math.floor(window.advertiser).toLocaleString() + "원";
     if(document.getElementById("consValue")) 
@@ -252,41 +244,22 @@ function updateStatus() {
         document.getElementById("totalValue").innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
 }
 
-// 3. 엔진 가동 (0.1초마다 실행)
 if (window.finEngine) clearInterval(window.finEngine);
 window.finEngine = setInterval(updateStatus, 100);
 
-    
+/* =========================================================
+   [2] 화면 전환 및 지갑 설립 (즉시 반영 버전)
+   ========================================================= */
+function showSection(sectionId, btn) {
+    document.querySelectorAll('section').forEach(s => s.style.display = 'none');
+    document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    const target = document.getElementById(sectionId);
+    if(target) target.style.display = 'block';
+    if(btn) btn.classList.add('active');
+    window.scrollTo(0, 0);
+}
 
-
-    
-    var isMypageExpanded = false;
-
-    // [1] 화면 전환 함수 (자판기 감지 이름표 제거 포함)
-    function showSection(sectionId, btn) {
-        document.querySelectorAll('section').forEach(s => s.style.display = 'none');
-        document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
-
-        const target = document.getElementById(sectionId);
-        if(target) target.style.display = 'block';
-        if(btn) btn.classList.add('active');
-
-        if(sectionId === 'mypage') {
-            isMypageExpanded = !isMypageExpanded;
-            if(typeof forceUpdateAll === "function") forceUpdateAll();
-        } else {
-            isMypageExpanded = false;
-        }
-
-        // 입력 폼 첫 칸 포커스 (지갑설립 제외)
-        const focusMap = { 'adApplyForm': 'shopName', 'loanApplyForm': 'loanName', 'routineForm': 'routineOwner' };
-        if (focusMap[sectionId]) document.getElementById(focusMap[sectionId]).focus();
-        
-        // 화면 이동 시 자판기 흔적 제거
-        window.scrollTo(0, 0);
-    }
-
-// AI 지갑 설립 완료 함수 (클릭 시 메인 화면으로 즉시 이동)
+// ★ '나의 현황'에 즉시 반영되도록 수정된 핵심 함수
 function submitBank() {
     const name = document.getElementById('bankName');
     const phone = document.getElementById('bankPhone');
@@ -294,44 +267,77 @@ function submitBank() {
     const agree = document.getElementById('bankAgree');
     const refInput = document.getElementById('bankReferrer');
 
-    // 1. 유효성 검사
-    if (!name.value.trim()) { 
-        alert("성함을 입력해주세요."); 
-        name.focus(); 
-        return; 
-    }
-    if (!agree.checked) { 
-        alert("개인정보 동의가 필요합니다."); 
-        return; 
-    }
+    if (!name.value.trim()) { alert("성함을 입력해주세요."); name.focus(); return; }
+    if (!agree.checked) { alert("개인정보 동의가 필요합니다."); return; }
 
-    // 2. 추천인 가져오기
     let finalRef = refInput.value.trim() || window.currentReferrer || "직접 가입";
 
-    // 3. 데이터 저장 (내 스마트폰 메모리에 기록)
-    const newUser = {
-        bankName: name.value,
-        bankPhone: phone.value,
-        bankAddress: address.value,
-        referrer: finalRef,
-        date: new Date().toLocaleString()
-    };
-    
-    let wallets = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
-    wallets.unshift(newUser);
-    localStorage.setItem('fin_wallets', JSON.stringify(wallets));
+    // FinData 엔진을 사용하여 저장 (동시에 나의 현황 갱신)
+    if(typeof FinData !== "undefined") {
+        FinData.add('wallets', {
+            bankName: name.value,
+            bankPhone: phone.value,
+            bankAddress: address.value,
+            referrer: finalRef
+        });
+    }
 
-    // 4. 완료 알림
-    alert(`🏦 [${name.value}] 님 설립 완료!\n메인 화면으로 이동합니다.`);
-
-    // 5. [핵심] 입력창 초기화 및 메인 화면(Dashboard)으로 즉시 강제 이동
-    name.value = "";
-    phone.value = "";
-    address.value = "";
-    agree.checked = false;
-
-    // ★ 이 코드가 대표님이 원하시는 "메인으로 가기" 기능을 수행합니다.
+    alert(`🏦 [${name.value}] 님 설립 완료!`);
+    name.value = ""; phone.value = ""; address.value = ""; agree.checked = false;
     showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+/* =========================================================
+   [3] 자판기 가림 및 탭 메뉴 제어
+   ========================================================= */
+if (window.visualViewport) {
+    window.visualViewport.addEventListener('resize', () => {
+        const nav = document.querySelector('.nav');
+        if (nav) {
+            if (window.visualViewport.height < window.innerHeight * 0.8) {
+                nav.style.display = 'none'; 
+                window.scrollTo(0, 0); 
+            } else {
+                nav.style.display = 'flex'; 
+            }
+        }
+    });
+}
+
+/* =========================================================
+   [4] 페이지 로드 시 초기화
+   ========================================================= */
+window.addEventListener('load', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const referrerName = urlParams.get('ref');
+    const refInput = document.getElementById('bankReferrer');
+
+    if (referrerName) {
+        window.currentReferrer = referrerName;
+        if (refInput) {
+            refInput.value = referrerName;
+            refInput.readOnly = true; 
+            refInput.style.backgroundColor = "#222"; 
+        }
+    } else {
+        window.currentReferrer = "CEO 채정석"; 
+        if (refInput) {
+            refInput.value = "CEO 채정석";
+            refInput.readOnly = false;
+            refInput.style.backgroundColor = "#111";
+        }
+    }
+    if (document.activeElement) document.activeElement.blur();
+    
+    // 페이지 로드 시 기존 장부 내역 로드
+    if(typeof FinData !== "undefined") FinData.updateUI();
+});
+
+
+
+
+
+    
 
     // 실시간 참여 명단 업데이트가 있다면 실행
     if (typeof updateRealtimeList === "function") updateRealtimeList();
