@@ -361,7 +361,7 @@ function autoFillKakao() {
 
 // 음성 주문 실행 (말하기 기능 포함)
 function startVoiceCommand() {
-    const msg = "안녕하세요 핀세계예요 무엇을 도와 드릴까요? 문자와 음성 모두 가능합니다. 제가 안내하는 멘트에 따라서 진행해 주시면 됩니다.";
+    const msg = "안녕하세요  핀세계예요  무엇을 도와 드릴까요?  문자와 음성 모두 가능합니다. 제가 안내하는 멘트에 따라서 진행해 주시면 됩니다.";
     alert("🎙️ 음성 안내: " + msg);
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(msg);
@@ -373,9 +373,9 @@ function startVoiceCommand() {
 // AI 재테크 및 국내외 주문 안내
 function alertFunction(type) {
     if(type === 'aiInvest') {
-        alert("📈 [AI 재테크 안내]\n핀세계 딥러닝 엔진이 수익률을 극대화할 최적의 포트폴리오를 구성하고 있습니다.");
+        alert("📈 [AI 재테크 안내]\n핀세계 딥러닝 AI 엔진이 세계 최초로 개발되어 곧 공개 됩니다.수익을 극대화 할수있는 포트폴리오를 구성하고 있습니다.");
     } else {
-        alert("🌐 [국내외 주문 안내]\n전 세계 주요 거래소와 실시간 연동 중입니다. 곧 정식 오픈됩니다.");
+        alert("🌐 [국내외 주문 안내]\n전 세계 가맹점과 실시간 연동 중입니다. 곧 정식 오픈됩니다.");
     }
 }
 
