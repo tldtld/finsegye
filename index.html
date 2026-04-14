@@ -289,24 +289,21 @@ const FinData = {
 };
 
 /* =========================================================
-   3. 음성 및 안내 시스템 (속도 0.8로 최적화)
+   3. 음성 및 안내 시스템
    ========================================================= */
-
-// 목소리 출력 함수 (대표님 요청대로 속도 0.8 적용)
 function speak(text) {
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'ko-KR';
-        utterance.rate = 0.8; // 대표님, 0.8로 아주 듣기 편하게 고쳤습니다.
+        utterance.rate = 0.8; 
         window.speechSynthesis.speak(utterance);
     }
 }
 
-// 탭 전환 및 안내 통합
 function showSection(id, btn) {
     if (id === 'aiInvest') {
-        const msg = "핀세계 딥러닝 AI 엔진이 세계 최초로 개발되어 곧 공개 됩니다.수익을 극대화 할수있는 포트폴리오를 구성하고 있습니다.";
+        const msg = "핀세계 딥러닝 AI 엔진이 세계 최초로 개발되어 곧 공개 됩니다. 수익을 극대화 할 수 있는 포트폴리오를 구성하고 있습니다.";
         alert("📈 [AI 재테크 안내]\n\n" + msg);
         speak(msg);
         return;
@@ -317,7 +314,6 @@ function showSection(id, btn) {
         speak(msg);
         return;
     }
-
     document.querySelectorAll('section').forEach(s => s.style.display = 'none');
     document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
     const target = document.getElementById(id);
@@ -331,23 +327,37 @@ function showSection(id, btn) {
     if(id === 'mypage') FinData.updateUI();
 }
 
-// 음성 주문 (마이크 버튼)
 function startVoiceCommand() {
-    const msg = "안녕하세요  핀세계예요  무엇을 도와 드릴까요?  문자와 음성 모두 가능합니다. 제가 안내하는 멘트에 따라서 진행해 주시면 됩니다.";
+    const msg = "안녕하세요 핀 세계 예요 세계최초의 공유경제 메카니즘을 경험하세요. 무엇을 도와 드릴까요? 문자와 음성 모두 가능합니다. 제가 안내하는 멘트에 따라서 진행해 주시면 됩니다.";
     alert("🎙️ 음성 안내: " + msg);
     speak(msg);
 }
 
 /* =========================================================
-   4. UI 연출 및 토글 기능 (QR 복구 완료)
+   4. [수리 완료] 리셋 및 토글 기능
    ========================================================= */
 
-// [복구] QR 코드 보이기/숨기기
+// ★ 리셋 버튼을 누르면 이 함수가 실행되어 화면을 즉시 바꿉니다.
+function resetEconomy() {
+    window.advertiser = 50000; 
+    window.consumer = 20000; 
+    window.loanPercent = 100.0; 
+    window.aiRate = 0.0;
+    window.pause = false;
+
+    // 화면 숫자 즉시 업데이트
+    if(document.getElementById("advValue")) document.getElementById("advValue").innerText = "50,000원";
+    if(document.getElementById("consValue")) document.getElementById("consValue").innerText = "20,000원";
+    if(document.getElementById("totalValue")) document.getElementById("totalValue").innerText = "70,000원";
+    if(document.getElementById("loanPercent")) document.getElementById("loanPercent").innerText = "100.0%";
+    if(document.getElementById("aiRate")) document.getElementById("aiRate").innerText = "+0.0%";
+
+    alert("🚨 자산 현황 수치가 초기 상태로 리셋되었습니다.");
+}
+
 function toggleQR() {
     const q = document.getElementById('qrContainer');
-    if(q) {
-        q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none';
-    }
+    if(q) q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none';
 }
 
 function toggleLiveList() { const q = document.getElementById('liveListContainer'); q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none'; }
@@ -418,7 +428,6 @@ window.addEventListener('load', () => {
     updateAISignal(); 
     setTimeout(startGrowth, 2000); 
 });
-
     
 </script>
     
