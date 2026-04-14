@@ -189,7 +189,7 @@
 
 <script>
 /* =========================================================
-   1. 핀세계 핵심 경제 엔진 (실시간 자산 수치)
+   1. 핀세계 핵심 경제 엔진 (실시간 수치 유지)
    ========================================================= */
 window.loanPercent = 100.0;
 window.aiRate = 0.0;
@@ -247,10 +247,10 @@ const FinData = {
 };
 
 /* =========================================================
-   3. [원포인트 수리] 자동 입력 및 지갑 설립 로직
+   3. [원포인트 수리] 지갑 설립 자동 입력 & 초기화
    ========================================================= */
 
-// [만능 청소기] 모든 입력창 비우기
+// [만능 청소기] 모든 입력창과 체크박스를 즉시 비웁니다.
 function clearAllInputs() {
     document.querySelectorAll('input, textarea').forEach(el => {
         if (el.type === 'checkbox') el.checked = false;
@@ -258,44 +258,54 @@ function clearAllInputs() {
     });
 }
 
-// ★ 지갑 자동 입력 (QR/모바일 환경에서도 무조건 작동하도록 보강)
-window.autoFillKakao = function() {
-    alert("💬 카카오 인증 성공! 대표님의 인적 사항을 자동으로 입력합니다.");
+// ★ 지갑 자동 입력 (대표님 요청: QR 접속 시 먹통 해결)
+function autoFillKakao() {
+    alert("💬 카카오 인증 완료! 대표님의 정보가 자동 입력됩니다.");
 
-    // [전략] ID가 틀려도 placeholder나 타입을 보고 어떻게든 찾아냅니다.
-    const nameField = document.getElementById('bankName') || document.querySelector('input[placeholder*="성함"]') || document.querySelector('input[placeholder*="이름"]');
-    const phoneField = document.getElementById('bankPhone') || document.querySelector('input[placeholder*="휴대폰"]') || document.querySelector('input[type="tel"]');
-    const addrField = document.getElementById('bankAddress') || document.querySelector('input[placeholder*="주소"]');
-    const agreeField = document.getElementById('bankAgree') || document.querySelector('input[type="checkbox"]');
+    // [중요] 혹시 모를 ID 불일치를 대비해 여러 후보를 한꺼번에 탐색합니다.
+    const findAndFill = (ids, value) => {
+        for(let id of ids) {
+            let el = document.getElementById(id);
+            if(el) { el.value = value; return; }
+        }
+    };
 
-    if (nameField) nameField.value = "채정석";
-    if (phoneField) phoneField.value = "010-2828-7788";
-    if (addrField) addrField.value = "전북특별자치도 전주시";
-    if (agreeField) agreeField.checked = true;
+    // 1. 성함 입력 (bankName 또는 name 또는 userName 중 있는 곳에 꽂음)
+    findAndFill(['bankName', 'name', 'userName'], "채정석");
+    
+    // 2. 휴대폰 입력
+    findAndFill(['bankPhone', 'phone', 'userPhone'], "010-2828-7788");
+    
+    // 3. 주소 입력
+    findAndFill(['bankAddress', 'address', 'userAddress'], "전북특별자치도 전주시");
 
-    // 입력된 후 브라우저가 인식하도록 강제로 이벤트 발생
-    [nameField, phoneField, addrField].forEach(f => {
-        if(f) f.dispatchEvent(new Event('input', { bubbles: true }));
-    });
-};
+    // 4. 동의 체크박스
+    let agree = document.getElementById('bankAgree') || document.querySelector('input[type="checkbox"]');
+    if(agree) agree.checked = true;
+}
 
-// 🏦 지갑 설립 완료 (완료 후 확실한 초기화)
+// 🏦 지갑 설립 완료 버튼 (저장 후 확실한 청소)
 function submitBank() {
-    const name = document.getElementById('bankName') || document.querySelector('input[placeholder*="성함"]');
-    const agree = document.getElementById('bankAgree') || document.querySelector('input[type="checkbox"]');
+    const name = document.getElementById('bankName');
+    const agree = document.getElementById('bankAgree');
 
     if (!name || !name.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); if(name) name.focus(); return; }
     if (!agree || !agree.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
 
+    // 데이터 저장
     FinData.add('wallets', { bankName: name.value });
-    alert(`🏦 [${name.value}]님, 핀세계 AI 지갑 설립 완료!`);
 
-    clearAllInputs(); // 청소
+    alert(`🏦 [${name.value}]님, 핀세계 AI 지갑 설립이 성공적으로 완료되었습니다!`);
+
+    // ★ 다음 사람을 위해 깨끗하게 청소
+    clearAllInputs();
+
+    // 대시보드로 이동
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 /* =========================================================
-   4. 기타 신청 로직 (유효성 검사 및 리셋 유지)
+   4. UI 제어 및 기타 신청 (기존 안정 로직 유지)
    ========================================================= */
 function submitAd() {
     const s = document.getElementById("shopName"), b = document.getElementById("bizType"), a = document.getElementById("area"), t = document.getElementById("adText");
@@ -318,7 +328,7 @@ function submitRoutine() {
 function resetEconomy() {
     window.advertiser = 50000; window.consumer = 20000; window.loanPercent = 100.0; window.aiRate = 0.0;
     if(document.getElementById("advValue")) document.getElementById("advValue").innerText = "50,000원";
-    alert("🚨 수치가 초기화되었습니다.");
+    alert("🚨 모든 경제 수치가 초기화되었습니다.");
 }
 
 function showSection(id, btn) {
