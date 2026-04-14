@@ -277,7 +277,7 @@ function updateStatus() {
 // 0.1초마다 상태를 업데이트합니다.
 setInterval(updateStatus, 100);
 /* =========================================================
-   2. 데이터 관리 엔진
+   2. 데이터 관리 엔진 (실시간 명단 연동 수리)
    ========================================================= */
 const FinData = {
     get: (key) => JSON.parse(localStorage.getItem('fin_' + key)) || [],
@@ -286,7 +286,7 @@ const FinData = {
         item.date = new Date().toLocaleString();
         list.unshift(item);
         localStorage.setItem('fin_' + key, JSON.stringify(list));
-        FinData.updateUI();
+        FinData.updateUI(); // 장부에 적는 즉시 화면 전체 갱신
     },
     updateUI: () => {
         const draw = (key, id, label) => {
@@ -294,14 +294,46 @@ const FinData = {
             if(!el) return;
             const list = FinData.get(key);
             el.innerHTML = list.length === 0 ? '<div style="color:#555; padding:10px;">내역 없음</div>' : 
-                list.map(i => `<div style="border-bottom:1px solid #333; padding:8px 0; font-size:0.85em;"><b>${label}</b> ${i.bankName || i.shopName || i.loanName || i.routineOwner}</div>`).join('');
+                list.map(i => `<div style="border-bottom:1px solid #333; padding:8px 0; font-size:0.85em;"><b>${label}</b> ${i.bankName || i.shopName || i.loanName || i.routineOwner} <span style="font-size:0.8em; color:#666;">(${i.date})</span></div>`).join('');
         };
+
+        // 1. 나의 현황 4개 리스트 업데이트
         draw('wallets', 'walletDisplay', '✅');
         draw('ads', 'adListDisplay', '📢');
         draw('loans', 'loanListDisplay', '💰');
         draw('routines', 'routineListDisplay', '🌀');
+
+        // 2. [수리 핵심] 실시간 참여자 명단 업데이트
+        const liveList = document.getElementById('realtimeNameList');
+        if(liveList) {
+            const wallets = FinData.get('wallets'); // 지갑 설립한 사람들을 가져옴
+            if(wallets.length === 0) {
+                liveList.innerHTML = '<div style="color:#555; text-align:center; padding:20px;">현재 접속 대기 중...</div>';
+            } else {
+                // 최근 참여자 50명까지만 실시간 리스트에 노출
+                liveList.innerHTML = wallets.slice(0, 50).map(w => 
+                    `<div style="padding:5px 0; border-bottom:1px solid rgba(0,255,204,0.1); color:#00ffcc;">
+                        🚀 <b>${w.bankName}</b>님이 참여하셨습니다.
+                     </div>`
+                ).join('');
+            }
+        }
     }
 };
+
+/* =========================================================
+   4. UI 연출 및 토글 기능 (실시간 명단 보기 보강)
+   ========================================================= */
+
+function toggleLiveList() {
+    const q = document.getElementById('liveListContainer');
+    if(q) {
+        // 창을 열 때마다 최신 데이터를 다시 불러옵니다.
+        const isOpening = (q.style.display === 'none' || q.style.display === '');
+        q.style.display = isOpening ? 'block' : 'none';
+        if(isOpening) FinData.updateUI(); 
+    }
+}
 
 /* =========================================================
    3. 음성 및 안내 시스템
