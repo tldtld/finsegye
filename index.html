@@ -189,18 +189,18 @@
 
 <script>
 /* =========================================================
-   1. 핀세계 핵심 경제 엔진 (자산 수치)
+   1. 핀세계 핵심 경제 엔진 (수치 및 실시간 업데이트)
    ========================================================= */
 window.loanPercent = 100.0;
 window.aiRate = 0.0;
-window.advertiser = 50000; // 초기값 고정
-window.consumer = 20000;   // 초기값 고정
+window.advertiser = 50000;
+window.consumer = 20000;
 window.pause = false;
 
 function updateStatus() {
     try {
-        const resElem = document.getElementById("reserveValue");
-        if(resElem) resElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
+        if(document.getElementById("reserveValue")) 
+            document.getElementById("reserveValue").innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
 
         if(!window.pause) {
             window.loanPercent -= 0.5;
@@ -210,44 +210,15 @@ function updateStatus() {
             }
         }
         if(document.getElementById("loanPercent")) document.getElementById("loanPercent").innerText = window.loanPercent.toFixed(1) + "%";
-        
         window.aiRate += 0.01;
         if(document.getElementById("aiRate")) document.getElementById("aiRate").innerText = "+" + window.aiRate.toFixed(1) + "%";
-        
         if (window.loanPercent === 0) { window.advertiser += 24; window.consumer += 20; }
-        
         if(document.getElementById("advValue")) document.getElementById("advValue").innerText = Math.floor(window.advertiser).toLocaleString() + "원";
         if(document.getElementById("consValue")) document.getElementById("consValue").innerText = Math.floor(window.consumer).toLocaleString() + "원";
         if(document.getElementById("totalValue")) document.getElementById("totalValue").innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
     } catch(e) {}
 }
-window.finEngine = setInterval(updateStatus, 100);
-
-/* =========================================================
-   ♻️ 리셋 시스템 (대표님 요청: 원포인트 수치 초기화)
-   ========================================================= */
-function resetEconomy() {
-    // 1. 엔진 변수를 태초 상태로 되돌림
-    window.advertiser = 50000;
-    window.consumer = 20000;
-    window.loanPercent = 100.0;
-    window.aiRate = 0.0;
-    window.pause = false;
-
-    // 2. 화면에 즉시 반영 (딜레이 없이)
-    if(document.getElementById("advValue")) document.getElementById("advValue").innerText = "50,000원";
-    if(document.getElementById("consValue")) document.getElementById("consValue").innerText = "20,000원";
-    if(document.getElementById("totalValue")) document.getElementById("totalValue").innerText = "70,000원";
-    if(document.getElementById("loanPercent")) document.getElementById("loanPercent").innerText = "100.0%";
-    if(document.getElementById("aiRate")) document.getElementById("aiRate").innerText = "+0.0%";
-
-    // 3. 결제창이나 QR창이 열려있다면 닫기
-    if(typeof closePayment === "function") closePayment();
-    const qr = document.getElementById('qrContainer');
-    if(qr) qr.style.display = 'none';
-
-    alert("🚨 핀세계의 모든 경제 수치가 초기화되었습니다.");
-}
+setInterval(updateStatus, 100);
 
 /* =========================================================
    2. 데이터 엔진 (나의 현황 관리)
@@ -277,68 +248,87 @@ const FinData = {
 };
 
 /* =========================================================
-   3. 정밀 검증 및 신청 로직 (빈칸 체크 & 자동 청소)
+   3. 신청 및 청소 로직 (대표님 요청: 설립 후 즉시 삭제)
    ========================================================= */
+
+// [만능 청소기] 모든 입력창과 체크박스를 태초의 상태로!
 function clearAllInputs() {
     document.querySelectorAll('input, textarea').forEach(el => {
         if (el.type === 'checkbox') el.checked = false;
-        else el.value = '';
+        else el.value = ''; // 모든 글자 삭제
     });
 }
 
-// [행사 신청]
+// 🏦 지갑 설립 (완료 후 즉시 초기화 보강)
+function submitBank() {
+    const name = document.getElementById('bankName');
+    const phone = document.getElementById('bankPhone');
+    const addr = document.getElementById('bankAddress');
+    const agree = document.getElementById('bankAgree');
+
+    if (!name || !name.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); if(name) name.focus(); return; }
+    if (!agree || !agree.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
+
+    // 데이터 저장
+    FinData.add('wallets', { bankName: name.value });
+
+    alert(`🏦 [${name.value}]님, 핀세계 AI 지갑 설립이 완료되었습니다!`);
+
+    // ★ 핵심: 다음 사용자를 위해 즉시 모든 입력창 비우기
+    clearAllInputs();
+
+    // 메인으로 이동
+    showSection('dashboard', document.getElementById('btn-dashboard'));
+}
+
+// ★ 지갑 자동 입력 (카카오 인증 버튼 연동)
+function autoFillKakao() {
+    const n = document.getElementById('bankName');
+    const p = document.getElementById('bankPhone');
+    const a = document.getElementById('bankAddress');
+    const c = document.getElementById('bankAgree');
+
+    // 기존 데이터가 있다면 덮어씌우기 위해 강제 입력
+    if(n) n.value = "채정석"; 
+    if(p) p.value = "010-2828-7788"; 
+    if(a) a.value = "전북특별자치도 전주시"; 
+    if(c) c.checked = true;
+
+    alert("💬 카카오 인증 성공! 인적 사항이 자동으로 입력되었습니다.");
+}
+
+/* =========================================================
+   4. UI 제어 및 신청 로직 (행사/공유/루틴)
+   ========================================================= */
 function submitAd() {
-    const shop = document.getElementById("shopName"), biz = document.getElementById("bizType"), area = document.getElementById("area"), text = document.getElementById("adText");
-    if (!shop.value.trim()) { alert("⚠️ 상호명을 입력해 주세요."); shop.focus(); return; }
-    if (!biz.value.trim()) { alert("⚠️ 업종을 입력해 주세요."); biz.focus(); return; }
-    if (!area.value.trim()) { alert("⚠️ 지역을 입력해 주세요."); area.focus(); return; }
-    if (!text.value.trim()) { alert("⚠️ 문구를 입력해 주세요."); text.focus(); return; }
+    const shop = document.getElementById("shopName"), area = document.getElementById("area"), text = document.getElementById("adText");
+    if (!shop.value.trim() || !area.value.trim() || !text.value.trim()) { alert("⚠️ 모든 항목을 입력해 주세요."); return; }
     FinData.add('ads', { shopName: shop.value });
     alert("📢 행사 신청 완료!"); clearAllInputs();
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// [공유 신청]
 function submitLoan() {
     const name = document.getElementById("loanName"), amt = document.getElementById("loanAmount"), purp = document.getElementById("loanPurpose") || document.getElementById("loanPhone");
-    if (!name.value.trim()) { alert("⚠️ 신청자명을 입력해 주세요."); name.focus(); return; }
-    if (!amt.value.trim()) { alert("⚠️ 금액을 입력해 주세요."); amt.focus(); return; }
-    if (!purp.value.trim()) { alert("⚠️ 공유 목적을 입력해 주세요."); purp.focus(); return; }
+    if (!name.value.trim() || !amt.value.trim() || !purp.value.trim()) { alert("⚠️ 모든 항목을 입력해 주세요."); return; }
     FinData.add('loans', { loanName: name.value });
     alert("💰 공유 신청 완료!"); clearAllInputs();
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// [행사 루틴]
 function submitRoutine() {
     const owner = document.getElementById("routineOwner"), region = document.getElementById("routineRegion"), rText = document.getElementById("routineText");
-    if (!owner.value.trim()) { alert("⚠️ 제작자를 입력해 주세요."); owner.focus(); return; }
-    if (!region.value.trim()) { alert("⚠️ 지역을 입력해 주세요."); region.focus(); return; }
-    if (!rText.value.trim()) { alert("⚠️ 루틴 문구를 입력해 주세요."); rText.focus(); return; }
+    if (!owner.value.trim() || !region.value.trim() || !rText.value.trim()) { alert("⚠️ 모든 항목을 입력해 주세요."); return; }
     FinData.add('routines', { routineOwner: owner.value });
     alert("🌀 루틴 생성 완료!"); clearAllInputs();
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// [지갑 설립]
-function submitBank() {
-    const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'), a = document.getElementById('bankAddress'), c = document.getElementById('bankAgree');
-    if (!n.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); n.focus(); return; }
-    if (!p.value.trim()) { alert("⚠️ 휴대폰 번호를 입력해 주세요."); p.focus(); return; }
-    if (!a.value.trim()) { alert("⚠️ 주소를 입력해 주세요."); a.focus(); return; }
-    if (!c.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
-    FinData.add('wallets', { bankName: n.value });
-    alert(`🏦 [${n.value}]님 지갑 설립 완료!`); clearAllInputs();
-    showSection('dashboard', document.getElementById('btn-dashboard'));
-}
-
-/* =========================================================
-   4. UI 제어 및 자동 입력
-   ========================================================= */
-function autoFillKakao() { 
-    alert("💬 카카오 인증 완료!"); 
-    const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'), a = document.getElementById('bankAddress'), c = document.getElementById('bankAgree');
-    if(n) n.value = "채정석"; if(p) p.value = "010-2828-7788"; if(a) a.value = "전북특별자치도 전주시"; if(c) c.checked = true;
+function resetEconomy() {
+    window.advertiser = 50000; window.consumer = 20000; window.loanPercent = 100.0; window.aiRate = 0.0;
+    if(document.getElementById("advValue")) document.getElementById("advValue").innerText = "50,000원";
+    if(document.getElementById("totalValue")) document.getElementById("totalValue").innerText = "70,000원";
+    alert("🚨 모든 수치가 초기화되었습니다.");
 }
 
 function showSection(id, btn) {
@@ -365,13 +355,13 @@ function closePayment() { document.getElementById('paymentFields').style.display
 function submitPayment() {
     const amtInput = document.getElementById('payAmount');
     const amt = parseInt(amtInput.value || 0);
-    if(amt <= 0) { alert("⚠️ 금액을 입력하세요."); amtInput.focus(); return; }
+    if(amt <= 0) { alert("⚠️ 금액을 입력하세요."); return; }
     window.advertiser += Math.floor(amt * 0.7); window.consumer += Math.floor(amt * 0.3);
     alert("✅ 결제 반영 완료!"); closePayment();
 }
 
 /* =========================================================
-   5. 연출 엔진 (인원수 & AI 신호)
+   5. 실시간 연출 (인원수 & AI 신호)
    ========================================================= */
 let liveCount = 10000;
 function startGrowth() {
