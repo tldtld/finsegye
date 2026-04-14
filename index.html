@@ -370,12 +370,37 @@ function startVoiceCommand() {
     }
 }
 
-// AI 재테크 및 국내외 주문 안내
+/* =========================================================
+   [업그레이드] 클릭 시 문구 표시와 음성 설명을 동시에 실행
+   ========================================================= */
+
 function alertFunction(type) {
+    let title = "";
+    let msg = "";
+
+    // 1. 유형에 따른 문구 설정 (대표님께서 이 안의 내용을 자유롭게 수정하세요!)
     if(type === 'aiInvest') {
-        alert("📈 [AI 재테크 안내]\n핀세계 딥러닝 AI 엔진이 세계 최초로 개발되어 곧 공개 됩니다.수익을 극대화 할수있는 포트폴리오를 구성하고 있습니다.");
-    } else {
-        alert("🌐 [국내외 주문 안내]\n전 세계 가맹점과 실시간 연동 중입니다. 곧 정식 오픈됩니다.");
+        title = "📈 [AI 재테크 안내]";
+        msg = "핀세계 딥러닝 엔진이 수익률을 극대화할 최적의 포트폴리오를 구성하고 있습니다. 잠시만 기다려 주세요.";
+    } else if(type === 'globalOrder') {
+        title = "🌐 [국내외 주문 안내]";
+        msg = "전 세계 주요 거래소와 실시간 연동 중입니다. 국내 및 해외 주식 통합 주문 시스템을 곧 만나보실 수 있습니다.";
+    }
+
+    // 2. 화면에 알림창 띄우기
+    alert(title + "\n\n" + msg);
+
+    // 3. [핵심] 설정된 문구를 음성으로 읽어주기
+    if ('speechSynthesis' in window) {
+        // 읽어주기 전에 혹시 다른 목소리가 나오고 있다면 멈춤
+        window.speechSynthesis.cancel(); 
+
+        const utterance = new SpeechSynthesisUtterance(msg);
+        utterance.lang = 'ko-KR'; // 한국어
+        utterance.rate = 1.0;     // 읽기 속도 (0.8~1.2 사이가 적당합니다)
+        utterance.pitch = 1.0;    // 목소리 높낮이
+        
+        window.speechSynthesis.speak(utterance);
     }
 }
 
