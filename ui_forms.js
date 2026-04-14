@@ -1,6 +1,8 @@
+
 /* =========================================================
    핀세계 통합 데이터 엔진 (무제한 스크롤 & 즉시 반영)
    ========================================================= */
+/*
 const FinData = {
     // [데이터 가져오기]
     get: (key) => JSON.parse(localStorage.getItem('fin_' + key)) || [],
@@ -56,8 +58,10 @@ const FinData = {
         el.innerHTML = list.length === 0 
             ? '<div style="color:#555; padding:10px; font-size:0.8em;">내역 없음</div>' 
             : list.map(template).join('');
-    }
+    } 
+   
 };
 
 // 페이지 로드 시 즉시 실행하여 기존 내역 표시
 window.addEventListener('load', () => FinData.updateUI());
+*/
