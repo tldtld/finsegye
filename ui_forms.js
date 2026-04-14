@@ -23,7 +23,7 @@ const FinData = {
         // 1. AI 지갑 설립 리스트
         FinData.renderList('wallets', 'walletDisplay', (item) => `
             <div style="border-bottom:1px solid #333; padding:8px 0; font-size:0.85em;">
-                <b style="color:gold;">✅ ${item.bankName}</b> 님 설립완료<br>
+                <b style="color:gold;"> ${item.bankName}</b> 님 설립완료<br>
                 <small style="color:#666;">${item.date}</small>
             </div>
         `);
@@ -31,21 +31,21 @@ const FinData = {
         // 2. 행사 신청 리스트
         FinData.renderList('ads', 'adListDisplay', (item) => `
             <div style="border-bottom:1px solid #333; padding:8px 0; font-size:0.85em;">
-                <b style="color:#ff00ff;">📢 ${item.shopName}</b> (${item.area})
+                <b style="color:#ff00ff;"> ${item.shopName}</b> (${item.area})
             </div>
         `);
 
         // 3. 공유 신청 리스트
         FinData.renderList('loans', 'loanListDisplay', (item) => `
             <div style="border-bottom:1px solid #333; padding:8px 0; font-size:0.85em;">
-                <b style="color:#ff9900;">💰 ${item.loanName}</b> ${item.loanAmount}만
+                <b style="color:#ff9900;"> ${item.loanName}</b> ${item.loanAmount}만
             </div>
         `);
 
         // 4. 행사 루틴 리스트
         FinData.renderList('routines', 'routineListDisplay', (item) => `
             <div style="border-bottom:1px solid #333; padding:8px 0; font-size:0.85em;">
-                <b style="color:#cc99ff;">🌀 ${item.routineOwner}</b> (${item.routineRegion})
+                <b style="color:#cc99ff;"> ${item.routineOwner}</b> (${item.routineRegion})
             </div>
         `);
     },
