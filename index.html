@@ -277,17 +277,75 @@ function toggleQR() {
     if(list) list.style.display = 'none';
 }
 
-// 💳 결제 시스템 (고정 해결)
-function openPayment() { document.getElementById('paymentFields').style.display = 'block'; }
-function closePayment() { document.getElementById('paymentFields').style.display = 'none'; }
-function submitPayment() {
-    const amt = parseInt(document.getElementById('payAmount').value || 0);
-    if(amt <= 0) return alert("금액을 입력하세요.");
-    window.advertiser += Math.floor(amt * 0.7);
-    window.consumer += Math.floor(amt * 0.3);
-    alert(amt.toLocaleString() + "원 결제 반영 완료!");
-    closePayment();
+/* =========================================================
+   💳 실시간 결제 시스템 (토글 및 초기화 강화 버전)
+   ========================================================= */
+
+// 1. 버튼 클릭 시 열려있으면 닫고, 닫혀있으면 여는 '토글' 기능
+function openPayment() {
+    const fields = document.getElementById('paymentFields');
+    const payInput = document.getElementById('payAmount');
+
+    if (fields.style.display === 'block') {
+        // 이미 열려있다면? -> 닫으면서 초기화
+        closePayment();
+    } else {
+        // 닫혀있다면? -> 열기
+        fields.style.display = 'block';
+        if(payInput) payInput.focus();
+    }
 }
+
+// 2. 취소 버튼을 누르거나 창이 닫힐 때 '금액'을 무조건 초기화
+function closePayment() {
+    const fields = document.getElementById('paymentFields');
+    const payInput = document.getElementById('payAmount');
+
+    if (fields) fields.style.display = 'none';
+    if (payInput) payInput.value = ""; // ★ 대표님 요청: 입력값 초기화
+}
+
+// 3. 결제 완료 후 초기화 및 자산 반영
+function submitPayment() {
+    const payInput = document.getElementById('payAmount');
+    const amount = parseInt(payInput.value || 0);
+
+    if (amount <= 0) {
+        alert("금액을 입력해주세요.");
+        return;
+    }
+
+    // [자산 엔진에 반영]
+    window.advertiser += Math.floor(amount * 0.7);
+    window.consumer += Math.floor(amount * 0.3);
+    
+    alert(amount.toLocaleString() + "원 결제가 완료되어 자산에 반영되었습니다!");
+
+    // ★ 결제 완료 후 즉시 입력칸 비우고 창 닫기
+    closePayment(); 
+}
+
+/* =========================================================
+   ♻️ 리셋 시스템 (엔진 멈춤 해결용)
+   ========================================================= */
+window.resetEconomy = function() {
+    // 1. 모든 변수 강제 초기화
+    window.advertiser = 50000;
+    window.consumer = 20000;
+    window.loanPercent = 100.0;
+    window.aiRate = 0.0;
+
+    // 2. 화면 출력 즉시 갱신
+    if (document.getElementById('advValue')) document.getElementById('advValue').innerText = "50,000원";
+    if (document.getElementById('consValue')) document.getElementById('consValue').innerText = "20,000원";
+    if (document.getElementById('totalValue')) document.getElementById('totalValue').innerText = "70,000원";
+    if (document.getElementById('loanPercent')) document.getElementById('loanPercent').innerText = "100.0%";
+
+    alert("🚨 모든 경제 데이터가 초기화되었습니다.");
+    
+    // 3. 결제창이 열려있다면 닫기
+    closePayment();
+};
 
 // [강화된 신청 로직] 빈칸 검사 추가
 function submitAd() {
