@@ -316,16 +316,34 @@ function submitBank() {
         if (fields) fields.style.display = 'none';
         document.getElementById('payAmount').value = "";
     }
-    function submitPayment() {
-        const payInput = document.getElementById('payAmount');
-        const amount = parseInt(payInput.value || 0);
-        if (amount <= 0) { alert("금액을 입력해주세요."); return; }
-        window.advertiser += Math.floor(amount * 0.7);
-        window.consumer += Math.floor(amount * 0.3);
-        if (typeof renderAssetUI === "function") renderAssetUI();
-        alert(amount.toLocaleString() + "원 결제 완료!");
-        closePayment();
+function submitPayment() {
+    const payInput = document.getElementById('payAmount');
+    const amount = parseInt(payInput.value || 0);
+
+    // 1. 유효성 검사
+    if (amount <= 0) { 
+        alert("금액을 입력해주세요."); 
+        payInput.focus();
+        return; 
     }
+
+    // 2. [핵심] 결제 금액을 엔진 변수에 반영 (7:3 비율 배분)
+    // 현재 엔진이 사용 중인 advertiser, consumer 변수에 직접 더해줍니다.
+    advertiser += Math.floor(amount * 0.7);
+    consumer += Math.floor(amount * 0.3);
+
+    // 3. 화면 UI 즉시 갱신 (엔진이 0%가 될 때까지 기다리지 않고 바로 보여줌)
+    if (document.getElementById("advValue")) 
+        document.getElementById("advValue").innerText = Math.floor(advertiser).toLocaleString() + "원";
+    if (document.getElementById("consValue")) 
+        document.getElementById("consValue").innerText = Math.floor(consumer).toLocaleString() + "원";
+    if (document.getElementById("totalValue")) 
+        document.getElementById("totalValue").innerText = Math.floor(advertiser + consumer).toLocaleString() + "원";
+
+    // 4. 완료 알림 및 창 닫기
+    alert(amount.toLocaleString() + "원 결제가 완료되어 자산에 반영되었습니다!");
+    closePayment();
+}
     function updateRealtimeList() {
         const data = JSON.parse(localStorage.getItem('fin_wallets') || '[]');
         const listEl = document.getElementById('realtimeNameList');
