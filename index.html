@@ -187,10 +187,9 @@
 
 
 
-
-  <script>
+<script>
 /* =========================================================
-   1. 핀세계 핵심 경제 엔진 (자산 수치)
+   1. 핵심 경제 엔진 (자산 수치)
    ========================================================= */
 window.loanPercent = 100.0;
 window.aiRate = 0.0;
@@ -200,8 +199,8 @@ window.pause = false;
 
 function updateStatus() {
     try {
-        if(document.getElementById("reserveValue")) 
-            document.getElementById("reserveValue").innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
+        const resElem = document.getElementById("reserveValue");
+        if(resElem) resElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
 
         if(!window.pause) {
             window.loanPercent -= 0.5;
@@ -249,10 +248,10 @@ const FinData = {
 };
 
 /* =========================================================
-   3. 정밀 검증 및 자동 청소 신청 로직 (원포인트 해결)
+   3. 정밀 검증 및 신청 로직 (대표님 요청: 모든 칸 검사)
    ========================================================= */
 
-// [만능 청소기] 모든 입력창 비우기
+// [통합 청소기] 모든 입력창을 즉시 비웁니다.
 function clearAllInputs() {
     document.querySelectorAll('input, textarea').forEach(el => {
         if (el.type === 'checkbox') el.checked = false;
@@ -260,7 +259,7 @@ function clearAllInputs() {
     });
 }
 
-// 📢 행사 신청: 상호명, 업종, 지역, 문구 4종 필수 검사
+// 📢 행사 신청 (4개 항목 필수)
 function submitAd() {
     const shop = document.getElementById("shopName");
     const biz = document.getElementById("bizType");
@@ -278,13 +277,15 @@ function submitAd() {
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// 💰 공유 신청: 신청자명, 금액 2종 필수 검사
+// 💰 공유 신청 (3개 항목 필수)
 function submitLoan() {
     const name = document.getElementById("loanName");
-    const amount = document.getElementById("loanAmount");
+    const amt = document.getElementById("loanAmount");
+    const phone = document.getElementById("loanPhone"); // 3번째 칸: 연락처 등
 
     if (!name.value.trim()) { alert("⚠️ 신청자명을 입력해 주세요."); name.focus(); return; }
-    if (!amount.value.trim()) { alert("⚠️ 공유 금액을 입력해 주세요."); amount.focus(); return; }
+    if (!amt.value.trim()) { alert("⚠️ 공유 금액을 입력해 주세요."); amt.focus(); return; }
+    if (!phone.value.trim()) { alert("⚠️ 연락처(또는 목적)를 입력해 주세요."); phone.focus(); return; }
 
     FinData.add('loans', { loanName: name.value });
     alert("💰 공유 신청 완료!");
@@ -292,13 +293,15 @@ function submitLoan() {
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// 🌀 행사 루틴: 제작자, 지역 2종 필수 검사
+// 🌀 행사 루틴 (3개 항목 필수)
 function submitRoutine() {
     const owner = document.getElementById("routineOwner");
     const region = document.getElementById("routineRegion");
+    const rText = document.getElementById("routineText"); // 3번째 칸: 루틴 내용
 
     if (!owner.value.trim()) { alert("⚠️ 제작자를 입력해 주세요."); owner.focus(); return; }
-    if (!region.value.trim()) { alert("⚠️ 해당 지역을 입력해 주세요."); region.focus(); return; }
+    if (!region.value.trim()) { alert("⚠️ 지역을 입력해 주세요."); region.focus(); return; }
+    if (!rText.value.trim()) { alert("⚠️ 루틴 문구를 입력해 주세요."); rText.focus(); return; }
 
     FinData.add('routines', { routineOwner: owner.value });
     alert("🌀 루틴 생성 완료!");
@@ -306,29 +309,29 @@ function submitRoutine() {
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// 🏦 지갑 설립: 성함, 휴대폰, 주소, 동의 필수 검사
+// 🏦 지갑 설립 (4개 항목 필수)
 function submitBank() {
-    const name = document.getElementById('bankName');
-    const phone = document.getElementById('bankPhone');
-    const addr = document.getElementById('bankAddress');
-    const agree = document.getElementById('bankAgree');
+    const n = document.getElementById('bankName');
+    const p = document.getElementById('bankPhone');
+    const a = document.getElementById('bankAddress');
+    const c = document.getElementById('bankAgree');
 
-    if (!name.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); name.focus(); return; }
-    if (!phone.value.trim()) { alert("⚠️ 휴대폰 번호를 입력해 주세요."); phone.focus(); return; }
-    if (!addr.value.trim()) { alert("⚠️ 주소를 입력해 주세요."); addr.focus(); return; }
-    if (!agree.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
+    if (!n.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); n.focus(); return; }
+    if (!p.value.trim()) { alert("⚠️ 휴대폰 번호를 입력해 주세요."); p.focus(); return; }
+    if (!a.value.trim()) { alert("⚠️ 주소를 입력해 주세요."); a.focus(); return; }
+    if (!c.checked) { alert("⚠️ 개인정보 동의가 필요합니다."); return; }
 
-    FinData.add('wallets', { bankName: name.value });
-    alert(`🏦 [${name.value}]님 지갑 설립 완료!`);
+    FinData.add('wallets', { bankName: n.value });
+    alert(`🏦 [${n.value}]님 지갑 설립 완료!`);
     clearAllInputs();
     showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 /* =========================================================
-   4. 자동 입력 및 UI 제어
+   4. 자동 입력 및 UI 제어 (QR/결제/카카오)
    ========================================================= */
 
-// ★ 지갑 자동 입력 (ID 불일치 해결 버전)
+// ★ 지갑 자동 입력 (작동 보장)
 function autoFillInfo() {
     const n = document.getElementById('bankName');
     const p = document.getElementById('bankPhone');
@@ -342,7 +345,7 @@ function autoFillInfo() {
 }
 
 function autoFillKakao() { 
-    alert("💬 카카오 인증 완료! 정보가 자동으로 채워집니다."); 
+    alert("💬 카카오 인증 완료! 정보가 자동 입력됩니다."); 
     autoFillInfo(); 
 }
 
@@ -366,15 +369,15 @@ function openPayment() {
     else { p.style.display = 'block'; document.getElementById('payAmount').focus(); }
 }
 
-function closePayment() {
-    document.getElementById('paymentFields').style.display = 'none';
-    document.getElementById('payAmount').value = '';
+function closePayment() { 
+    document.getElementById('paymentFields').style.display = 'none'; 
+    document.getElementById('payAmount').value = ''; 
 }
 
 function submitPayment() {
     const amtInput = document.getElementById('payAmount');
     const amt = parseInt(amtInput.value || 0);
-    if(amt <= 0) { alert("⚠️ 금액을 입력하세요."); amtInput.focus(); return; }
+    if(amt <= 0) { alert("⚠️ 결제 금액을 입력하세요."); amtInput.focus(); return; }
     window.advertiser += Math.floor(amt * 0.7);
     window.consumer += Math.floor(amt * 0.3);
     alert("✅ 결제 반영 완료!");
@@ -382,7 +385,7 @@ function submitPayment() {
 }
 
 /* =========================================================
-   5. 실시간 연출 (인원수 & AI 신호)
+   5. 연출 엔진 (AI 신호 & 실시간 인원)
    ========================================================= */
 let liveCount = parseInt(localStorage.getItem('fin_live_users_v3')) || 10000;
 function startGrowth() {
@@ -397,7 +400,7 @@ function startGrowth() {
 
 function updateAISignal() {
     const assets = ["KOSPI200", "삼성전자", "핀세계 AI", "GOLD"];
-    const actions = ["매수 포착", "비중 확대", "관망"];
+    const actions = ["매수 포착", "비중 확대", "관망(대기)"];
     if(document.getElementById('assetName')) document.getElementById('assetName').innerText = assets[Math.floor(Math.random() * assets.length)];
     if(document.getElementById('actionType')) document.getElementById('actionType').innerText = actions[Math.floor(Math.random() * actions.length)];
     setTimeout(updateAISignal, 3000);
