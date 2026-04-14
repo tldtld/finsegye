@@ -46,6 +46,10 @@
                 🤝 QR참여
             </button>
 
+
+
+            
+
 <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 0 15px rgba(161, 196, 253, 0.4); cursor:pointer;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_최정석" alt="QR" style="width:100%; max-width:100px; display:block; margin: 0 auto;">
             <div style="font-size:0.65em; color:#444; font-weight:bold; margin-top:5px;">
@@ -224,6 +228,8 @@ if (typeof showSection === 'function') {
 
 
 <script>
+
+    
 /* =========================================================
    1. 핀세계 핵심 경제 엔진 (실시간 수치 연동)
    ========================================================= */
@@ -237,7 +243,6 @@ function updateStatus() {
     try {
         const resElem = document.getElementById("reserveValue");
         if(resElem) resElem.innerText = (98.8 + Math.random() * 1.2).toFixed(2) + "%";
-        
         if(!window.pause) {
             window.loanPercent -= 0.5;
             if(window.loanPercent <= 0) {
@@ -245,13 +250,10 @@ function updateStatus() {
                 setTimeout(() => { window.loanPercent = 100.0; window.pause = false; }, 5000);
             }
         }
-        
         if(document.getElementById("loanPercent")) document.getElementById("loanPercent").innerText = window.loanPercent.toFixed(1) + "%";
         window.aiRate += 0.01;
         if(document.getElementById("aiRate")) document.getElementById("aiRate").innerText = "+" + window.aiRate.toFixed(1) + "%";
-        
         if (window.loanPercent === 0) { window.advertiser += 24; window.consumer += 20; }
-        
         if(document.getElementById("advValue")) document.getElementById("advValue").innerText = Math.floor(window.advertiser).toLocaleString() + "원";
         if(document.getElementById("consValue")) document.getElementById("consValue").innerText = Math.floor(window.consumer).toLocaleString() + "원";
         if(document.getElementById("totalValue")) document.getElementById("totalValue").innerText = Math.floor(window.advertiser + window.consumer).toLocaleString() + "원";
@@ -287,10 +289,9 @@ const FinData = {
 };
 
 /* =========================================================
-   3. [스마트 로직] 하이패스 입력 및 커서 제어
+   3. [스마트 로직] 하이패스 입력 및 안내 시스템
    ========================================================= */
 
-// 모든 입력창 초기화
 function clearAllInputs() {
     document.querySelectorAll('input, textarea').forEach(el => {
         if (el.type === 'checkbox') el.checked = false;
@@ -298,98 +299,53 @@ function clearAllInputs() {
     });
 }
 
-// 특정 섹션 이동 시 첫 번째 입력창에 커서 배치
 function focusFirstInput(sectionId) {
     const section = document.getElementById(sectionId);
     if (section) {
         const firstInput = section.querySelector('input:not([type="checkbox"]), textarea');
-        if (firstInput) {
-            setTimeout(() => firstInput.focus(), 150); // 화면 전환 애니메이션 고려
-        }
+        if (firstInput) { setTimeout(() => firstInput.focus(), 150); }
     }
 }
 
-// [하이패스] 엔터 키 입력 시 다음 항목으로 자동 이동
-document.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-        const target = e.target;
-        if (target.tagName === 'INPUT' || (target.tagName === 'TEXTAREA' && e.ctrlKey)) {
-            const section = target.closest('section');
-            if (section) {
-                const inputs = Array.from(section.querySelectorAll('input:not([type="checkbox"]), textarea, button.submitBtn'));
-                const index = inputs.indexOf(target);
-                if (index > -1 && index < inputs.length - 1) {
-                    e.preventDefault();
-                    inputs[index + 1].focus();
-                }
-            }
-        }
-    }
-});
-
 // 📢 [행사 신청] 정밀 검증 및 커서 이동
 function submitAd() {
-    const s = document.getElementById("shopName"), b = document.getElementById("bizType"), 
-          a = document.getElementById("area"), t = document.getElementById("adText");
-    
+    const s = document.getElementById("shopName"), b = document.getElementById("bizType"), a = document.getElementById("area"), t = document.getElementById("adText");
     if (!s.value.trim()) { alert("⚠️ 상호명을 입력해 주세요."); s.focus(); return; }
     if (!b.value.trim()) { alert("⚠️ 업종/업태를 입력해 주세요."); b.focus(); return; }
     if (!a.value.trim()) { alert("⚠️ 행사 지역을 입력해 주세요."); a.focus(); return; }
     if (!t.value.trim()) { alert("⚠️ 행사 문구를 입력해 주세요."); t.focus(); return; }
-
-    FinData.add('ads', { shopName: s.value });
-    alert("📢 행사 신청이 완료되었습니다!");
-    clearAllInputs();
-    showSection('dashboard', document.getElementById('btn-dashboard'));
+    FinData.add('ads', { shopName: s.value }); alert("📢 행사 신청 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 // 💰 [공유 신청] 정밀 검증 및 커서 이동
 function submitLoan() {
-    const n = document.getElementById("loanName"), m = document.getElementById("loanAmount"), 
-          p = document.getElementById("loanPurpose");
-    
+    const n = document.getElementById("loanName"), m = document.getElementById("loanAmount"), p = document.getElementById("loanPurpose");
     if (!n.value.trim()) { alert("⚠️ 신청자명을 입력해 주세요."); n.focus(); return; }
     if (!m.value.trim()) { alert("⚠️ 신청 금액을 입력해 주세요."); m.focus(); return; }
     if (!p.value.trim()) { alert("⚠️ 공유 목적을 입력해 주세요."); p.focus(); return; }
-
-    FinData.add('loans', { loanName: n.value });
-    alert("💰 공유 신청이 완료되었습니다!");
-    clearAllInputs();
-    showSection('dashboard', document.getElementById('btn-dashboard'));
+    FinData.add('loans', { loanName: n.value }); alert("💰 공유 신청 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 // 🌀 [행사 루틴] 정밀 검증 및 커서 이동
 function submitRoutine() {
-    const o = document.getElementById("routineOwner"), r = document.getElementById("routineRegion"), 
-          t = document.getElementById("routineText");
-    
+    const o = document.getElementById("routineOwner"), r = document.getElementById("routineRegion"), t = document.getElementById("routineText");
     if (!o.value.trim()) { alert("⚠️ 제작자 이름을 입력해 주세요."); o.focus(); return; }
     if (!r.value.trim()) { alert("⚠️ 적용 지역을 입력해 주세요."); r.focus(); return; }
     if (!t.value.trim()) { alert("⚠️ 루틴 내용을 입력해 주세요."); t.focus(); return; }
-
-    FinData.add('routines', { routineOwner: o.value });
-    alert("🌀 루틴 생성이 완료되었습니다!");
-    clearAllInputs();
-    showSection('dashboard', document.getElementById('btn-dashboard'));
+    FinData.add('routines', { routineOwner: o.value }); alert("🌀 루틴 생성 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 // 🏦 [지갑 설립] 정밀 검증 및 커서 이동
 function submitBank() {
-    const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'),
-          a = document.getElementById('bankAddress'), g = document.getElementById('bankAgree');
-
+    const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'), a = document.getElementById('bankAddress'), g = document.getElementById('bankAgree');
     if (!n.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); n.focus(); return; }
     if (!p.value.trim()) { alert("⚠️ 전화번호를 입력해 주세요."); p.focus(); return; }
     if (!a.value.trim()) { alert("⚠️ 주소를 입력해 주세요."); a.focus(); return; }
     if (!g.checked) { alert("⚠️ 개인정보 수집 동의가 필요합니다."); g.focus(); return; }
-
-    FinData.add('wallets', { bankName: n.value });
-    alert(`🏦 [${n.value}]님, AI 지갑이 설립되었습니다!`);
-    clearAllInputs();
-    showSection('dashboard', document.getElementById('btn-dashboard'));
+    FinData.add('wallets', { bankName: n.value }); alert(`🏦 [${n.value}]님, AI 지갑 설립 완료!`); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
-// 카카오 인증 자동입력
+// [카카오 인증] 자동입력
 function autoFillKakao() {
     alert("💬 카카오 인증 성공! 대표님의 인적 사항을 적용합니다.");
     document.getElementById('bankName').value = "채정석";
@@ -400,17 +356,47 @@ function autoFillKakao() {
 }
 
 /* =========================================================
-   4. UI 제어 및 초기화
+   4. [신규] 제미나이식 음성 대화 및 탭 안내 시스템
+   ========================================================= */
+
+// 음성 주문 실행 (말하기 기능 포함)
+function startVoiceCommand() {
+    const msg = "어떤 상품을 주문할까요? 말씀해 주세요.";
+    alert("🎙️ 음성 안내: " + msg);
+    if ('speechSynthesis' in window) {
+        const utterance = new SpeechSynthesisUtterance(msg);
+        utterance.lang = 'ko-KR';
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+// AI 재테크 및 국내외 주문 안내
+function alertFunction(type) {
+    if(type === 'aiInvest') {
+        alert("📈 [AI 재테크 안내]\n핀세계 딥러닝 엔진이 수익률을 극대화할 최적의 포트폴리오를 구성하고 있습니다.");
+    } else {
+        alert("🌐 [국내외 주문 안내]\n전 세계 주요 거래소와 실시간 연동 중입니다. 곧 정식 오픈됩니다.");
+    }
+}
+
+/* =========================================================
+   5. UI 제어 및 초기화
    ========================================================= */
 
 function showSection(id, btn) {
+    // 만약 아직 페이지가 없는 'AI 재테크'나 '국내외 주문'을 눌렀다면 안내문구만 띄움
+    if (id === 'aiInvest' || id === 'globalOrder') {
+        alertFunction(id);
+        return;
+    }
+
     document.querySelectorAll('section').forEach(s => s.style.display = 'none');
     document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
     
     const target = document.getElementById(id);
     if(target) {
         target.style.display = 'block';
-        focusFirstInput(id); // 탭 클릭 시 자동 커서
+        focusFirstInput(id);
     }
     
     if(btn) btn.classList.add('active');
@@ -418,12 +404,7 @@ function showSection(id, btn) {
     if(id === 'mypage') FinData.updateUI();
 }
 
-function resetEconomy() {
-    window.advertiser = 50000; window.consumer = 20000; window.loanPercent = 100.0; window.aiRate = 0.0;
-    alert("🚨 경제 수치가 초기화되었습니다.");
-}
-
-function toggleQR() { const q = document.getElementById('qrContainer'); q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none'; }
+function toggleLiveList() { const q = document.getElementById('liveListContainer'); q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none'; }
 function openPayment() { const p = document.getElementById('paymentFields'); if(p.style.display === 'block') closePayment(); else { p.style.display = 'block'; document.getElementById('payAmount').focus(); } }
 function closePayment() { document.getElementById('paymentFields').style.display = 'none'; document.getElementById('payAmount').value = ''; }
 function submitPayment() { const i = document.getElementById('payAmount'); const a = parseInt(i.value || 0); if(a <= 0) { alert("⚠️ 금액을 입력하세요."); return; } window.advertiser += Math.floor(a * 0.7); window.consumer += Math.floor(a * 0.3); alert("✅ 결제 완료!"); closePayment(); }
@@ -441,7 +422,7 @@ window.addEventListener('load', () => {
     FinData.updateUI(); 
     updateAISignal(); 
     setTimeout(startGrowth, 2000); 
-    focusFirstInput('dashboard'); // 초기 로딩 시 대시보드 포커스
+    focusFirstInput('dashboard');
 });
 
 
