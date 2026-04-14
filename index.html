@@ -361,7 +361,7 @@ function autoFillKakao() {
 
 // 음성 주문 실행 (말하기 기능 포함)
 function startVoiceCommand() {
-    const msg = "어떤 상품을 주문할까요? 말씀해 주세요.";
+    const msg = "안녕하세요 핀세계예요 무엇을 도와 드릴까요? 문자와 음성 모두 가능합니다. 제가 안내하는 멘트에 따라서 진행해 주시면 됩니다.";
     alert("🎙️ 음성 안내: " + msg);
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(msg);
