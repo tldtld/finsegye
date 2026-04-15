@@ -171,13 +171,19 @@ if (typeof showSection === 'function') {
 
 
 
-        <div style="background:#1a1a1a; border:1px solid #333; padding:12px; font-size:0.8em; color:#ccc; height:100px; overflow-y:scroll; margin-bottom:12px; text-align:left; line-height:1.6; border-radius:5px; width: 90%; margin-left: auto; margin-right: auto;">
-            <strong style="color:gold;">[개인정보 수집 및 이용 동의]</strong><br><br>
-            <strong>1. 수집 항목</strong>: 성명, 전화번호, 주소<br>
-            <strong>2. 수집 목적</strong>: 핀세계 AI 지갑 설립 및 본인 확인, 시스템 안내<br>
-            <strong>3. 보유 기간</strong>: 서비스 종료 시 또는 이용자 요청 시까지<br>
-            <strong>4. 동의 거부 권리</strong>: 귀하는 동의를 거부할 수 있으나, 거부 시 서비스 이용이 제한될 수 있습니다.
-        </div>
+  <div style="width: 90%; margin: 0 auto 10px auto; border: 1px solid #333; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.02);">
+    <div onclick="toggleTerms()" style="padding: 10px; background: #1a1a1a; cursor: pointer; display: flex; justify-content: space-between; align-items: center;">
+        <span style="color: gold; font-size: 0.8em; font-weight: bold;">[필수] 개인정보 수집 및 이용 동의 (내용보기)</span>
+        <span id="termsArrow" style="color: gold; font-size: 0.8em;">▼</span>
+    </div>
+    
+    <div id="termsContent" style="display: none; padding: 12px; font-size: 0.75em; color: #ccc; height: 100px; overflow-y: scroll; border-top: 1px solid #333; text-align: left; line-height: 1.5;">
+        <strong>1. 수집 항목</strong>: 성명, 전화번호, 주소<br>
+        <strong>2. 수집 목적</strong>: 핀세계 AI 지갑 설립 및 본인 확인, 시스템 안내<br>
+        <strong>3. 보유 기간</strong>: 서비스 종료 시 또는 이용자 요청 시까지<br>
+        <strong>4. 동의 거부 권리</strong>: 귀하는 동의를 거부할 수 있으나, 거부 시 서비스 이용이 제한될 수 있습니다.
+    </div>
+</div>
 
         
         
