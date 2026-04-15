@@ -452,20 +452,45 @@ function resetEconomy() {
     alert("🚨 자산 현황 수치가 초기 상태로 리셋되었습니다.");
 }
 
+
+
+    
+// 👤 [최종 수리] 대표님 전용 자동 입력 (법적 리스크 방지용)
 function autoFillInfo() {
-    alert("👤 대표님 정보로 자동 입력을 시작합니다.");
-    document.getElementById('bankName').value = "채정석";
-    document.getElementById('bankPhone').value = "010-2828-7788";
-    document.getElementById('bankAddress').value = "전북특별자치도 전주시";
-    document.getElementById('bankAgree').checked = true;
-    document.getElementById('bankName').focus();
+    const nameInput = document.getElementById('bankName');
+    const phoneInput = document.getElementById('bankPhone');
+    const addrInput = document.getElementById('bankAddress');
+    const agreeInput = document.getElementById('bankAgree');
+    const termsContent = document.getElementById('termsContent');
+    const termsArrow = document.getElementById('termsArrow');
+
+    alert("👤 대표님 정보 입력을 위해 약관을 펼칩니다. 내용을 확인 후 동의해 주세요.");
+
+    // 1. 정보 입력 (V 체크는 사용자가 직접 하도록 비워둡니다)
+    if(nameInput) nameInput.value = "채정석";
+    if(phoneInput) phoneInput.value = "010-2828-7788";
+    if(addrInput) addrInput.value = "전북특별자치도 전주시";
+
+    // 2. [핵심] 약관 창을 자동으로 펼쳐서 법적 절차를 시각화합니다.
+    if(termsContent) {
+        termsContent.style.display = 'block';
+        if(termsArrow) termsArrow.innerText = '▲';
+    }
+
+    if(nameInput) nameInput.focus();
 }
 
+// 💬 [최종 수리] 카카오 인증
 function autoFillKakao() {
-    alert("💬 카카오 인증 성공!");
-    autoFillInfo();
+    alert("💬 카카오 인증 성공! 약관 확인 후 동의를 진행해 주세요.");
+    
+    // 로직 통일을 위해 위 자동입력 함수를 호출합니다.
+    autoFillInfo(); 
 }
 
+
+
+    
 function toggleQR() { const q = document.getElementById('qrContainer'); if(q) q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none'; }
 function toggleLiveList() { const q = document.getElementById('liveListContainer'); if(q) { const isOp = (q.style.display === 'none' || q.style.display === ''); q.style.display = isOp ? 'block' : 'none'; if(isOp) FinData.updateUI(); } }
 function openPayment() { const p = document.getElementById('paymentFields'); if(p.style.display === 'block') closePayment(); else { p.style.display = 'block'; document.getElementById('payAmount').focus(); } }
