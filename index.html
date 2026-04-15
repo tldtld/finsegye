@@ -231,7 +231,7 @@ if (typeof showSection === 'function') {
 
     
 /* =========================================================
-   1. 핀세계 핵심 경제 엔진 (20초 하강 / 20초 유지 로직)
+   1. 핀세계 핵심 경제 엔진 (20초/20초 밸런스 유지)
    ========================================================= */
 window.loanPercent = 100.0;
 window.aiRate = 0.0;
@@ -247,13 +247,9 @@ function updateStatus() {
         if(!window.pause) {
             window.loanPercent -= 0.5;
             if(window.loanPercent <= 0) {
-                window.loanPercent = 0; 
-                window.pause = true; 
-                // 대표님 요청: 0%에서 20초(20000ms) 동안 머무름
-                setTimeout(() => { 
-                    window.loanPercent = 100.0; 
-                    window.pause = false; 
-                }, 20000); 
+                window.loanPercent = 0; window.pause = true;
+                // 대표님 요청: 0%에서 20초 유지
+                setTimeout(() => { window.loanPercent = 100.0; window.pause = false; }, 20000);
             }
         }
         
@@ -261,11 +257,7 @@ function updateStatus() {
         window.aiRate += 0.01;
         if(document.getElementById("aiRate")) document.getElementById("aiRate").innerText = "+" + window.aiRate.toFixed(1) + "%";
         
-        // 0%일 때 자산이 20초 동안 꾸준히 증가
-        if (window.loanPercent === 0) { 
-            window.advertiser += 24; 
-            window.consumer += 20; 
-        }
+        if (window.loanPercent === 0) { window.advertiser += 24; window.consumer += 20; }
         
         if(document.getElementById("advValue")) document.getElementById("advValue").innerText = Math.floor(window.advertiser).toLocaleString() + "원";
         if(document.getElementById("consValue")) document.getElementById("consValue").innerText = Math.floor(window.consumer).toLocaleString() + "원";
@@ -275,7 +267,7 @@ function updateStatus() {
 setInterval(updateStatus, 100);
 
 /* =========================================================
-   2. 데이터 관리 및 실시간 명단 연동
+   2. 데이터 관리 엔진 (실시간 리스트 연동)
    ========================================================= */
 const FinData = {
     get: (key) => JSON.parse(localStorage.getItem('fin_' + key)) || [],
@@ -309,28 +301,28 @@ const FinData = {
 };
 
 /* =========================================================
-   3. 음성 안내 시스템 (또박또박 0.8 속도 + 쉼표 적용)
+   3. 음성 안내 시스템 (또박또박 0.8 속도)
    ========================================================= */
 function speak(text) {
     if ('speechSynthesis' in window) {
         window.speechSynthesis.cancel();
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'ko-KR';
-        utterance.rate = 0.8; // 부드럽고 차분한 속도
-        utterance.pitch = 1.1; // 또박또박한 톤
+        utterance.rate = 0.8;
+        utterance.pitch = 1.1;
         window.speechSynthesis.speak(utterance);
     }
 }
 
 function startVoiceCommand() {
     const msg = "안녕하세요. 핀 세계 예요. 세계 최초의, 공유 경제 메카니즘을 경험하세요. 무엇을 도와 드릴까요? 문자와 음성, 모두 가능합니다. 제가 안내하는 멘트에 따라서, 차근차근 진행해 주시면 됩니다.";
-    alert("🎙️ 음성 안내: " + msg);
-    speak(msg);
+    alert("🎙️ 음성 안내: " + msg); speak(msg);
 }
 
 /* =========================================================
-   4. 하이패스 자동 포커스 및 섹션 제어
+   4. [대표님 최종 요청] 하이패스 자동 커서 & 섹션 제어
    ========================================================= */
+
 function showSection(id, btn) {
     if (id === 'aiInvest') {
         const msg = "핀세계 딥러닝 에이아이 엔진이, 세계 최초로 개발되어 곧 공개 됩니다. 수익을 극대화 할 수 있는, 포트폴리오를 구성하고 있습니다. 잠시만 기다려 주세요.";
@@ -347,79 +339,89 @@ function showSection(id, btn) {
     const target = document.getElementById(id);
     if(target) {
         target.style.display = 'block';
-        // 탭 클릭 시 첫 번째 입력칸에 자동으로 커서(Focus) 배치
+        // 탭 이동 시 첫 번째 입력창 자동 포커스
         const firstInput = target.querySelector('input:not([type="checkbox"]), textarea');
-        if (firstInput) setTimeout(() => firstInput.focus(), 200);
+        if (firstInput) setTimeout(() => firstInput.focus(), 250);
     }
     if(btn) btn.classList.add('active');
     window.scrollTo(0, 0); 
     if(id === 'mypage') FinData.updateUI();
 }
 
-/* =========================================================
-   5. 입력 검증 및 자동 커서 이동 수리 완료
-   ========================================================= */
-function clearAllInputs() { document.querySelectorAll('input, textarea').forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; }); }
+// 공통 검증 및 자동 커서 이동 로직
+function validateAndFocus(elementId, message) {
+    const el = document.getElementById(elementId);
+    if (!el.value.trim()) {
+        alert(message);
+        setTimeout(() => el.focus(), 100); // 알림창 닫힌 후 즉시 포커스
+        return false;
+    }
+    return true;
+}
 
 function submitAd() {
-    const s = document.getElementById("shopName"), b = document.getElementById("bizType"), a = document.getElementById("area"), t = document.getElementById("adText");
-    if (!s.value.trim()) { alert("⚠️ 상호명을 입력해 주세요."); s.focus(); return; }
-    if (!b.value.trim()) { alert("⚠️ 업종/업태를 입력해 주세요."); b.focus(); return; }
-    if (!a.value.trim()) { alert("⚠️ 행사 지역을 입력해 주세요."); a.focus(); return; }
-    if (!t.value.trim()) { alert("⚠️ 행사 문구를 입력해 주세요."); t.focus(); return; }
-    FinData.add('ads', { shopName: s.value }); alert("📢 행사 신청 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
+    if (!validateAndFocus("shopName", "⚠️ 상호명을 입력해 주세요.")) return;
+    if (!validateAndFocus("bizType", "⚠️ 업종/업태를 입력해 주세요.")) return;
+    if (!validateAndFocus("area", "⚠️ 행사 지역을 입력해 주세요.")) return;
+    if (!validateAndFocus("adText", "⚠️ 행사 문구를 입력해 주세요.")) return;
+
+    FinData.add('ads', { shopName: document.getElementById("shopName").value });
+    alert("📢 행사 신청이 성공적으로 완료되었습니다!");
+    clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 function submitLoan() {
-    const n = document.getElementById("loanName"), m = document.getElementById("loanAmount"), p = document.getElementById("loanPurpose");
-    if (!n.value.trim()) { alert("⚠️ 신청자명을 입력해 주세요."); n.focus(); return; }
-    if (!m.value.trim()) { alert("⚠️ 신청 금액을 입력해 주세요."); m.focus(); return; }
-    if (!p.value.trim()) { alert("⚠️ 공유 목적을 입력해 주세요."); p.focus(); return; }
-    FinData.add('loans', { loanName: n.value }); alert("💰 공유 신청 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
+    if (!validateAndFocus("loanName", "⚠️ 신청자명을 입력해 주세요.")) return;
+    if (!validateAndFocus("loanAmount", "⚠️ 신청 금액을 입력해 주세요.")) return;
+    if (!validateAndFocus("loanPurpose", "⚠️ 공유 목적을 입력해 주세요.")) return;
+
+    FinData.add('loans', { loanName: document.getElementById("loanName").value });
+    alert("💰 공유 신청 완료!");
+    clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 function submitRoutine() {
-    const o = document.getElementById("routineOwner"), r = document.getElementById("routineRegion"), t = document.getElementById("routineText");
-    if (!o.value.trim()) { alert("⚠️ 제작자 이름을 입력해 주세요."); o.focus(); return; }
-    if (!r.value.trim()) { alert("⚠️ 적용 지역을 입력해 주세요."); r.focus(); return; }
-    if (!t.value.trim()) { alert("⚠️ 루틴 내용을 입력해 주세요."); t.focus(); return; }
-    FinData.add('routines', { routineOwner: o.value }); alert("🌀 루틴 생성 완료!"); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
+    if (!validateAndFocus("routineOwner", "⚠️ 제작자 이름을 입력해 주세요.")) return;
+    if (!validateAndFocus("routineRegion", "⚠️ 적용 지역을 입력해 주세요.")) return;
+    if (!validateAndFocus("routineText", "⚠️ 루틴 내용을 입력해 주세요.")) return;
+
+    FinData.add('routines', { routineOwner: document.getElementById("routineOwner").value });
+    alert("🌀 루틴 생성 완료!");
+    clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 function submitBank() {
-    const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'), a = document.getElementById('bankAddress'), g = document.getElementById('bankAgree');
-    if (!n.value.trim()) { alert("⚠️ 성함을 입력해 주세요."); n.focus(); return; }
-    if (!p.value.trim()) { alert("⚠️ 전화번호를 입력해 주세요."); p.focus(); return; }
-    if (!a.value.trim()) { alert("⚠️ 주소를 입력해 주세요."); a.focus(); return; }
+    if (!validateAndFocus("bankName", "⚠️ 성함을 입력해 주세요.")) return;
+    if (!validateAndFocus("bankPhone", "⚠️ 전화번호를 입력해 주세요.")) return;
+    if (!validateAndFocus("bankAddress", "⚠️ 주소를 입력해 주세요.")) return;
+    const g = document.getElementById('bankAgree');
     if (!g.checked) { alert("⚠️ 개인정보 수집 동의가 필요합니다."); g.focus(); return; }
-    FinData.add('wallets', { bankName: n.value }); alert(`🏦 [${n.value}]님, AI 지갑 설립 완료!`); clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
+
+    FinData.add('wallets', { bankName: document.getElementById("bankName").value });
+    alert(`🏦 [${document.getElementById("bankName").value}]님, AI 지갑 설립 완료!`);
+    clearAllInputs(); showSection('dashboard', document.getElementById('btn-dashboard'));
 }
 
 /* =========================================================
-   6. 리셋, 자동입력, 실시간 연동 (유지)
+   5. 리셋, 자동입력, 토글 기능 (유지)
    ========================================================= */
 function resetEconomy() {
     window.advertiser = 50000; window.consumer = 20000; window.loanPercent = 100.0; window.aiRate = 0.0; window.pause = false;
-    if(document.getElementById("advValue")) document.getElementById("advValue").innerText = "50,000원";
-    if(document.getElementById("consValue")) document.getElementById("consValue").innerText = "20,000원";
-    if(document.getElementById("totalValue")) document.getElementById("totalValue").innerText = "70,000원";
-    if(document.getElementById("loanPercent")) document.getElementById("loanPercent").innerText = "100.0%";
-    if(document.getElementById("aiRate")) document.getElementById("aiRate").innerText = "+0.0%";
     alert("🚨 자산 현황 수치가 초기 상태로 리셋되었습니다.");
 }
 
 function autoFillInfo() {
-    const n = document.getElementById('bankName'), p = document.getElementById('bankPhone'), a = document.getElementById('bankAddress'), g = document.getElementById('bankAgree');
     alert("👤 대표님 정보로 자동 입력을 시작합니다.");
-    if(n) n.value = "채정석"; if(p) p.value = "010-2828-7788"; if(a) a.value = "전북특별자치도 전주시"; if(g) g.checked = true;
-    if(n) n.focus();
+    document.getElementById('bankName').value = "채정석";
+    document.getElementById('bankPhone').value = "010-2828-7788";
+    document.getElementById('bankAddress').value = "전북특별자치도 전주시";
+    document.getElementById('bankAgree').checked = true;
+    document.getElementById('bankName').focus();
 }
 
 function autoFillKakao() {
-    alert("💬 카카오 인증 성공! 대표님의 인적 사항을 적용합니다.");
-    document.getElementById('bankName').value = "채정석"; document.getElementById('bankPhone').value = "010-2828-7788";
-    document.getElementById('bankAddress').value = "전북특별자치도 전주시"; document.getElementById('bankAgree').checked = true;
-    document.getElementById('bankName').focus(); 
+    alert("💬 카카오 인증 성공!");
+    autoFillInfo();
 }
 
 function toggleQR() { const q = document.getElementById('qrContainer'); if(q) q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none'; }
@@ -427,6 +429,7 @@ function toggleLiveList() { const q = document.getElementById('liveListContainer
 function openPayment() { const p = document.getElementById('paymentFields'); if(p.style.display === 'block') closePayment(); else { p.style.display = 'block'; document.getElementById('payAmount').focus(); } }
 function closePayment() { document.getElementById('paymentFields').style.display = 'none'; document.getElementById('payAmount').value = ''; }
 function submitPayment() { const i = document.getElementById('payAmount'); const a = parseInt(i.value || 0); if(a <= 0) { alert("⚠️ 금액을 입력하세요."); return; } window.advertiser += Math.floor(a * 0.7); window.consumer += Math.floor(a * 0.3); alert("✅ 결제 완료!"); closePayment(); }
+function clearAllInputs() { document.querySelectorAll('input, textarea').forEach(el => { if (el.type === 'checkbox') el.checked = false; else el.value = ''; }); }
 
 let liveCount = 10000;
 function startGrowth() { const e = document.getElementById('realtimeUserCount'); if (e) { liveCount += 1; e.innerText = liveCount.toLocaleString(); } setTimeout(startGrowth, 5000); }
@@ -437,8 +440,7 @@ function updateAISignal() {
     setTimeout(updateAISignal, 3000);
 }
 
-window.addEventListener('load', () => { if(typeof FinData !== 'undefined') FinData.updateUI(); updateAISignal(); setTimeout(startGrowth, 2000); });
-    
+window.addEventListener('load', () => { FinData.updateUI(); updateAISignal(); setTimeout(startGrowth, 2000); });    
 </script>
     
 
