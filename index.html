@@ -338,37 +338,57 @@ function toggleLiveList() {
 /* =========================================================
    3. 음성 및 안내 시스템
    ========================================================= */
+/* =========================================================
+   [수리] 또박또박하고 부드러운 음성 가이드 시스템
+   ========================================================= */
+
 function speak(text) {
     if ('speechSynthesis' in window) {
-        window.speechSynthesis.cancel();
+        window.speechSynthesis.cancel(); 
+        
         const utterance = new SpeechSynthesisUtterance(text);
         utterance.lang = 'ko-KR';
+        
+        // 1. 속도는 0.8로 차분하게 유지
         utterance.rate = 0.8; 
+        
+        // 2. 목소리 톤(Pitch)을 1.1로 높여 더 명료하게 들리도록 설정
+        utterance.pitch = 1.1; 
+        
         window.speechSynthesis.speak(utterance);
     }
 }
 
+// 탭 전환 및 안내 통합 (쉼표를 넣어 띄어 읽기를 유도했습니다)
 function showSection(id, btn) {
+    // 1. AI 재테크 안내
     if (id === 'aiInvest') {
-        const msg = "핀세계 딥러닝 AI 엔진이 세계 최초로 개발되어 곧 공개 됩니다. 수익을 극대화 할 수 있는 포트폴리오를 구성하고 있습니다.";
+        const msg = "핀세계 딥러닝 에이아이 엔진이, 세계 최초로 개발되어 곧 공개 됩니다. 수익을 극대화 할 수 있는, 포트폴리오를 구성하고 있습니다. 잠시만 기다려 주세요.";
         alert("📈 [AI 재테크 안내]\n\n" + msg);
         speak(msg);
         return;
     }
+
+    // 2. 국내외 주문 안내
     if (id === 'globalOrder') {
-        const msg = "전 세계 가맹점과 실시간 연동 중입니다. 곧 정식 오픈됩니다.";
+        const msg = "전 세계 가맹점과, 실시간으로 연동 중입니다. 정식 오픈이 얼마 남지 않았습니다. 기대해 주세요.";
         alert("🌐 [국내외 주문 안내]\n\n" + msg);
         speak(msg);
         return;
     }
+
+    // 기존 섹션 이동 로직 (유지)
     document.querySelectorAll('section').forEach(s => s.style.display = 'none');
     document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+    
     const target = document.getElementById(id);
     if(target) {
         target.style.display = 'block';
+        // 하이패스 커서 포커스
         const firstInput = target.querySelector('input:not([type="checkbox"]), textarea');
         if (firstInput) setTimeout(() => firstInput.focus(), 150);
     }
+    
     if(btn) btn.classList.add('active');
     window.scrollTo(0, 0); 
     if(id === 'mypage') FinData.updateUI();
