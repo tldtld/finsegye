@@ -46,10 +46,6 @@
                 🤝 QR참여
             </button>
 
-
-
-            
-
 <div id="qrContainer" style="display: none; padding: 10px; background: white; border-radius: 12px; text-align: center; box-shadow: 0 0 15px rgba(161, 196, 253, 0.4); cursor:pointer;" onclick="window.currentReferrer='CEO 채정석'; showSection('bankForm')">
             <img src="https://api.qrserver.com/v1/create-qr-code/?size=100x100&data=https://finsegye.com/join?ref=CEO_최정석" alt="QR" style="width:100%; max-width:100px; display:block; margin: 0 auto;">
             <div style="font-size:0.65em; color:#444; font-weight:bold; margin-top:5px;">
@@ -129,9 +125,6 @@ if (typeof showSection === 'function') {
     };
 }
 </script>
-
-
-    
     </div>
 
 </section>
@@ -171,8 +164,6 @@ if (typeof showSection === 'function') {
         <input id="bankPhone" type="tel" placeholder="전화번호" style="width: 90%; margin-bottom: 8px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
         <input id="bankAddress" type="text" placeholder="주소" style="width: 90%; margin-bottom: 12px; background: #111; color: #fff; border: 1px solid #444; padding: 10px; border-radius: 5px;">
 
-
-
 <div style="width: 100%; margin: 0 auto 10px auto; border: 1px solid #333; border-radius: 8px; overflow: hidden; background: rgba(255,255,255,0.02);">
     
     <div onclick="toggleTermsNow()" style="padding: 12px; background: #1a1a1a; cursor: pointer; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333;">
@@ -205,8 +196,6 @@ function toggleTermsNow() {
 }
 </script>
 
-        
-        
         <div class="agree-container" style="display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05); padding: 8px; border-radius: 6px; font-size: 0.75em;">
             <input type="checkbox" id="bankAgree" style="margin-right: 8px;">
             <span>개인정보 수집 및 이용 동의 (필수)</span>
@@ -217,11 +206,6 @@ function toggleTermsNow() {
         </button>
     </div>
 </section>
-
-
-
-
-
 
 <section id="mypage" style="display:none; padding: 5px; margin-top: 10px;">
     <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
@@ -253,13 +237,7 @@ function toggleTermsNow() {
     <button onclick="showSection('mypage', this)" id="btn-mypage">나의<br>현황</button>
 </div>
 
-
-
-
-
 <script>
-
-    
 /* =========================================================
    1. 핀세계 핵심 경제 엔진 (20초/20초 밸런스 유지)
    ========================================================= */
@@ -445,9 +423,6 @@ function resetEconomy() {
     window.advertiser = 50000; window.consumer = 20000; window.loanPercent = 100.0; window.aiRate = 0.0; window.pause = false;
     alert("🚨 자산 현황 수치가 초기 상태로 리셋되었습니다.");
 }
-
-
-
     
 // 👤 [최종 수리] 대표님 전용 자동 입력 (법적 리스크 방지용)
 function autoFillInfo() {
@@ -482,9 +457,6 @@ function autoFillKakao() {
     autoFillInfo(); 
 }
 
-
-
-    
 function toggleQR() { const q = document.getElementById('qrContainer'); if(q) q.style.display = (q.style.display === 'none' || q.style.display === '') ? 'block' : 'none'; }
 function toggleLiveList() { const q = document.getElementById('liveListContainer'); if(q) { const isOp = (q.style.display === 'none' || q.style.display === ''); q.style.display = isOp ? 'block' : 'none'; if(isOp) FinData.updateUI(); } }
 function openPayment() { const p = document.getElementById('paymentFields'); if(p.style.display === 'block') closePayment(); else { p.style.display = 'block'; document.getElementById('payAmount').focus(); } }
@@ -503,8 +475,6 @@ function updateAISignal() {
 
 window.addEventListener('load', () => { FinData.updateUI(); updateAISignal(); setTimeout(startGrowth, 2000); });    
 </script>
-    
-
     
 </body>
 </html>
