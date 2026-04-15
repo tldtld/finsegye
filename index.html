@@ -348,12 +348,18 @@ function showSection(id, btn) {
     if(id === 'mypage') FinData.updateUI();
 }
 
-// 공통 검증 및 자동 커서 이동 로직
+// [마지막 수리] 알림창 확인 후 0.3초 뒤에 확실히 커서를 박는 로직
 function validateAndFocus(elementId, message) {
     const el = document.getElementById(elementId);
     if (!el.value.trim()) {
         alert(message);
-        setTimeout(() => el.focus(), 100); // 알림창 닫힌 후 즉시 포커스
+        // 모바일 기기는 알림창이 닫히는 시간이 필요합니다. 
+        // 0.3초(300ms)로 넉넉하게 잡았습니다.
+        setTimeout(() => {
+            el.focus();
+            // 안드로이드에서 키보드가 더 잘 올라오도록 살짝 건드려줍니다.
+            el.click(); 
+        }, 300); 
         return false;
     }
     return true;
